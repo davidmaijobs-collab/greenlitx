@@ -52,7 +52,7 @@ function cardHtml(film) {
     '<a class="poster-link" href="#/film/' + film.id + '" aria-label="View project: ' + escapeHtml(film.title) + '">' +
     '<div class="poster">' + posterHtml(film) + "</div></a>" +
     '<figcaption><p class="card-title">' + escapeHtml(film.title) + '</p>' +
-    '<p class="card-meta">' + escapeHtml(film.genre) + " · " + escapeHtml(film.runtime) + "</p>" +
+    '<p class="card-meta">' + escapeHtml(film.genre) + " · " + escapeHtml(film.runtime) + " · " + fmtMoney(film.budget) + "</p>" +
     '<p class="card-votes"><b>' + voteCount(film) + "</b> Green Lights</p></figcaption></figure>";
 }
 
@@ -83,7 +83,66 @@ const SECTIONS = [
   { title: "Newly Added", films: () => FILMS.slice().sort((a, b) => b.n - a.n) },
   { title: "Discover All 40", films: () => FILMS.slice(), link: "#/discover" }
 ];
+/* ---------- showcase (home hero) ---------- */
+let showcaseTimer = null;
+let showcaseIdx = 0;
+function showcaseSlides() {
+  const brand = { brand: true };
+  return [brand].concat(FEATURED.map(filmById).filter(Boolean));
+}
+function showcaseHtml() {
+  const slides = showcaseSlides();
+  const slideHtml = slides.map((s, i) => {
+    if (s.brand) {
+      return '<div class="showcase-slide' + (i === 0 ? " active" : "") + '">' +
+        '<div class="backdrop-gradient" style="--hue:150"></div><div class="showcase-shade"></div>' +
+        '<div class="showcase-content"><div class="showcase-inner">' +
+        '<p class="showcase-kicker">GreenlitX — a film platform powered by its audience</p>' +
+        '<h1 class="showcase-title" tabindex="-1">Hollywood decides what gets made today. <span class="accent">On GreenlitX, the audience does.</span></h1>' +
+        '<p class="showcase-log">Forty original films are in development — live action, AI, hybrid and animation. Discover them, give your Green Light, and help make them happen.</p>' +
+        '<div class="showcase-actions"><a class="btn btn-play" href="#/discover">▶ Browse the 40 films</a>' +
+        '<button type="button" class="btn btn-ghost" data-scroll="teaser">Watch the teaser</button></div>' +
+        '<div class="hero-steps" aria-label="How it works"><span><b>1</b>&nbsp; DISCOVER</span><span><b>2</b>&nbsp; GREEN LIGHT</span><span><b>3</b>&nbsp; HELP MAKE IT HAPPEN</span></div>' +
+        "</div></div></div>";
+    }
+    const f = s;
+    return '<div class="showcase-slide' + (i === 0 ? " active" : "") + '">' +
+      '<img class="backdrop" src="backdrops/' + f.id + '.webp" width="1600" height="900" alt="" aria-hidden="true">' +
+      '<div class="showcase-shade"></div>' +
+      '<div class="showcase-content"><div class="showcase-inner">' +
+      '<p class="showcase-kicker">Featured · ' + escapeHtml(f.productionType) + "</p>" +
+      '<p class="showcase-title">' + escapeHtml(f.title) + "</p>" +
+      '<p class="showcase-tag">' + escapeHtml(f.tagline) + "</p>" +
+      '<p class="showcase-log">' + escapeHtml(f.logline) + "</p>" +
+      '<div class="showcase-actions"><a class="btn btn-play" href="#/film/' + f.id + '">View project</a>' +
+      '<button type="button" class="btn btn-ghost" data-scroll="teaser">▶ Teaser</button>' +
+      '<span class="showcase-meta">' + escapeHtml(f.genre) + " · " + escapeHtml(f.runtime) + " · " + voteCount(f) + " Green Lights</span></div>" +
+      "</div></div></div>";
+  }).join("");
+  const dots = slides.map((s, i) => '<button type="button" data-slide="' + i + '" aria-current="' + (i === 0) + '" aria-label="Showcase slide ' + (i + 1) + '"></button>').join("");
+  return slideHtml + '<div class="showcase-dots">' + dots + "</div>";
+}
+function startShowcaseRotationOnly() {
+  const root = $("#showcase");
+  if (!root) return;
+  const slides = $$(".showcase-slide", root);
+  if (slides.length < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  showcaseTimer = setInterval(() => {
+    showcaseIdx = (showcaseIdx + 1) % slides.length;
+    slides.forEach((el, i) => el.classList.toggle("active", i === showcaseIdx));
+    $$(".showcase-dots button", root).forEach((d, i) => d.setAttribute("aria-current", String(i === showcaseIdx)));
+  }, 7000);
+}
+function startShowcase() {
+  const root = $("#showcase");
+  if (!root) return;
+  root.innerHTML = showcaseHtml();
+  showcaseIdx = 0;
+  if (showcaseTimer) clearInterval(showcaseTimer);
+  startShowcaseRotationOnly();
+}
 function renderHome() {
+  startShowcase();
   $("#home-rows").innerHTML = SECTIONS.map((s) => {
     const films = s.films();
     if (!films.length) return "";
@@ -139,9 +198,29 @@ function renderFilmDetail(id) {
     '<div class="char-card"><h3>' + escapeHtml(c.name) + '</h3><p class="char-role">' + escapeHtml(c.role) + "</p><p>" + escapeHtml(c.note) + "</p></div>").join("");
   const roadmap = ROADMAP.map((s, i) =>
     "<li" + (i === 0 ? ' aria-current="step"><strong>' + escapeHtml(s) + " — you are here</strong>" : ">" + escapeHtml(s)) + "</li>").join("");
+  const heroArt = POSTER_READY[film.id]
+    ? '<img class="backdrop" src="backdrops/' + film.id + '.webp" width="1600" height="900" alt="" aria-hidden="true">'
+    : '<div class="backdrop-gradient" style="--hue:' + genreHue(film) + '"></div>';
   el.innerHTML =
+    '<div class="detail-hero">' + heroArt + '<div class="detail-hero-shade"></div>' +
+    '<div class="detail-hero-inner"><div class="poster">' + posterHtml(film) + "</div>" +
+    '<div><p class="showcase-kicker">' + escapeHtml(film.productionType) + " · " + escapeHtml(film.genre) + "</p>" +
+    '<h1 tabindex="-1">' + escapeHtml(film.title) + "</h1>" +
+    '<p class="tagline">' + escapeHtml(film.tagline) + "</p>" +
+    '<p class="hero-meta">' + escapeHtml(film.runtime) + " · " + escapeHtml(film.status) + " · Budget " + fmtMoney(film.budget) + " · For " + escapeHtml(film.audience) + "</p></div>" +
+    "</div></div>" +
     '<div class="detail-layout">' +
-    '<div><div class="poster detail-poster">' + posterHtml(film) + "</div>" +
+    '<div class="detail-main">' +
+    '<p class="logline">' + escapeHtml(film.logline) + "</p>" +
+    '<div class="detail-section"><h2>The story</h2><p>' + escapeHtml(film.synopsis) + "</p></div>" +
+    '<div class="detail-section"><h2>Main characters</h2><div class="char-grid">' + chars + "</div></div>" +
+    '<div class="detail-section"><h2>How it will be made</h2><p><strong>' + escapeHtml(film.productionType) + ".</strong> " + escapeHtml(film.productionNote) + "</p>" +
+    "<p><strong>Budget:</strong> " + fmtMoney(film.budget) + " — " + escapeHtml(film.budgetNote) + "</p></div>" +
+    '<div class="detail-section"><h2>Development roadmap</h2><ol>' + roadmap + "</ol>" +
+    '<p class="fineprint">Every GreenlitX founding project begins at concept development. Nothing here is financed, cast, or in production — the audience campaign is what moves a project forward.</p></div>' +
+    (film.treatmentHtml ? '<div class="detail-section"><details class="treatment-wrap"><summary>Read the full development treatment</summary><div class="treatment">' + film.treatmentHtml + "</div></details></div>" : "") +
+    "</div>" +
+    '<div class="detail-rail">' +
     '<div class="action-panel"><h3>Give a Green Light</h3>' +
     '<p class="big-count">' + voteCount(film) + ' <small>Green Lights</small></p>' +
     '<p class="panel-note">One Green Light per person, per film. It costs nothing — it tells the filmmakers, and us, what the audience wants made.</p>' +
@@ -151,26 +230,7 @@ function renderFilmDetail(id) {
     '<p class="big-count">$0 <small>collected of ' + fmtMoney(film.budget) + " goal</small></p>" +
     '<div class="progress" role="img" aria-label="Funding progress: 0 percent"><div class="bar" style="width:0%"></div></div>' +
     '<p class="panel-note">Conditional pledges — $5 / $10 / $25 / $50 / $100 or a custom amount — open with founding memberships in January 2027. A pledge is only ever charged if the project reaches its funding goal by its deadline.</p>' +
-    '<button type="button" class="btn" disabled>Pledging opens January 2027</button></div></div>' +
-    '<div class="detail-main">' +
-    '<h1 tabindex="-1">' + escapeHtml(film.title) + "</h1>" +
-    '<p class="tagline">' + escapeHtml(film.tagline) + "</p>" +
-    '<dl class="detail-facts">' +
-    "<div><dt>Production type</dt><dd>" + escapeHtml(film.productionType) + "</dd></div>" +
-    "<div><dt>Genre</dt><dd>" + escapeHtml(film.genre) + "</dd></div>" +
-    "<div><dt>Intended runtime</dt><dd>" + escapeHtml(film.runtime) + "</dd></div>" +
-    "<div><dt>Development status</dt><dd>" + escapeHtml(film.status) + "</dd></div>" +
-    "<div><dt>Production budget</dt><dd>" + fmtMoney(film.budget) + "</dd></div>" +
-    "<div><dt>Target audience</dt><dd>" + escapeHtml(film.audience) + "</dd></div>" +
-    "</dl>" +
-    '<p class="logline">' + escapeHtml(film.logline) + "</p>" +
-    '<div class="detail-section"><h2>The story</h2><p>' + escapeHtml(film.synopsis) + "</p></div>" +
-    '<div class="detail-section"><h2>Main characters</h2><div class="char-grid">' + chars + "</div></div>" +
-    '<div class="detail-section"><h2>How it will be made</h2><p><strong>' + escapeHtml(film.productionType) + ".</strong> " + escapeHtml(film.productionNote) + "</p>" +
-    "<p><strong>Budget:</strong> " + fmtMoney(film.budget) + " — " + escapeHtml(film.budgetNote) + "</p></div>" +
-    '<div class="detail-section"><h2>Development roadmap</h2><ol>' + roadmap + "</ol>" +
-    '<p class="fineprint">Every GreenlitX founding project begins at concept development. Nothing here is financed, cast, or in production — the audience campaign is what moves a project forward.</p></div>' +
-    (film.treatmentHtml ? '<div class="detail-section"><details class="treatment-wrap"><summary>Read the full development treatment</summary><div class="treatment">' + film.treatmentHtml + "</div></details></div>" : "") +
+    '<button type="button" class="btn" disabled>Pledging opens January 2027</button></div>' +
     "</div></div>";
 }
 
@@ -197,6 +257,7 @@ function parseRoute() {
 }
 function render() {
   const r = parseRoute();
+  if (r.view !== "home" && showcaseTimer) { clearInterval(showcaseTimer); showcaseTimer = null; }
   VIEWS.forEach((v) => { $("#view-" + v).hidden = v !== r.view; });
   $$(".main-nav a").forEach((a) => {
     if (a.dataset.nav === r.view) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
@@ -219,6 +280,21 @@ document.addEventListener("click", (e) => {
   if (navBtn) {
     const nav = $("#main-nav"); const open = nav.classList.toggle("open");
     navBtn.setAttribute("aria-expanded", String(open)); return;
+  }
+  const scrollBtn = e.target.closest("[data-scroll]");
+  if (scrollBtn) {
+    const target = document.getElementById(scrollBtn.dataset.scroll);
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+  const dot = e.target.closest("[data-slide]");
+  if (dot) {
+    const root = $("#showcase");
+    showcaseIdx = Number(dot.dataset.slide);
+    $$(".showcase-slide", root).forEach((el, i) => el.classList.toggle("active", i === showcaseIdx));
+    $$(".showcase-dots button", root).forEach((d, i) => d.setAttribute("aria-current", String(i === showcaseIdx)));
+    if (showcaseTimer) { clearInterval(showcaseTimer); startShowcaseRotationOnly(); }
+    return;
   }
   const chip = e.target.closest(".chip");
   if (chip) {
