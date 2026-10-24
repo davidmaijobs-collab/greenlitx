@@ -317,11 +317,16 @@ function posterSVG(film, context) {
 
 /* ---------------- Film cards ---------------- */
 
+/* Real key art (original generated artwork) lives at posters/<film-id>.webp */
+function posterArt(film) {
+  return '<img class="poster-img" src="posters/' + film.id + '.webp" width="880" height="1320" loading="lazy" alt="Key art for ' + escapeHtml(film.title) + ' — original artwork created for this demonstration project">';
+}
+
 function filmCard(film, context) {
   const pct = pledgePct(film);
   return '<article class="card">' +
     '<a class="poster-link" href="#/film/' + film.id + '" aria-label="View project: ' + escapeHtml(film.title) + '">' +
-    '<div class="poster">' + posterSVG(film, context) + '</div></a>' +
+    '<div class="poster">' + posterArt(film) + '</div></a>' +
     '<div class="card-body">' +
     '<h3><a href="#/film/' + film.id + '">' + escapeHtml(film.title) + '</a></h3>' +
     '<div class="card-meta"><span class="chip">' + escapeHtml(film.genre) + '</span>' +
@@ -464,7 +469,7 @@ function renderFilmDetail(id) {
 
   el.innerHTML =
     '<div class="detail-layout">' +
-    '<div><div class="poster detail-poster">' + posterSVG(film, "detail") + '</div>' +
+    '<div><div class="poster detail-poster">' + posterArt(film) + '</div>' +
     '<div class="trailer-placeholder" role="note"><span class="play-mark" aria-hidden="true">▶</span>' +
     '<strong>Trailer placeholder</strong>No trailer exists yet for this demonstration project.</div></div>' +
     '<div class="detail-main">' +

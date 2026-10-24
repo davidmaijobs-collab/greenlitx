@@ -77,9 +77,10 @@ as-is. Deployment is intentionally **not** configured in this prototype step.
   supporter would only be charged if a project reaches its funding threshold.
 - **Submissions are not delivered.** The submission form saves entries only in
   this browser as a demonstration. Nothing is emailed or transmitted anywhere.
-- **Posters are original CSS/SVG art.** All film artwork is generated in code
-  (gradients, shapes, typography) — no external images and no copyrighted
-  material, so the prototype is legally safe and costs nothing to run.
+- **Posters are original generated key art.** Each film's poster is original
+  AI-generated artwork created for this prototype (in `posters/`), with no
+  stock, external, or copyrighted material, so the prototype is legally safe
+  and costs nothing to run.
 
 ## Planned next steps
 
