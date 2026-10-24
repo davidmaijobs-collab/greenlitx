@@ -1,4 +1,4 @@
-/* GreenlitX — Watch Free catalog. 50 verified titles; every embed was checked against its official source (see watchfree/ for the verification records and rights notes). */
+/* GreenlitX — Watch Free catalog. 79 verified titles; every embed was checked against its official source (see watchfree/ for the verification records and rights notes). */
 window.WATCH_FREE = [
  {
   "category": "classic",
@@ -932,5 +932,543 @@ window.WATCH_FREE = [
   "synopsis": "Patagonian winter is closing in and food is scarce when Koro the llama spots one last tasty berry bush — currently occupied by Oti, a very pushy baby penguin. What follows is two and a half minutes of Chuck Jones-inspired cartoon warfare over a single berry, from the Blender Institute's Caminandes series.",
   "title": "Caminandes 3: Llamigos",
   "year": 2016
+ },
+ {
+  "category": "classic",
+  "director": "Delmer Daves",
+  "embedUrl": "https://archive.org/embed/THE_RED_HOUSE",
+  "genres": [
+   "Film Noir",
+   "Thriller",
+   "Drama"
+  ],
+  "id": "the-red-house",
+  "posterUrl": "https://archive.org/services/img/THE_RED_HOUSE",
+  "rightsNote": "Public domain (copyright not renewed) — the item itself is marked with the Creative Commons public domain mark / CC0 at the Internet Archive. Verified via archive.org metadata API: item THE_RED_HOUSE, full-length stream (6,023s).",
+  "runtimeMinutes": 100,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/THE_RED_HOUSE",
+  "synopsis": "Aging farmer Pete Morgan rules his homestead — and his adopted daughter Meg — with an iron hand, and one rule above all: never enter the Oxhead woods, where an abandoned house stands among the trees. When Meg and the young hired hand Nath defy the ban, they edge toward the terrible secret Pete has buried there for years. Edward G. Robinson anchors Delmer Daves' moody rural noir, with Miklós Rózsa's theremin-laced score haunting every return to the woods.",
+  "title": "The Red House",
+  "year": 1947
+ },
+ {
+  "category": "classic",
+  "director": "Fred C. Newmeyer, Sam Taylor",
+  "embedUrl": "https://archive.org/embed/safety-last-final_202506",
+  "genres": [
+   "Comedy",
+   "Action",
+   "Romance"
+  ],
+  "id": "safety-last",
+  "posterUrl": "https://archive.org/services/img/safety-last-final_202506",
+  "rightsNote": "Public domain (pre-1930 publication, 1923) — the item metadata carries the Creative Commons public domain mark (licenseurl https://creativecommons.org/publicdomain/mark/1.0/), collections Comedy_Films / feature_films. Verified via archive.org metadata API: item safety-last-final_202506, full-length stream (4,433s).",
+  "runtimeMinutes": 74,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/safety-last-final_202506",
+  "synopsis": "A small-town boy promises his sweetheart he'll make good in the big city, but his department-store clerk's wages won't cover the jewelry he's pretending to afford. His solution: a publicity stunt paying $1,000 to whoever climbs the store's twelve-story facade — a job he ends up having to do himself, floor by terrifying floor. Harold Lloyd's Safety Last! ends with the most famous clock-face dangle in silent comedy.",
+  "title": "Safety Last!",
+  "year": 1923
+ },
+ {
+  "category": "classic",
+  "director": "John Huston",
+  "embedUrl": "https://archive.org/embed/beat-the-devil-1953_20250321",
+  "genres": [
+   "Adventure",
+   "Comedy",
+   "Drama"
+  ],
+  "id": "beat-the-devil",
+  "posterUrl": "https://archive.org/services/img/beat-the-devil-1953_20250321",
+  "rightsNote": "Public domain (copyright not renewed) — the item metadata carries the Creative Commons public domain mark (licenseurl https://creativecommons.org/publicdomain/mark/1.0/), collection feature_films. Verified via archive.org metadata API: item beat-the-devil-1953_20250321, full-length stream (5,357s).",
+  "runtimeMinutes": 89,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/beat-the-devil-1953_20250321",
+  "synopsis": "Stranded in an Italian port town waiting for a tramp steamer to East Africa, a syndicate of smooth operators and their wives schemes to grab uranium-rich land before anyone else can. Everybody is conning everybody, half of them know it, and the ship — when it finally sails — has plans of its own. John Huston and Humphrey Bogart reunite for a sly parody of their own adventure films, scripted by a young Truman Capote.",
+  "title": "Beat the Devil",
+  "year": 1953
+ },
+ {
+  "category": "classic",
+  "director": "Bernard L. Kowalski",
+  "embedUrl": "https://archive.org/embed/attack-of-the-giant-leeches-1959",
+  "genres": [
+   "Horror",
+   "Science Fiction"
+  ],
+  "id": "attack-of-the-giant-leeches",
+  "posterUrl": "https://archive.org/services/img/attack-of-the-giant-leeches-1959",
+  "rightsNote": "Public domain (copyright not renewed) — the item metadata carries the Creative Commons public domain mark (licenseurl https://creativecommons.org/publicdomain/mark/1.0/), collection feature_films. Verified via archive.org metadata API: item attack-of-the-giant-leeches-1959, full-length stream (3,761s).",
+  "runtimeMinutes": 63,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/attack-of-the-giant-leeches-1959",
+  "synopsis": "Something in the Florida bayou is dragging townspeople into an underwater cave, and local moonshiners and poachers are disappearing first. As the bodies — drained and barely alive — turn up, a young game warden has to convince a skeptical town that the swamp's leeches have grown to man size. A Roger Corman-produced drive-in chiller shot in eight days, played with total sincerity by its backwoods cast.",
+  "title": "Attack of the Giant Leeches",
+  "year": 1959
+ },
+ {
+  "category": "classic",
+  "director": "Roger Corman",
+  "embedUrl": "https://archive.org/embed/the-wasp-woman-1959-by-roger-corman",
+  "genres": [
+   "Horror",
+   "Science Fiction"
+  ],
+  "id": "the-wasp-woman",
+  "posterUrl": "https://archive.org/services/img/the-wasp-woman-1959-by-roger-corman",
+  "rightsNote": "Public domain (copyright not renewed) — the item metadata carries the Creative Commons public domain mark (licenseurl https://creativecommons.org/publicdomain/mark/1.0/). This copy is the longer television cut of the film. Verified via archive.org metadata API: item the-wasp-woman-1959-by-roger-corman, full-length stream (4,378s).",
+  "runtimeMinutes": 73,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/the-wasp-woman-1959-by-roger-corman",
+  "synopsis": "Janice Starlin built a cosmetics empire on her own face — and now that she's aging, sales are falling with it. A disgraced scientist offers her a youth serum distilled from wasp enzymes; it works, until the injections turn her, by night, into a wasp-headed predator stalking her own offices. Roger Corman directed this beauty-industry monster movie in five days, and Susan Cabot's final film role gives it real pathos.",
+  "title": "The Wasp Woman",
+  "year": 1959
+ },
+ {
+  "category": "classic",
+  "director": "Buster Keaton",
+  "embedUrl": "https://archive.org/embed/sherlock-jr_202506",
+  "genres": [
+   "Comedy",
+   "Fantasy",
+   "Romance"
+  ],
+  "id": "sherlock-jr",
+  "posterUrl": "https://archive.org/services/img/sherlock-jr_202506",
+  "rightsNote": "Public domain (pre-1930 publication, 1924) — the item metadata carries the Creative Commons public domain mark (licenseurl https://creativecommons.org/publicdomain/mark/1.0/), collections Comedy_Films / feature_films. Verified via archive.org metadata API: item sherlock-jr_202506, full-length stream (2,674s).",
+  "runtimeMinutes": 45,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/sherlock-jr_202506",
+  "synopsis": "A movie projectionist studying a detective handbook falls asleep in the booth — and dreams himself into the film on screen as Sherlock Jr., the world's greatest detective, hot on the trail of a stolen watch. Framed for the theft back in real life, he can only solve the case in his sleep. Buster Keaton's most ingenious film crams a century of visual trickery, including the famous montage of a man trapped between changing movies, into 45 minutes.",
+  "title": "Sherlock Jr.",
+  "year": 1924
+ },
+ {
+  "category": "classic",
+  "director": "Dave Fleischer",
+  "embedUrl": "https://archive.org/embed/gullivers-travels-1939",
+  "genres": [
+   "Animation",
+   "Family",
+   "Fantasy"
+  ],
+  "id": "gullivers-travels",
+  "posterUrl": "https://archive.org/services/img/gullivers-travels-1939",
+  "rightsNote": "Public domain (copyright not renewed) — the item metadata carries the Creative Commons public domain mark (licenseurl http://creativecommons.org/publicdomain/mark/1.0/). Verified via archive.org metadata API: item gullivers-travels-1939, full-length stream (4,581s).",
+  "runtimeMinutes": 76,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/gullivers-travels-1939",
+  "synopsis": "Shipwrecked sailor Lemuel Gulliver washes ashore in Lilliput, where the thumb-sized kingdom is mobilizing for war against Blefuscu over which end of an egg — and which wedding song — is correct. Towering over both armies, Gulliver becomes the one hope of peace for two princes' forbidden romance. The Fleischer Studios' answer to Snow White was only the second American animated feature ever made, built around Max Fleischer's rotoscope and a kingdom of hand-drawn tiny people.",
+  "title": "Gulliver's Travels",
+  "year": 1939
+ },
+ {
+  "category": "classic",
+  "director": "Joseph Green",
+  "embedUrl": "https://archive.org/embed/TheBrainThatWouldntDieTheatricalVersion82Min.",
+  "genres": [
+   "Horror",
+   "Science Fiction"
+  ],
+  "id": "the-brain-that-wouldnt-die",
+  "posterUrl": "https://archive.org/services/img/TheBrainThatWouldntDieTheatricalVersion82Min.",
+  "rightsNote": "Public domain — the item metadata carries the Creative Commons public domain mark (licenseurl http://creativecommons.org/publicdomain/mark/1.0/), collections feature_films / film_scifi. Verified via archive.org metadata API: item TheBrainThatWouldntDieTheatricalVersion82Min., full-length stream (4,917s).",
+  "runtimeMinutes": 82,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/TheBrainThatWouldntDieTheatricalVersion82Min.",
+  "synopsis": "Brilliant surgeon Bill Cortner wrecks his car and his fiancée Jan is decapitated — so he saves her head, keeps it alive in a pan of experimental fluid in his lab, and goes hunting the bars and beauty contests of the city for a body to steal. Jan, furious at being kept alive as a head, plots with the monstrous thing locked in the lab closet. Joseph Green's gruesome cult classic is drive-in horror at its most gleefully unhinged.",
+  "title": "The Brain That Wouldn't Die",
+  "year": 1962
+ },
+ {
+  "category": "classic",
+  "director": "Arch Hall Sr.",
+  "embedUrl": "https://archive.org/embed/Eegah",
+  "genres": [
+   "Horror",
+   "Adventure"
+  ],
+  "id": "eegah",
+  "posterUrl": "https://archive.org/services/img/Eegah",
+  "rightsNote": "Public domain (copyright not renewed) — the item metadata carries licenseurl http://creativecommons.org/licenses/publicdomain/, collections SciFi_Horror / feature_films. This is the original theatrical film, not any later television parody version. Verified via archive.org metadata API: item Eegah, full-length stream (5,426s).",
+  "runtimeMinutes": 90,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/Eegah",
+  "synopsis": "Driving near Palm Springs, teenager Roxy nearly runs down a seven-foot Stone Age giant who has somehow survived into the twentieth century. She returns with her boyfriend and her skeptical father to find him — and the giant, Eegah, finds them first, carrying her father off to his cave. Richard Kiel, a decade before becoming James Bond's Jaws, plays the lovesick caveman in Arch Hall Sr.'s gloriously threadbare desert horror show.",
+  "title": "Eegah",
+  "year": 1962
+ },
+ {
+  "category": "classic",
+  "director": "Edgar G. Ulmer",
+  "embedUrl": "https://archive.org/embed/The_Amazing_Transparent_Man.avi",
+  "genres": [
+   "Science Fiction",
+   "Crime",
+   "Thriller"
+  ],
+  "id": "the-amazing-transparent-man",
+  "posterUrl": "https://archive.org/services/img/The_Amazing_Transparent_Man.avi",
+  "rightsNote": "Public domain (copyright not renewed) — as catalogued by the Internet Archive (collections film_scifi / feature_films). Verified via archive.org metadata API: item The_Amazing_Transparent_Man.avi, full-length stream (3,438s).",
+  "runtimeMinutes": 57,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/The_Amazing_Transparent_Man.avi",
+  "synopsis": "A ruthless ex-major springs safecracker Joey Faust from prison for one job: submit to a scientist's invisibility ray and steal the rare materials needed to build an invisible army. But Faust discovers the radiation is killing him — and invisible men make their own plans. Edgar G. Ulmer, the Poverty Row auteur behind Detour, shot this sci-fi crime picture back-to-back with Beyond the Time Barrier in the Dallas fairgrounds.",
+  "title": "The Amazing Transparent Man",
+  "year": 1960
+ },
+ {
+  "category": "classic",
+  "director": "Louis J. Gasnier",
+  "embedUrl": "https://archive.org/embed/reefer_madness_ipod",
+  "genres": [
+   "Drama",
+   "Exploitation"
+  ],
+  "id": "reefer-madness",
+  "posterUrl": "https://archive.org/services/img/reefer_madness_ipod",
+  "rightsNote": "Public domain (copyright not renewed) — the item metadata carries licenseurl http://creativecommons.org/licenses/publicdomain/, collections feature_films. Verified via archive.org metadata API: item reefer_madness_ipod, full-length stream (4,098s).",
+  "runtimeMinutes": 68,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/reefer_madness_ipod",
+  "synopsis": "A high-school principal warns parents about a new menace in town: pushers luring clean-cut teenagers to an apartment where a single puff of marijuana leads, inevitably, to hit-and-run driving, violence, and permanent madness. Financed by a church group as a sincere scare film and recut for the exploitation circuit, Reefer Madness failed at everything — then became, decades later, the most beloved piece of accidental comedy in propaganda history.",
+  "title": "Reefer Madness",
+  "year": 1936
+ },
+ {
+  "category": "classic",
+  "director": "Lewis Milestone",
+  "embedUrl": "https://archive.org/embed/the-front-page-1931_202402",
+  "genres": [
+   "Comedy",
+   "Drama",
+   "Romance"
+  ],
+  "id": "the-front-page",
+  "posterUrl": "https://archive.org/services/img/the-front-page-1931_202402",
+  "rightsNote": "Public domain (copyright not renewed) — the item metadata carries the Creative Commons public domain mark (licenseurl https://creativecommons.org/publicdomain/mark/1.0/), collection feature_films. Verified via archive.org metadata API: item the-front-page-1931_202402, full-length stream (6,068s).",
+  "runtimeMinutes": 101,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/the-front-page-1931_202402",
+  "synopsis": "Star reporter Hildy Johnson is quitting the Chicago newspaper racket to get married — but on his last night, condemned killer Earl Williams escapes hours before his execution, and Hildy hides him in a roll-top desk while his editor, the magnificent manipulator Walter Burns, does everything legal and otherwise to keep his best man on the story. Lewis Milestone's film of the Hecht–MacArthur stage hit is the original newspaper comedy — the one remade a decade later as His Girl Friday.",
+  "title": "The Front Page",
+  "year": 1931
+ },
+ {
+  "category": "classic",
+  "director": "John Cromwell",
+  "embedUrl": "https://archive.org/embed/of-human-bondage-1934",
+  "genres": [
+   "Drama",
+   "Romance"
+  ],
+  "id": "of-human-bondage",
+  "posterUrl": "https://archive.org/services/img/of-human-bondage-1934",
+  "rightsNote": "Public domain (copyright not renewed) — the item metadata carries the Creative Commons public domain mark (licenseurl https://creativecommons.org/publicdomain/mark/1.0/), collection feature_films. Verified via archive.org metadata API: item of-human-bondage-1934, full-length stream (4,988s).",
+  "runtimeMinutes": 83,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/of-human-bondage-1934",
+  "synopsis": "Sensitive, club-footed medical student Philip Carey falls hopelessly for Mildred, a vulgar, manipulative waitress who treats his devotion with open contempt — and destroys his career, his savings, and his pride every time she walks back into his life. John Cromwell's adaptation of W. Somerset Maugham's novel made Bette Davis a star in the role no RKO contract player would touch; her performance was so undeniable it forced a write-in Oscar campaign.",
+  "title": "Of Human Bondage",
+  "year": 1934
+ },
+ {
+  "category": "classic",
+  "director": "William A. Wellman",
+  "embedUrl": "https://archive.org/embed/AStarIsBorn1937FullHDMovie",
+  "genres": [
+   "Drama",
+   "Romance"
+  ],
+  "id": "a-star-is-born",
+  "posterUrl": "https://archive.org/services/img/AStarIsBorn1937FullHDMovie",
+  "rightsNote": "Public domain (copyright not renewed) — the item metadata carries the Creative Commons public domain mark (licenseurl http://creativecommons.org/publicdomain/mark/1.0/), collection feature_films. Verified via archive.org metadata API: item AStarIsBorn1937FullHDMovie, full-length stream (6,658s).",
+  "runtimeMinutes": 111,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/AStarIsBorn1937FullHDMovie",
+  "synopsis": "North Dakota farm girl Esther Blodgett comes to Hollywood with nothing but a letter of introduction and a grandmother's faith. Fading matinee idol Norman Maine spots her waitressing, engineers her screen test, and marries her as she rises — while his own career dissolves in alcohol. The original A Star Is Born, filmed in early Technicolor by William A. Wellman, set the template three remakes have followed: one fame goes up exactly as fast as the other comes down.",
+  "title": "A Star Is Born",
+  "year": 1937
+ },
+ {
+  "category": "classic",
+  "director": "William A. Wellman",
+  "embedUrl": "https://archive.org/embed/nothingsacred1937",
+  "genres": [
+   "Comedy",
+   "Romance",
+   "Drama"
+  ],
+  "id": "nothing-sacred",
+  "posterUrl": "https://archive.org/services/img/nothingsacred1937",
+  "rightsNote": "Public domain (copyright not renewed) — as catalogued by the Internet Archive. Verified via archive.org metadata API: item nothingsacred1937, full-length stream (4,414s).",
+  "runtimeMinutes": 74,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/nothingsacred1937",
+  "synopsis": "Small-town varnish-factory worker Hazel Flagg is misdiagnosed with fatal radium poisoning — and a New York newspaper flies her to the city as its dying heroine, showering her with luxury while she tries to keep her perfect health a secret. Ben Hecht's script and Carole Lombard, at her screwball peak, make this Technicolor satire a gleeful attack on tabloid sentimentality that still feels ahead of its time.",
+  "title": "Nothing Sacred",
+  "year": 1937
+ },
+ {
+  "category": "classic",
+  "director": "Charlie Chaplin",
+  "embedUrl": "https://archive.org/embed/the-gold-rush-film-1925",
+  "genres": [
+   "Comedy",
+   "Adventure",
+   "Romance"
+  ],
+  "id": "the-gold-rush",
+  "posterUrl": "https://archive.org/services/img/the-gold-rush-film-1925",
+  "rightsNote": "Public domain (1925 publication; U.S. copyright expired January 1, 2021) — this is Chaplin's original 1925 silent version, in a copy with no added soundtrack. Note: Chaplin's 1942 reissue, which replaces the intertitles with his own narration and a new score, remains under copyright and is NOT the copy used here. The item metadata carries the Creative Commons public domain mark. Verified via archive.org metadata API: item the-gold-rush-film-1925, full-length stream (5,195s).",
+  "runtimeMinutes": 87,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/the-gold-rush-film-1925",
+  "synopsis": "The Little Tramp joins the Klondike gold rush and ends up snowed into a teetering cabin with a blizzard, a bear, and a starving prospector who keeps mistaking him for a chicken. For Thanksgiving dinner he boils and eats his own boot — laces twirled like spaghetti. Charlie Chaplin considered The Gold Rush the film he most wanted to be remembered by, and its dance of the bread rolls alone justifies him.",
+  "title": "The Gold Rush",
+  "year": 1925
+ },
+ {
+  "category": "modern",
+  "director": "Colin Levy, Hjalti Hjálmarsson",
+  "embedUrl": "https://www.youtube-nocookie.com/embed/mN0zPOpADL4",
+  "genres": [
+   "Animation",
+   "Action",
+   "Comedy"
+  ],
+  "id": "agent-327-operation-barbershop",
+  "posterUrl": "https://i.ytimg.com/vi/mN0zPOpADL4/hqdefault.jpg",
+  "rightsNote": "CC BY 3.0 — Blender Institute / Blender Animation Studio official release. Video ID verified two ways: the Blender Studio blog and the director's own portfolio embed youtube.com/embed/mN0zPOpADL4, and opening that watch page shows title 'Agent 327: Operation Barbershop' with the Blender Animation Studio description.",
+  "runtimeMinutes": 4,
+  "source": "youtube",
+  "sourcePageUrl": "https://www.youtube.com/watch?v=mN0zPOpADL4",
+  "synopsis": "Dutch secret agent 327 follows a clue to a shabby Amsterdam barbershop — unaware that the hulking mercenary Boris Kloris has been tailing him all day. What begins as a shave becomes a full-contact brawl of capes, chairs, and barber poles. This three-and-a-half-minute Blender Institute short, based on Martin Lodewijk's classic comics, was the proof of concept for a proposed animated feature.",
+  "title": "Agent 327: Operation Barbershop",
+  "year": 2017
+ },
+ {
+  "category": "modern",
+  "director": "Daniel Martínez Lara",
+  "embedUrl": "https://www.youtube-nocookie.com/embed/pKmSdY56VtY",
+  "genres": [
+   "Animation",
+   "Action",
+   "Fantasy"
+  ],
+  "id": "hero",
+  "posterUrl": "https://i.ytimg.com/vi/pKmSdY56VtY/hqdefault.jpg",
+  "rightsNote": "CC BY 3.0 — Blender Foundation official release. Video ID verified two ways: blender.org's official press page ('Hero – Blender Grease Pencil showcase') embeds youtube.com/embed/pKmSdY56VtY, the full-film copy archived at Wikimedia Commons names the same YouTube upload as its source with a Creative Commons Attribution licence, and opening the watch page shows title 'HERO – Blender Grease Pencil Showcase'.",
+  "runtimeMinutes": 4,
+  "source": "youtube",
+  "sourcePageUrl": "https://www.youtube.com/watch?v=pKmSdY56VtY",
+  "synopsis": "In a towering steampunk city, a hand-drawn hero springs from the page into battle — drawn live, line by line, inside a full 3D world. Hero is the Blender Foundation's showcase for Grease Pencil, its tool for drawing 2D animation inside a 3D pipeline: every frame is visibly inked, yet the camera swoops through real three-dimensional space around the characters.",
+  "title": "Hero",
+  "year": 2018
+ },
+ {
+  "category": "modern",
+  "director": "Beorn Leonard",
+  "embedUrl": "https://www.youtube-nocookie.com/embed/lqiN98z6Dak",
+  "genres": [
+   "Animation",
+   "Comedy"
+  ],
+  "id": "glass-half",
+  "posterUrl": "https://i.ytimg.com/vi/lqiN98z6Dak/hqdefault.jpg",
+  "rightsNote": "CC BY 3.0 — Blender Institute official release. Video ID verified two ways: the Blender Studio premiere announcement embeds youtube-nocookie.com/embed/lqiN98z6Dak, and opening that watch page shows title 'Glass Half - Blender animated cartoon' with the description 'the film itself and all the assets are being released open and free as Creative Commons CC-BY' and credit 'Directed by: Beorn Leonard'.",
+  "runtimeMinutes": 3,
+  "source": "youtube",
+  "sourcePageUrl": "https://www.youtube.com/watch?v=lqiN98z6Dak",
+  "synopsis": "Two amateur art critics meet in a gallery and argue passionately — and destructively — about every piece they see: too literal, too abstract, too derivative. Chaos follows them from room to room, until at last they stand before a work they can finally, completely, agree on. Beorn Leonard's three-minute cartoon was rendered in real time in Blender's viewport to explore toon-shaded storytelling.",
+  "title": "Glass Half",
+  "year": 2015
+ },
+ {
+  "category": "modern",
+  "director": "Blender Animation Studio",
+  "embedUrl": "https://www.youtube-nocookie.com/embed/RJnKaAtBPhA",
+  "genres": [
+   "Animation",
+   "Comedy",
+   "Family"
+  ],
+  "id": "the-daily-dweebs",
+  "posterUrl": "https://i.ytimg.com/vi/RJnKaAtBPhA/hqdefault.jpg",
+  "rightsNote": "CC BY 3.0 — Blender Animation Studio official release. Video ID verified two ways: studio.blender.org's official announcement embeds youtube-nocookie.com/embed/RJnKaAtBPhA, and opening that watch page shows title 'The Daily Dweebs' with the Blender Animation Studio description; the full-film copy at Wikimedia Commons, sourced from this upload, carries a Creative Commons Attribution licence.",
+  "runtimeMinutes": 1,
+  "source": "youtube",
+  "sourcePageUrl": "https://www.youtube.com/watch?v=RJnKaAtBPhA",
+  "synopsis": "In a perfect 1950s suburb, pet dog Dixey runs through an entire emotional roller-coaster — joy, suspicion, heartbreak, triumph — in about a minute, mostly over a chicken. The Daily Dweebs is the Blender Animation Studio's pilot for a proposed animated series, rendered with a storybook vintage-poster look and famous for being finished, as a dare, in 8K stereoscopic 3D.",
+  "title": "The Daily Dweebs",
+  "year": 2017
+ },
+ {
+  "category": "short",
+  "director": "Winsor McCay",
+  "embedUrl": "https://archive.org/embed/GertieTheDinosaur",
+  "genres": [
+   "Animation",
+   "Comedy",
+   "Fantasy"
+  ],
+  "id": "gertie-the-dinosaur",
+  "posterUrl": "https://archive.org/services/img/GertieTheDinosaur",
+  "rightsNote": "Public domain (pre-1930 publication, 1914) — as catalogued by the Internet Archive. Verified via archive.org metadata API: item GertieTheDinosaur, full-length stream (831s).",
+  "runtimeMinutes": 14,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/GertieTheDinosaur",
+  "synopsis": "Cartoonist Winsor McCay bets a friend he can bring a dinosaur back to life through animation — then appears on screen himself, whip in hand, to command Gertie: a gentle brontosaurus who stomps, dances, sulks, cries when scolded, and finally carries her creator off into the prehistoric landscape. McCay drew some ten thousand frames by hand for what is widely considered the first cartoon with a real personality.",
+  "title": "Gertie the Dinosaur",
+  "year": 1914
+ },
+ {
+  "category": "short",
+  "director": "Dave Fleischer",
+  "embedUrl": "https://archive.org/embed/bb_snow_white",
+  "genres": [
+   "Animation",
+   "Comedy",
+   "Fantasy"
+  ],
+  "id": "betty-boop-snow-white",
+  "posterUrl": "https://archive.org/services/img/bb_snow_white",
+  "rightsNote": "Public domain (copyright not renewed) — the item metadata carries licenseurl http://creativecommons.org/licenses/publicdomain/, collections classic_cartoons / animationandcartoons. Verified via archive.org metadata API: item bb_snow_white, full-length stream (424s).",
+  "runtimeMinutes": 7,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/bb_snow_white",
+  "synopsis": "Betty Boop is Snow White, condemned by a jealous queen whose magic mirror keeps giving the wrong answer. Condemned to the executioner's block, Betty escapes into an icy underworld where Cab Calloway — rotoscoped as a singing ghost — performs 'St. James Infirmary Blues' as the cartoon melts into pure surrealism around him. The Fleischer Studios' Snow White is routinely named one of the greatest animated shorts ever made.",
+  "title": "Betty Boop in Snow White",
+  "year": 1933
+ },
+ {
+  "category": "short",
+  "director": "Dave Fleischer",
+  "embedUrl": "https://archive.org/embed/bb_minnie_the_moocher_201805",
+  "genres": [
+   "Animation",
+   "Comedy",
+   "Musical"
+  ],
+  "id": "minnie-the-moocher",
+  "posterUrl": "https://archive.org/services/img/bb_minnie_the_moocher_201805",
+  "rightsNote": "Public domain (copyright not renewed) — the item metadata carries the Creative Commons public domain mark (licenseurl http://creativecommons.org/publicdomain/mark/1.0/). Verified via archive.org metadata API: item bb_minnie_the_moocher_201805, full-length stream (466s).",
+  "runtimeMinutes": 8,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/bb_minnie_the_moocher_201805",
+  "synopsis": "Scolded at the dinner table, Betty Boop runs away from home with her pal Bimbo and takes shelter in a haunted cave — where a ghostly walrus, rotoscoped from Cab Calloway himself, dances and scats his signature song 'Minnie the Moocher' for them. A parade of skeletons, witches, and jailbirds joins the chorus before Betty sensibly runs home. One of the defining jazz-age cartoons.",
+  "title": "Minnie the Moocher",
+  "year": 1932
+ },
+ {
+  "category": "short",
+  "director": "William C. McGann",
+  "embedUrl": "https://archive.org/embed/THESTOLENJOOLS",
+  "genres": [
+   "Comedy",
+   "Mystery"
+  ],
+  "id": "the-stolen-jools",
+  "posterUrl": "https://archive.org/services/img/THESTOLENJOOLS",
+  "rightsNote": "Public domain — produced in 1931 as a charity film for the National Variety Artists tuberculosis fund; the item metadata carries licenseurl http://creativecommons.org/licenses/publicdomain/, collection short_films. Verified via archive.org metadata API: item THESTOLENJOOLS, full-length stream (1,154s).",
+  "runtimeMinutes": 19,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/THESTOLENJOOLS",
+  "synopsis": "At a glittering Hollywood party, Norma Shearer's pearl necklace — her 'jools' — goes missing, and a police inspector grills the guest list: which is to say, half the stars in Hollywood, all playing themselves. Laurel and Hardy, Buster Keaton, Joan Crawford, Barbara Stanwyck, and dozens more turn up in cameos in this two-reel whodunit made to raise money for tubercular actors.",
+  "title": "The Stolen Jools",
+  "year": 1931
+ },
+ {
+  "category": "short",
+  "director": "Otto Messmer",
+  "embedUrl": "https://archive.org/embed/felix-the-cat-1919-feline-follies-silent",
+  "genres": [
+   "Animation",
+   "Comedy"
+  ],
+  "id": "feline-follies",
+  "posterUrl": "https://archive.org/services/img/felix-the-cat-1919-feline-follies-silent",
+  "rightsNote": "Public domain (pre-1930 publication, 1919) — the item metadata carries the Creative Commons public domain mark (licenseurl https://creativecommons.org/publicdomain/mark/1.0/). Verified via archive.org metadata API: item felix-the-cat-1919-feline-follies-silent, full-length stream (255s).",
+  "runtimeMinutes": 4,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/felix-the-cat-1919-feline-follies-silent",
+  "synopsis": "A tomcat named Master Tom slips out for a night of serenading Miss Kitty White, rids her house of mice with his musical tail, and comes home to face the consequences of romance: a houseful of kittens and a very unsympathetic owner. Released in 1919 as Feline Follies, this Pat Sullivan short is the first screen appearance of the cat the world would soon know as Felix — already walking upright, already thinking in punctuation marks.",
+  "title": "Feline Follies",
+  "year": 1919
+ },
+ {
+  "category": "short",
+  "director": "Otto Messmer",
+  "embedUrl": "https://archive.org/embed/FELIXTHECATTRIFLESWITHTIME",
+  "genres": [
+   "Animation",
+   "Comedy"
+  ],
+  "id": "felix-trifles-with-time",
+  "posterUrl": "https://archive.org/services/img/FELIXTHECATTRIFLESWITHTIME",
+  "rightsNote": "Public domain (pre-1930 publication, 1925) — the item metadata carries the Creative Commons public domain mark (licenseurl https://creativecommons.org/publicdomain/mark/1.0/). Verified via archive.org metadata API: item FELIXTHECATTRIFLESWITHTIME, full-length stream (593s).",
+  "runtimeMinutes": 10,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/FELIXTHECATTRIFLESWITHTIME",
+  "synopsis": "Felix — a cat out of his time in any century — finds himself hurled into adventures across the ages in this 1925 Pat Sullivan short, animated by Otto Messmer. By the mid-twenties Felix was arguably the most popular animated character on Earth, and shorts like this one show why: a bag of visual tricks, a walk powered by pure attitude, and a hero who solves every problem by thinking hard enough to make the punctuation appear.",
+  "title": "Felix Trifles with Time",
+  "year": 1925
+ },
+ {
+  "category": "documentary",
+  "director": "Frank Capra",
+  "embedUrl": "https://archive.org/embed/DivideAndConquer",
+  "genres": [
+   "Documentary",
+   "War",
+   "History"
+  ],
+  "id": "why-we-fight-divide-and-conquer",
+  "posterUrl": "https://archive.org/services/img/DivideAndConquer",
+  "rightsNote": "Public domain — a U.S. federal government work, produced by the U.S. Army Signal Corps / Office of War Information; the item metadata carries licenseurl http://creativecommons.org/licenses/publicdomain/. Verified via archive.org metadata API: item DivideAndConquer, creator Frank Capra, full-length stream (3,382s).",
+  "runtimeMinutes": 56,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/DivideAndConquer",
+  "synopsis": "The third Why We Fight film explains how Hitler conquered Western Europe in 1940 without, at first, firing at half of it: propaganda and fifth columns softening Denmark, Norway, Holland, and Belgium from inside before the Wehrmacht arrived — then the lightning fall of France. Made to teach American soldiers that the enemy's favorite weapon was division itself, Frank Capra's chapter is the series' sharpest lesson in how democracies get talked into surrendering.",
+  "title": "Why We Fight: Divide and Conquer",
+  "year": 1943
+ },
+ {
+  "category": "documentary",
+  "director": "U.S. Federal Civil Defense Administration",
+  "embedUrl": "https://archive.org/embed/the-house-in-the-middle-1954-edited",
+  "genres": [
+   "Documentary",
+   "History"
+  ],
+  "id": "the-house-in-the-middle",
+  "posterUrl": "https://archive.org/services/img/the-house-in-the-middle-1954-edited",
+  "rightsNote": "Public domain — an official U.S. federal civil defense film (Federal Civil Defense Administration, 1954), held at the Internet Archive. Note: the Archive's best-known Prelinger Collection copy of this film (Houseint1954) is currently dark, so this verified open copy is used. Verified via archive.org metadata API: item the-house-in-the-middle-1954-edited, full-length stream (729s).",
+  "runtimeMinutes": 12,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/the-house-in-the-middle-1954-edited",
+  "synopsis": "At the Nevada Proving Ground, three identical wooden houses sit in a row within range of an atomic test. One is weathered and ringed with trash, one is shabby, and the one in the middle is freshly painted and tidy. After the blast, the film shows which house burned and which stood — and draws the Cold War's most surreal moral: good housekeeping is national defense. A Prelinger Collection classic of civil-defense logic.",
+  "title": "The House in the Middle",
+  "year": 1954
+ },
+ {
+  "category": "documentary",
+  "director": "U.S. Federal Civil Defense Administration",
+  "embedUrl": "https://archive.org/embed/el-mp16-137_2Mbps",
+  "genres": [
+   "Documentary",
+   "History"
+  ],
+  "id": "operation-doorstep",
+  "posterUrl": "https://archive.org/services/img/el-mp16-137_2Mbps",
+  "rightsNote": "Public domain — a U.S. federal government film (Federal Civil Defense Administration, 1953), held in the FedFlix / U.S. government films collections at the Internet Archive, from National Archives footage. Verified via archive.org metadata API: item el-mp16-137_2Mbps, full-length stream (1,729s).",
+  "runtimeMinutes": 29,
+  "source": "archive",
+  "sourcePageUrl": "https://archive.org/details/el-mp16-137_2Mbps",
+  "synopsis": "In the spring of 1953 the Federal Civil Defense Administration built a fake American neighborhood — houses, cars, a radio tower, even mannequin families at dinner tables — on the Nevada desert floor, then dropped an atomic bomb on it as part of the Upshot-Knothole tests. Operation Doorstep documents the construction, the countdown, and the eerily cheerful survey of the ruins, all to prove that a prepared family could survive the unsurvivable.",
+  "title": "Operation Doorstep",
+  "year": 1953
  }
 ];
