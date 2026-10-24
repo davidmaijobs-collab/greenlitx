@@ -201,6 +201,11 @@ form .hint { color: var(--muted); font-size: 0.85rem; }
 .footer-slogan { color: var(--text); font-weight: 700; }
 .noscript-note { text-align: center; padding: 1rem; color: #ffb35c; }
 
+.testmode-note { margin-top: 0.9rem; font-size: 0.82rem; color: #ffb35c; border: 1px dashed rgba(255,179,92,0.45); border-radius: 8px; padding: 0.55rem 0.7rem; }
+.pledge-amounts { display: flex; gap: 0.45rem; flex-wrap: wrap; margin: 0.4rem 0 0.2rem; }
+.pledge-amounts .chip { font-size: 0.95rem; padding: 0.45rem 0.95rem; }
+.chip-static { cursor: default; opacity: 0.75; }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .poster img, .card, .showcase-slide { transition: none; }

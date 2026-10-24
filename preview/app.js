@@ -33,7 +33,11 @@ const filmById = (id) => FILMS.find((f) => f.id === id);
 const SB_URL = "https://fjrdjspecrnvetlsxxos.supabase.co";
 const SB_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqcmRqc3BlY3JudmV0bHN4eG9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI4NzQ4MTAsImV4cCI6MjEwODQ1MDgxMH0.FuSoy9qytnRDbLWJolkvy1bTk2CB2AAkNNO09H3QpW0";
 const sb = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SB_URL, SB_ANON) : null;
-const server = { user: null, counts: {}, ready: false };
+const server = { user: null, counts: {}, pledgeTotals: {}, myPledges: [], ready: false };
+const PLEDGE_DEADLINE = "December 31, 2027";
+const PLEDGE_AMOUNTS = [500, 1000, 2500, 5000, 10000];
+let pledgePick = { filmId: null, cents: 2500 };
+const fmtCents = (c) => "$" + (Number(c || 0) / 100).toLocaleString("en-US", { maximumFractionDigits: 0 });
 const voteCount = (film) => {
   const base = server.counts[film.id] || 0;
   if (server.user) return base; // server counts include my vote when signed in
@@ -44,6 +48,8 @@ async function sbFetchCounts() {
   try {
     const { data, error } = await sb.from("vote_counts").select("film_id, votes");
     if (!error && data) { server.counts = {}; data.forEach((r) => { server.counts[r.film_id] = r.votes; }); }
+    const pt = await sb.from("pledge_totals").select("film_id, pledged_cents, collected_cents, backers");
+    if (!pt.error && pt.data) { server.pledgeTotals = {}; pt.data.forEach((r) => { server.pledgeTotals[r.film_id] = r; }); }
   } catch (e) {}
 }
 async function sbFetchMine() {
@@ -55,6 +61,8 @@ async function sbFetchMine() {
     ]);
     if (v) state.votes = new Set(v.map((r) => r.film_id));
     if (f) state.follows = new Set(f.map((r) => r.film_id));
+    const pl = await sb.from("pledges").select("id, film_id, amount_cents, status, created_at").eq("user_id", server.user.id).order("created_at", { ascending: false });
+    if (pl.data) server.myPledges = pl.data;
   } catch (e) {}
 }
 async function sbMigrateGuest() {
@@ -252,6 +260,37 @@ function renderDiscover() {
 }
 
 /* ---------- film detail ---------- */
+function myPledgeFor(filmId) { return server.myPledges.find((p) => p.film_id === filmId && p.status === "pledged"); }
+function pledgePanelHtml(film) {
+  const t = server.pledgeTotals[film.id] || { pledged_cents: 0, collected_cents: 0, backers: 0 };
+  const goalCents = film.budget * 100;
+  const pct = Math.min(100, Math.round((Number(t.pledged_cents) / goalCents) * 1000) / 10);
+  const mine = server.user ? myPledgeFor(film.id) : null;
+  if (pledgePick.filmId !== film.id) pledgePick = { filmId: film.id, cents: 2500 };
+  let action = "";
+  if (!server.user) {
+    action = '<div class="pledge-amounts" aria-hidden="true">' + PLEDGE_AMOUNTS.map((c) => '<span class="chip chip-static">' + fmtCents(c) + "</span>").join("") + "</div>" +
+      '<a class="btn btn-primary" href="#/account">Create a free account to pledge</a>' +
+      '<p class="panel-note">Pledging needs an account — your card is only ever charged once, if this film reaches 100% of its goal by ' + PLEDGE_DEADLINE + ". Until then, nothing is charged.</p>";
+  } else if (mine) {
+    action = '<p class="panel-note"><strong>You have pledged ' + fmtCents(mine.amount_cents) + "</strong> to this film. It will be charged once, only if the film reaches 100% of its goal by " + PLEDGE_DEADLINE + " — otherwise it is cancelled automatically and nothing is charged.</p>" +
+      '<button type="button" class="btn btn-ghost" data-action="pledge-cancel" data-id="' + film.id + '">Cancel my pledge</button>';
+  } else {
+    action = '<div class="pledge-amounts" role="group" aria-label="Choose a pledge amount">' +
+      PLEDGE_AMOUNTS.map((c) => '<button type="button" class="chip" data-action="pledge-pick" data-cents="' + c + '" aria-pressed="' + (pledgePick.cents === c) + '">' + fmtCents(c) + "</button>").join("") + "</div>" +
+      '<div class="field" style="margin:0.6rem 0"><label for="pledge-custom" style="font-size:0.9rem">Or a custom amount (USD)</label>' +
+      '<input id="pledge-custom" type="number" min="1" step="1" placeholder="e.g. 75"></div>' +
+      '<button type="button" class="btn btn-primary" data-action="pledge-submit" data-id="' + film.id + '">Pledge ' + fmtCents(pledgePick.cents) + " — charged only at 100%</button>" +
+      '<p class="panel-note">One charge, only if this film reaches 100% of its goal by ' + PLEDGE_DEADLINE + ". If it doesn't, the pledge is cancelled and nothing is charged. You can cancel your pledge any time before the goal is reached.</p>";
+  }
+  return '<div class="action-panel"><h3>Back this film</h3>' +
+    '<p class="big-count">' + fmtCents(t.pledged_cents) + ' <small>pledged of ' + fmtMoney(film.budget) + " goal · " + (t.backers || 0) + " backers</small></p>" +
+    '<div class="progress" role="img" aria-label="Pledged ' + pct + ' percent of goal"><div class="bar" style="width:' + pct + '%"></div></div>' +
+    '<p class="panel-note">' + fmtCents(t.collected_cents) + " collected so far. Pledged is not collected: supporters are charged once, only when a project reaches 100%.</p>" +
+    action +
+    '<p class="testmode-note">Payments are being built and tested — pledges are recorded for real, but no card is charged yet. Live charging starts when the GreenlitX payment account is activated.</p></div>';
+}
+
 const ROADMAP = ["Concept development", "Script & treatment", "Audience Green Light campaign", "Conditional financing", "Production", "Release"];
 function renderFilmDetail(id) {
   const el = $("#film-detail");
@@ -294,11 +333,7 @@ function renderFilmDetail(id) {
     '<p class="panel-note">One Green Light per person, per film. It costs nothing — it tells the filmmakers, and us, what the audience wants made. ' + (server.user ? "Your Green Light is saved to your account and counts on every device." : 'You are voting as a guest on this device — <a href="#/account">create a free account</a> to make it count everywhere.') + "</p>" +
     '<button type="button" class="btn ' + (voted ? "btn-voted" : "btn-primary") + '" data-action="vote" data-id="' + film.id + '" aria-pressed="' + voted + '">' + (voted ? "Green Light given — tap to withdraw" : "Give a Green Light") + "</button> " +
     '<button type="button" class="btn btn-ghost" data-action="follow" data-id="' + film.id + '" aria-pressed="' + followed + '">' + (followed ? "Following ✓" : "Follow project") + "</button></div>" +
-    '<div class="action-panel"><h3>Back this film</h3>' +
-    '<p class="big-count">$0 <small>collected of ' + fmtMoney(film.budget) + " goal</small></p>" +
-    '<div class="progress" role="img" aria-label="Funding progress: 0 percent"><div class="bar" style="width:0%"></div></div>' +
-    '<p class="panel-note">Conditional pledges — $5 / $10 / $25 / $50 / $100 or a custom amount — open with founding memberships in January 2027. A pledge is only ever charged if the project reaches its funding goal by its deadline.</p>' +
-    '<button type="button" class="btn" disabled>Pledging opens January 2027</button></div>' +
+    pledgePanelHtml(film) +
     "</div></div>";
 }
 
@@ -344,11 +379,16 @@ async function renderAccount() {
   const u = server.user;
   let profileName = "";
   try { const { data } = await sb.from("profiles").select("display_name").eq("id", u.id).single(); if (data) profileName = data.display_name || ""; } catch (e) {}
+  const pledgeRows = server.myPledges.filter((p) => p.status === "pledged");
+  const pledgeHtml = pledgeRows.length
+    ? "<ul>" + pledgeRows.map((p) => { const f = filmById(p.film_id); return "<li><strong>" + fmtCents(p.amount_cents) + "</strong> pledged to " + (f ? '<a href="#/film/' + f.id + '">' + escapeHtml(f.title) + "</a>" : escapeHtml(p.film_id)) + ' — charged only if it reaches 100% by ' + PLEDGE_DEADLINE + '. <button type="button" class="btn btn-small btn-ghost" data-action="mypledge-cancel" data-pledge="' + p.id + '">Cancel</button></li>'; }).join("") + "</ul>"
+    : "<p class='fineprint'>No active pledges yet.</p>";
   el.innerHTML =
     "<p>Signed in as <strong>" + escapeHtml(u.email || "") + "</strong></p>" +
     "<form id='profile-form' novalidate><div class='field'><label for='a-name'>Display name (optional, shown with your support)</label><input id='a-name' value='" + escapeHtml(profileName) + "'></div>" +
     "<button class='btn' type='submit'>Save name</button> <span class='form-msg' id='profile-msg' role='status'></span></form>" +
     "<h3 style='margin-top:2rem'>My Green Lights (" + state.votes.size + ")</h3>" + filmLinks(Array.from(state.votes)) +
+    "<h3 style='margin-top:1.6rem'>My pledges (" + pledgeRows.length + ")</h3>" + pledgeHtml +
     "<h3 style='margin-top:1.6rem'>Projects I follow (" + state.follows.size + ")</h3>" + filmLinks(Array.from(state.follows)) +
     "<p style='margin-top:2rem'><button type='button' class='btn' id='signout-btn'>Sign out</button> " +
     "<button type='button' class='btn btn-ghost' id='deletedata-btn'>Delete my Green Lights, follows and profile</button></p>" +
@@ -364,6 +404,7 @@ async function renderAccount() {
   $("#deletedata-btn").addEventListener("click", async () => {
     await sb.from("votes").delete().eq("user_id", u.id);
     await sb.from("follows").delete().eq("user_id", u.id);
+    await sb.from("pledges").delete().eq("user_id", u.id);
     await sb.from("profiles").delete().eq("id", u.id);
     await sb.auth.signOut();
     $("#account-msg").textContent = "Your data has been deleted and you are signed out.";
@@ -454,6 +495,30 @@ document.addEventListener("click", (e) => {
     if (server.user) { sbToggle("follow", id, turnOn).then(refreshDynamic); }
     else save("glx2_follows", Array.from(state.follows));
     refreshDynamic();
+  } else if (btn.dataset.action === "pledge-pick") {
+    pledgePick.cents = Number(btn.dataset.cents);
+    const custom = $("#pledge-custom"); if (custom) custom.value = "";
+    refreshDynamic();
+  } else if (btn.dataset.action === "pledge-submit") {
+    if (!server.user || !sb) return;
+    const custom = $("#pledge-custom");
+    let cents = pledgePick.cents;
+    if (custom && custom.value) cents = Math.round(Number(custom.value) * 100);
+    if (!cents || cents < 100) return;
+    btn.disabled = true; btn.textContent = "Recording your pledge…";
+    sb.from("pledges").insert({ user_id: server.user.id, film_id: id, amount_cents: cents, status: "pledged" })
+      .then(async () => { await sbFetchMine(); await sbFetchCounts(); refreshDynamic(); });
+  } else if (btn.dataset.action === "pledge-cancel") {
+    const mine = myPledgeFor(id);
+    if (!mine || !sb) return;
+    btn.disabled = true;
+    sb.from("pledges").update({ status: "cancelled" }).eq("id", mine.id)
+      .then(async () => { await sbFetchMine(); await sbFetchCounts(); refreshDynamic(); });
+  } else if (btn.dataset.action === "mypledge-cancel") {
+    if (!sb) return;
+    btn.disabled = true;
+    sb.from("pledges").update({ status: "cancelled" }).eq("id", btn.dataset.pledge)
+      .then(async () => { await sbFetchMine(); await sbFetchCounts(); refreshDynamic(); });
   } else if (btn.dataset.action === "pro") {
     const cat = btn.dataset.cat;
     state.proInterest.has(cat) ? state.proInterest.delete(cat) : state.proInterest.add(cat);
