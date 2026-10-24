@@ -60,6 +60,13 @@ a:hover { text-decoration-thickness: 2px; }
   border-radius: 4px;
 }
 
+/* View headings receive script focus on navigation (tabindex="-1"). They are
+   not interactive, so they must never paint the focus outline — on Android
+   Chrome it renders as a green box around the whole headline. */
+[tabindex="-1"]:focus {
+  outline: none;
+}
+
 /* Anchor jumps must land below the sticky header */
 .section[id] { scroll-margin-top: calc(var(--header-h) + 20px); }
 
