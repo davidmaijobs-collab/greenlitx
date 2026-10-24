@@ -77,10 +77,30 @@ as-is. Deployment is intentionally **not** configured in this prototype step.
   supporter would only be charged if a project reaches its funding threshold.
 - **Submissions are not delivered.** The submission form saves entries only in
   this browser as a demonstration. Nothing is emailed or transmitted anywhere.
-- **Posters are original generated key art.** Each film's poster is original
-  AI-generated artwork created for this prototype (in `posters/`), with no
-  stock, external, or copyrighted material, so the prototype is legally safe
-  and costs nothing to run.
+- **Posters are real photography.** Each film's poster (in `posters/`) is a
+  real photograph, cropped and lightly graded — no AI-generated imagery.
+  All photos are free-licensed; credits below.
+
+## Poster photography credits
+
+- **The Last Signal** — "Milky Way over the Swedish-ESO Submillimetre
+  Telescope", ESO / P. Horálek, CC BY 4.0, via Wikimedia Commons:
+  https://commons.wikimedia.org/wiki/File:Milky_Way_over_the_Swedish-ESO_Submillimetre_Telescope_(2016-04-14-la-silla-fd-swedish-eq-extended).jpg
+- **Harvest of Salt** — "Salar de Uyuni, Bolivia (DD 10-12 HDR)", Diego
+  Delso, CC BY-SA 4.0, via Wikimedia Commons:
+  https://commons.wikimedia.org/wiki/File:Salar_de_Uyuni,_Bolivia,_2016-02-04,_DD_10-12_HDR.JPG
+- **The Vanishing Reef** — "Green Sea Turtle, Ningaloo Reef", Nicole
+  McLachlan, CC BY-SA 4.0, via Wikimedia Commons:
+  https://commons.wikimedia.org/wiki/File:Green_Sea_Turtle,_Ningaloo_Reef.jpg
+- **Paper Moons** — "Colorful star-shaped lanterns, Luang Prabang, Laos",
+  Basile Morin, CC BY-SA 4.0, via Wikimedia Commons:
+  https://commons.wikimedia.org/wiki/File:Colorful_star-shaped_lanterns_hanging_on_a_building_at_blue_hour_in_Luang_Prabang_Laos.jpg
+- **The Night Auditor** — "Gadsden Hotel lobby, Douglas, Arizona", Nicholas
+  Hartmann, CC BY-SA 4.0, via Wikimedia Commons:
+  https://commons.wikimedia.org/wiki/File:Douglas_Gadsden_Hotel_lobby_2.jpg
+- **Second Helpings** — "Vibrant Nightlife at a Food Truck Festival", Flor
+  Ibañez, Pexels License (free to use), via Pexels:
+  https://www.pexels.com/photo/38863226/
 
 ## Planned next steps
 
