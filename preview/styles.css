@@ -211,5 +211,16 @@ form .hint { color: var(--muted); font-size: 0.85rem; }
   .poster img, .card, .showcase-slide { transition: none; }
   .detail-hero img.backdrop { animation: none; }
 }
+/* ---------- watch free ---------- */
+.watch-detail .watch-back { margin: 0 0 1rem; }
+.watch-detail .watch-back a { font-weight: 700; text-decoration: none; }
+.watch-detail h1 { font-size: clamp(1.9rem, 4.6vw, 3rem); font-weight: 900; margin: 0 0 0.35rem; }
+.watch-detail h1::after { content: ""; display: block; width: 44px; height: 3px; background: var(--accent); margin-top: 0.5rem; border-radius: 2px; }
+.watch-meta { color: #d5dde3; font-weight: 600; margin: 0 0 1.1rem; }
+.player-wrap { position: relative; aspect-ratio: 16/9; background: #000; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; max-width: 980px; }
+.player-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+.watch-synopsis { color: #c9d2d9; max-width: 68ch; margin: 1.1rem 0 0.6rem; }
+.watch-attribution { color: var(--muted); font-size: 0.88rem; max-width: 78ch; }
+
 /* full-bleed heroes slide under the fixed header */
 #view-home, #view-film { margin-top: calc(-1 * var(--header-h)); }

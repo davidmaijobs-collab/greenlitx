@@ -12,7 +12,13 @@ const escapeHtml = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => 
 const fmtMoney = (n) => "$" + Number(n || 0).toLocaleString("en-US");
 const fmtNum = (n) => Number(n || 0).toLocaleString("en-US");
 
-const POSTER_READY = { "the-last-train-below": 1, "the-second-moon": 1, "the-devils-frequency": 1, "the-keeper-of-forgotten-things": 1, "tomorrows-witness": 1 };
+/* All 40 founding films now have finished theatrical posters in posters/<id>.webp. */
+const POSTER_READY = {};
+FILMS.forEach((f) => { POSTER_READY[f.id] = 1; });
+/* All 40 films have a 1600x900 backdrop in backdrops/<id>.webp — center-crops of the
+   poster source art (the original five keep their earlier curated crops). */
+const BACKDROPS = {};
+FILMS.forEach((f) => { BACKDROPS[f.id] = 1; });
 const FEATURED = ["the-last-train-below", "the-second-moon", "the-devils-frequency", "the-keeper-of-forgotten-things", "tomorrows-witness"];
 const TYPES = ["LIVE ACTION", "AI FILM", "HYBRID", "ANIMATION"];
 
@@ -25,7 +31,9 @@ const state = {
   proInterest: new Set(load("glx2_pro_interest", [])),
   genreFilter: "All",
   typeFilter: "All",
-  query: ""
+  query: "",
+  watchQuery: "",
+  watchCategory: "All"
 };
 const filmById = (id) => FILMS.find((f) => f.id === id);
 
@@ -176,8 +184,8 @@ function showcaseHtml() {
         '<p class="showcase-kicker">GreenlitX — a film platform powered by its audience</p>' +
         '<h1 class="showcase-title" tabindex="-1">Hollywood decides what gets made today. <span class="accent">On GreenlitX, the audience does.</span></h1>' +
         '<p class="showcase-log">Forty original films are in development — live action, AI, hybrid and animation. Discover them, give your Green Light, and help make them happen.</p>' +
-        '<div class="showcase-actions"><a class="btn btn-play" href="#/discover">▶ Browse the 40 films</a>' +
-        '<button type="button" class="btn btn-ghost" data-scroll="teaser">Watch the teaser</button></div>' +
+        '<div class="showcase-actions"><a class="btn btn-primary" href="#/watch">WATCH FREE MOVIES</a>' +
+        '<a class="btn btn-ghost" href="#/discover">DISCOVER GREEN LIGHT PROJECTS</a></div>' +
         '<div class="hero-steps" aria-label="How it works"><span><b>1</b>&nbsp; DISCOVER</span><span><b>2</b>&nbsp; GREEN LIGHT</span><span><b>3</b>&nbsp; HELP MAKE IT HAPPEN</span></div>' +
         "</div></div></div>";
     }
@@ -219,7 +227,12 @@ function startShowcase() {
 }
 function renderHome() {
   startShowcase();
-  $("#home-rows").innerHTML = SECTIONS.map((s) => {
+  const tonight = WATCH.filter((w) => w.category === "classic" || w.category === "modern");
+  const watchRow = tonight.length ?
+    '<section class="row-section" aria-label="Watch Free tonight">' +
+    '<div class="section-head"><h2>Watch Free tonight</h2><a class="section-link" href="#/watch">All free films →</a></div>' +
+    '<div class="poster-row">' + tonight.map(watchCardHtml).join("") + "</div></section>" : "";
+  $("#home-rows").innerHTML = watchRow + SECTIONS.map((s) => {
     const films = s.films();
     if (!films.length) return "";
     return '<section class="row-section" aria-label="' + escapeHtml(s.title) + '">' +
@@ -257,6 +270,75 @@ function renderDiscover() {
   const list = filteredFilms();
   $("#results-count").textContent = "Showing " + list.length + " of " + FILMS.length + " films";
   $("#discover-grid").innerHTML = list.map(cardHtml).join("");
+}
+
+/* ---------- watch free ---------- */
+const WATCH = (window.WATCH_FREE || []).slice();
+const WATCH_CATS = [
+  { key: "All", label: "All" },
+  { key: "classic", label: "Classics" },
+  { key: "modern", label: "Modern Independent" },
+  { key: "short", label: "Short Films" },
+  { key: "documentary", label: "Documentaries" }
+];
+const watchCatLabel = (key) => { const c = WATCH_CATS.find((x) => x.key === key); return c ? c.label : key; };
+const watchById = (id) => WATCH.find((w) => w.id === id);
+function watchCardHtml(w) {
+  return '<figure class="card">' +
+    '<a class="poster-link" href="#/watch/' + w.id + '" aria-label="Watch free: ' + escapeHtml(w.title) + '">' +
+    '<div class="poster"><img src="' + escapeHtml(w.posterUrl) + '" width="880" height="1320" loading="lazy" alt="Poster for ' + escapeHtml(w.title) + '"></div></a>' +
+    '<figcaption><p class="card-title">' + escapeHtml(w.title) + '</p>' +
+    '<p class="card-meta">' + w.year + " · " + w.runtimeMinutes + " min · " + escapeHtml(watchCatLabel(w.category)) + "</p></figcaption></figure>";
+}
+function watchFiltered() {
+  const q = state.watchQuery.trim().toLowerCase();
+  return WATCH.filter((w) => {
+    if (state.watchCategory !== "All" && w.category !== state.watchCategory) return false;
+    if (q) {
+      const hay = (w.title + " " + w.director + " " + w.year + " " + (w.genres || []).join(" ")).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+function renderWatch() {
+  const chipsEl = $("#watch-chips");
+  if (chipsEl) chipsEl.innerHTML = WATCH_CATS.map((c) =>
+    '<button type="button" class="chip" data-wcat="' + c.key + '" aria-pressed="' + (state.watchCategory === c.key) + '">' + escapeHtml(c.label) + "</button>").join("");
+  const list = watchFiltered();
+  const countEl = $("#watch-count");
+  if (countEl) countEl.textContent = "Showing " + list.length + " of " + WATCH.length + " free films";
+  const groups = WATCH_CATS.slice(1)
+    .map((c) => ({ cat: c, films: list.filter((w) => w.category === c.key) }))
+    .filter((g) => g.films.length);
+  $("#watch-rows").innerHTML = groups.length ? groups.map((g) =>
+    '<section class="row-section" aria-label="' + escapeHtml(g.cat.label) + '">' +
+    '<div class="section-head"><h2>' + escapeHtml(g.cat.label) + "</h2></div>" +
+    '<div class="poster-row">' + g.films.map(watchCardHtml).join("") + "</div></section>").join("")
+    : '<p class="section-intro">No free films match your search yet.</p>';
+}
+function renderWatchDetail(id) {
+  const el = $("#watch-detail");
+  const w = watchById(id);
+  if (!w) {
+    el.innerHTML = '<div class="section"><h2 tabindex="-1">Film not found</h2><p>This free film does not exist. <a href="#/watch">Browse Watch Free</a>.</p></div>';
+    return;
+  }
+  const sourceName = w.source === "youtube" ? "YouTube" : "the Internet Archive";
+  const related = WATCH.filter((x) => x.category === w.category && x.id !== w.id);
+  el.innerHTML =
+    '<div class="section watch-detail">' +
+    '<p class="watch-back"><a href="#/watch">&larr; All Watch Free films</a></p>' +
+    '<h1 tabindex="-1">' + escapeHtml(w.title) + "</h1>" +
+    '<p class="watch-meta">' + w.year + " · " + w.runtimeMinutes + " min · Directed by " + escapeHtml(w.director) + " · " + escapeHtml(watchCatLabel(w.category)) + "</p>" +
+    '<div class="player-wrap"><iframe src="' + escapeHtml(w.embedUrl) + '" title="' + escapeHtml(w.title) + ' — free streaming player" loading="lazy" allowfullscreen frameborder="0" referrerpolicy="no-referrer-when-downgrade"></iframe></div>' +
+    '<p class="watch-synopsis">' + escapeHtml(w.synopsis) + "</p>" +
+    '<p class="watch-attribution">Streaming via ' + sourceName + ". " + escapeHtml(w.rightsNote) + "</p>" +
+    '<p><a class="btn btn-ghost" href="' + escapeHtml(w.sourcePageUrl) + '" target="_blank" rel="noopener">Watch on the source site</a></p>' +
+    "</div>" +
+    (related.length ?
+      '<section class="row-section" aria-label="More like this"><div class="section-head"><h2>More like this</h2></div>' +
+      '<div class="poster-row">' + related.map(watchCardHtml).join("") + "</div></section>" : "");
 }
 
 /* ---------- film detail ---------- */
@@ -305,7 +387,7 @@ function renderFilmDetail(id) {
     '<div class="char-card"><h3>' + escapeHtml(c.name) + '</h3><p class="char-role">' + escapeHtml(c.role) + "</p><p>" + escapeHtml(c.note) + "</p></div>").join("");
   const roadmap = ROADMAP.map((s, i) =>
     "<li" + (i === 0 ? ' aria-current="step"><strong>' + escapeHtml(s) + " — you are here</strong>" : ">" + escapeHtml(s)) + "</li>").join("");
-  const heroArt = POSTER_READY[film.id]
+  const heroArt = BACKDROPS[film.id]
     ? '<img class="backdrop" src="backdrops/' + film.id + '.webp" width="1600" height="900" alt="" aria-hidden="true">'
     : '<div class="backdrop-gradient" style="--hue:' + genreHue(film) + '"></div>';
   el.innerHTML =
@@ -425,25 +507,29 @@ function renderSubmissions() {
 }
 
 /* ---------- routing ---------- */
-const VIEWS = ["home", "discover", "film", "professionals", "submit", "account"];
+const VIEWS = ["home", "discover", "film", "watch", "watchdetail", "professionals", "submit", "account"];
 function parseRoute() {
   const h = (location.hash || "#/home").replace(/^#\//, "");
   const parts = h.split("/");
   if (parts[0] === "film" && parts[1]) return { view: "film", id: parts[1] };
+  if (parts[0] === "watch" && parts[1]) return { view: "watchdetail", id: parts[1] };
   return { view: VIEWS.includes(parts[0]) ? parts[0] : "home" };
 }
 function render() {
   const r = parseRoute();
   if (r.view !== "home" && showcaseTimer) { clearInterval(showcaseTimer); showcaseTimer = null; }
   VIEWS.forEach((v) => { $("#view-" + v).hidden = v !== r.view; });
+  const navView = r.view === "watchdetail" ? "watch" : r.view;
   $$(".main-nav a").forEach((a) => {
-    if (a.dataset.nav === r.view) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    if (a.dataset.nav === navView) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
   });
   $("#main-nav").classList.remove("open");
   $("#nav-toggle").setAttribute("aria-expanded", "false");
   if (r.view === "home") renderHome();
   if (r.view === "discover") renderDiscover();
   if (r.view === "film") renderFilmDetail(r.id);
+  if (r.view === "watch") renderWatch();
+  if (r.view === "watchdetail") renderWatchDetail(r.id);
   if (r.view === "professionals") renderPros();
   if (r.view === "submit") renderSubmissions();
   if (r.view === "account") renderAccount();
@@ -476,6 +562,7 @@ document.addEventListener("click", (e) => {
   }
   const chip = e.target.closest(".chip");
   if (chip) {
+    if (chip.dataset.wcat != null) { state.watchCategory = chip.dataset.wcat; renderWatch(); return; }
     if (chip.dataset.genre != null) state.genreFilter = chip.dataset.genre;
     if (chip.dataset.type != null) state.typeFilter = chip.dataset.type;
     renderDiscover(); return;
@@ -528,6 +615,8 @@ document.addEventListener("click", (e) => {
   }
 });
 $("#search").addEventListener("input", (e) => { state.query = e.target.value; renderDiscover(); });
+const watchSearchEl = $("#watch-search");
+if (watchSearchEl) watchSearchEl.addEventListener("input", (e) => { state.watchQuery = e.target.value; renderWatch(); });
 $("#submit-form").addEventListener("submit", (e) => {
   e.preventDefault();
   const get = (id) => $(id).value.trim();

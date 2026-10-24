@@ -8,7 +8,7 @@
 <link rel="icon" href="logo.webp">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#05070a">
-<link rel="stylesheet" href="styles.css?v=5">
+<link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
 
@@ -18,6 +18,7 @@
   <nav class="main-nav" id="main-nav" aria-label="Main">
     <a href="#/home" data-nav="home">Home</a>
     <a href="#/discover" data-nav="discover">Discover Films</a>
+    <a href="#/watch" data-nav="watch">Watch Free</a>
     <a href="#/professionals" data-nav="professionals">For Professionals</a>
     <a href="#/submit" data-nav="submit">Submit Your Film</a>
     <a href="#/account" data-nav="account">Account</a>
@@ -87,6 +88,25 @@
     <div id="film-detail"></div>
   </section>
 
+  <!-- ============ VIEW: WATCH FREE ============ -->
+  <section id="view-watch" class="view" hidden aria-label="Watch Free">
+    <div class="section">
+      <h2 tabindex="-1">Watch Free</h2>
+      <p class="section-intro" style="padding-left:0">Real movies, free to watch tonight, streamed by their official sources. Every title below is a completed film with a verified, authorized stream — public-domain classics and Creative Commons releases, played here through the source's own player.</p>
+    </div>
+    <div class="filters">
+      <input type="search" id="watch-search" placeholder="Search free films, directors, genres…" aria-label="Search free films">
+      <div class="chip-row" id="watch-chips" role="group" aria-label="Filter by category"></div>
+    </div>
+    <p class="results-count" id="watch-count" role="status"></p>
+    <div id="watch-rows"></div>
+  </section>
+
+  <!-- ============ VIEW: WATCH DETAIL ============ -->
+  <section id="view-watchdetail" class="view" hidden aria-label="Watch a free film">
+    <div id="watch-detail"></div>
+  </section>
+
   <!-- ============ VIEW: PROFESSIONALS ============ -->
   <section id="view-professionals" class="view" hidden aria-label="For professionals">
     <div class="section">
@@ -154,7 +174,8 @@
 <noscript><p class="noscript-note">GreenlitX needs JavaScript enabled to display film projects.</p></noscript>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="data.js?v=3"></script>
-<script src="app.js?v=5"></script>
+<script src="data.js?v=6"></script>
+<script src="watch.js?v=1"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>
