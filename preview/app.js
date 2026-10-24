@@ -27,8 +27,6 @@ function save(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); } ca
 const state = {
   votes: new Set(load("glx2_votes", [])),
   follows: new Set(load("glx2_follows", [])),
-  submissions: load("glx2_submissions", []),
-  proInterest: new Set(load("glx2_pro_interest", [])),
   genreFilter: "All",
   typeFilter: "All",
   query: "",
@@ -41,6 +39,8 @@ const filmById = (id) => FILMS.find((f) => f.id === id);
 const SB_URL = "https://fjrdjspecrnvetlsxxos.supabase.co";
 const SB_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqcmRqc3BlY3JudmV0bHN4eG9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI4NzQ4MTAsImV4cCI6MjEwODQ1MDgxMH0.FuSoy9qytnRDbLWJolkvy1bTk2CB2AAkNNO09H3QpW0";
 const sb = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SB_URL, SB_ANON) : null;
+window.GLX_DB = sb;
+let recoveryMode = false; // true while a password-recovery link flow is in progress
 const server = { user: null, counts: {}, pledgeTotals: {}, myPledges: [], ready: false };
 const PLEDGE_DEADLINE = "December 31, 2027";
 const PLEDGE_AMOUNTS = [500, 1000, 2500, 5000, 10000];
@@ -94,6 +94,7 @@ async function sbToggle(kind, filmId, turnOn) {
 }
 async function sbInit() {
   if (!sb) return;
+  if (location.hash.includes("type=recovery")) recoveryMode = true;
   try {
     const { data } = await sb.auth.getSession();
     server.user = data && data.session ? data.session.user : null;
@@ -102,6 +103,13 @@ async function sbInit() {
     server.ready = true;
     updateAccountNav(); refreshDynamic();
     sb.auth.onAuthStateChange(async (_evt, session) => {
+      if (_evt === "PASSWORD_RECOVERY") {
+        recoveryMode = true;
+        server.user = session ? session.user : server.user;
+        updateAccountNav();
+        if (parseRoute().view !== "account") location.hash = "#/account"; else refreshDynamic();
+        return;
+      }
       server.user = session ? session.user : null;
       if (server.user) { await sbMigrateGuest(); await sbFetchMine(); } else { state.votes = new Set(load("glx2_votes", [])); state.follows = new Set(load("glx2_follows", [])); }
       await sbFetchCounts();
@@ -428,6 +436,32 @@ async function renderAccount() {
   const el = $("#account-body");
   if (!el) return;
   if (!sb) { el.innerHTML = "<p>Accounts are temporarily unavailable (the sign-in service could not be loaded). Guest Green Lights still work on this device.</p>"; return; }
+  if (recoveryMode) {
+    el.innerHTML =
+      "<p class='section-intro' style='padding-left:0'>You followed a password reset link. Choose a new password for your GreenlitX account.</p>" +
+      "<form id='recovery-form' novalidate>" +
+      "<div class='field'><label for='r-pass'>New password</label><input id='r-pass' type='password' autocomplete='new-password' required></div>" +
+      "<div class='field'><label for='r-pass2'>Confirm new password</label><input id='r-pass2' type='password' autocomplete='new-password' required></div>" +
+      "<button class='btn btn-primary' type='submit'>Set new password</button>" +
+      "<p class='form-msg' id='recovery-msg' role='status'></p></form>";
+    $("#recovery-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const msg = $("#recovery-msg");
+      const p1 = $("#r-pass").value, p2 = $("#r-pass2").value;
+      if (p1.length < 6) { msg.textContent = "Passwords need at least 6 characters."; return; }
+      if (p1 !== p2) { msg.textContent = "The two passwords don't match."; return; }
+      msg.textContent = "Updating your password…";
+      const btn = e.target.querySelector("button[type='submit']"); btn.disabled = true;
+      const { error } = await sb.auth.updateUser({ password: p1 });
+      if (error) { msg.textContent = "That didn't work: " + error.message; btn.disabled = false; return; }
+      recoveryMode = false;
+      try { history.replaceState(null, "", location.pathname + "#/account"); } catch (err) {}
+      await renderAccount();
+      const note = $("#account-msg");
+      if (note) note.textContent = "Password updated — you're signed in with your new password.";
+    });
+    return;
+  }
   if (!server.user) {
     el.innerHTML =
       "<p class='section-intro' style='padding-left:0'>Create a free account to make your Green Light count on every device — one per person per film, protected against duplicates. As a guest, your Green Lights still count on this device.</p>" +
@@ -437,7 +471,20 @@ async function renderAccount() {
       "<button class='btn btn-primary' type='submit' name='mode' value='signin'>Sign in</button> " +
       "<button class='btn' type='submit' name='mode' value='signup'>Create account</button>" +
       "<p class='form-msg' id='auth-msg' role='status'></p>" +
+      "<p style='margin-top:0.6rem'><button type='button' class='btn btn-ghost' id='forgot-btn'>Forgot password?</button></p>" +
       "<p class='fineprint'>New accounts confirm by email first. We store your email, an optional display name, your Green Lights and follows — nothing else. No ads, no selling data.</p></form>";
+    $("#forgot-btn").addEventListener("click", async () => {
+      const msg = $("#auth-msg");
+      const entered = window.prompt("Enter your account email and we'll send you a password reset link:", $("#a-email").value.trim());
+      if (entered == null) return;
+      const email = entered.trim();
+      if (!email) { msg.textContent = "Enter an email address first, then tap Forgot password."; return; }
+      msg.textContent = "Sending your reset email…";
+      try {
+        const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
+        msg.textContent = error ? "That didn't work: " + error.message : "Reset email sent — check your inbox and tap the link to set a new password.";
+      } catch (err) { msg.textContent = "That didn't work: " + (err.message || "unknown error"); }
+    });
     $("#auth-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       const mode = e.submitter && e.submitter.value === "signup" ? "signup" : "signin";
@@ -465,12 +512,23 @@ async function renderAccount() {
   const pledgeHtml = pledgeRows.length
     ? "<ul>" + pledgeRows.map((p) => { const f = filmById(p.film_id); return "<li><strong>" + fmtCents(p.amount_cents) + "</strong> pledged to " + (f ? '<a href="#/film/' + f.id + '">' + escapeHtml(f.title) + "</a>" : escapeHtml(p.film_id)) + ' — charged only if it reaches 100% by ' + PLEDGE_DEADLINE + '. <button type="button" class="btn btn-small btn-ghost" data-action="mypledge-cancel" data-pledge="' + p.id + '">Cancel</button></li>'; }).join("") + "</ul>"
     : "<p class='fineprint'>No active pledges yet.</p>";
+  const subStatusLabel = { pending: "Pending review", approved: "Approved", rejected: "Not selected" };
+  let mySubsHtml = "<p class='fineprint'>Submission history isn't available right now.</p>";
+  try {
+    const { data: subs, error: subsErr } = await sb.from("submissions").select("id, title, status").eq("user_id", u.id).order("created_at", { ascending: false });
+    if (!subsErr && subs) {
+      mySubsHtml = subs.length
+        ? "<ul>" + subs.map((s) => "<li><strong>" + escapeHtml(s.title) + "</strong> — " + escapeHtml(subStatusLabel[s.status] || s.status) + "</li>").join("") + "</ul>"
+        : "<p class='fineprint'>No submissions yet — <a href='#/submit'>submit a film</a> and it will be tracked here.</p>";
+    }
+  } catch (e) {}
   el.innerHTML =
     "<p>Signed in as <strong>" + escapeHtml(u.email || "") + "</strong></p>" +
     "<form id='profile-form' novalidate><div class='field'><label for='a-name'>Display name (optional, shown with your support)</label><input id='a-name' value='" + escapeHtml(profileName) + "'></div>" +
     "<button class='btn' type='submit'>Save name</button> <span class='form-msg' id='profile-msg' role='status'></span></form>" +
     "<h3 style='margin-top:2rem'>My Green Lights (" + state.votes.size + ")</h3>" + filmLinks(Array.from(state.votes)) +
     "<h3 style='margin-top:1.6rem'>My pledges (" + pledgeRows.length + ")</h3>" + pledgeHtml +
+    "<h3 style='margin-top:1.6rem'>My submissions</h3>" + mySubsHtml +
     "<h3 style='margin-top:1.6rem'>Projects I follow (" + state.follows.size + ")</h3>" + filmLinks(Array.from(state.follows)) +
     "<p style='margin-top:2rem'><button type='button' class='btn' id='signout-btn'>Sign out</button> " +
     "<button type='button' class='btn btn-ghost' id='deletedata-btn'>Delete my Green Lights, follows and profile</button></p>" +
@@ -497,13 +555,25 @@ async function renderAccount() {
 const PRO_CATEGORIES = ["Actors", "Directors", "Producers", "Screenwriters", "Cinematographers", "Editors", "Composers", "Animators", "AI Filmmakers", "Production Designers"];
 function renderPros() {
   $("#pro-grid").innerHTML = PRO_CATEGORIES.map((c) =>
-    '<div class="pro-card">' + escapeHtml(c) + '<br><button type="button" class="btn btn-small" data-action="pro" data-cat="' + escapeHtml(c) + '" aria-pressed="' + state.proInterest.has(c) + '">' +
-    (state.proInterest.has(c) ? "Interest registered ✓" : "Register interest") + "</button></div>").join("");
+    '<div class="pro-card">' + escapeHtml(c) + '<br><button type="button" class="btn btn-small" data-action="pro" data-cat="' + escapeHtml(c) + '">Register interest</button></div>').join("");
+  const sel = $("#p-role");
+  if (sel && !sel.options.length) {
+    sel.innerHTML = '<option value="">Choose…</option>' + PRO_CATEGORIES.map((c) => "<option>" + escapeHtml(c) + "</option>").join("");
+  }
 }
-function renderSubmissions() {
-  const list = $("#submission-list"), count = $("#submission-count");
-  count.textContent = state.submissions.length ? state.submissions.length + " saved on this device, awaiting the review system launch." : "None yet.";
-  list.innerHTML = state.submissions.map((s) => "<li><strong>" + escapeHtml(s.title) + "</strong> — " + escapeHtml(s.genre) + " · " + escapeHtml(s.type) + " · by " + escapeHtml(s.name) + "</li>").join("");
+/* Submission form draft: kept on this device ONLY while typing, so a closed
+   tab doesn't lose work. A draft is never a submission — the form is only
+   "received" once the insert into Supabase succeeds and returns a reference. */
+const SUBMIT_FIELDS = ["#f-title", "#f-genre", "#f-logline", "#f-synopsis", "#f-type", "#f-status", "#f-name", "#f-rights", "#f-target", "#f-video", "#f-email"];
+function saveSubmitDraft() {
+  const d = {};
+  SUBMIT_FIELDS.forEach((sel) => { const el = $(sel); if (el) d[sel] = el.value; });
+  save("glx2_submit_draft", d);
+}
+function restoreSubmitDraft() {
+  const d = load("glx2_submit_draft", null);
+  if (!d) return;
+  SUBMIT_FIELDS.forEach((sel) => { const el = $(sel); if (el && d[sel] != null && !el.value) el.value = d[sel]; });
 }
 
 /* ---------- routing ---------- */
@@ -531,7 +601,7 @@ function render() {
   if (r.view === "watch") renderWatch();
   if (r.view === "watchdetail") renderWatchDetail(r.id);
   if (r.view === "professionals") renderPros();
-  if (r.view === "submit") renderSubmissions();
+  if (r.view === "submit") restoreSubmitDraft();
   if (r.view === "account") renderAccount();
   window.scrollTo(0, 0);
   const focusEl = $("#view-" + r.view + " h1, #view-" + r.view + " h2");
@@ -607,27 +677,89 @@ document.addEventListener("click", (e) => {
     sb.from("pledges").update({ status: "cancelled" }).eq("id", btn.dataset.pledge)
       .then(async () => { await sbFetchMine(); await sbFetchCounts(); refreshDynamic(); });
   } else if (btn.dataset.action === "pro") {
-    const cat = btn.dataset.cat;
-    state.proInterest.has(cat) ? state.proInterest.delete(cat) : state.proInterest.add(cat);
-    save("glx2_pro_interest", Array.from(state.proInterest));
-    $("#pro-msg").textContent = state.proInterest.has(cat) ? "Interest registered for: " + cat + " (saved on this device)." : "";
-    renderPros();
+    const sel = $("#p-role");
+    if (sel) sel.value = btn.dataset.cat;
+    const form = $("#pro-form");
+    if (form) form.scrollIntoView({ behavior: "smooth", block: "start" });
+    const nameEl = $("#p-name");
+    if (nameEl) nameEl.focus({ preventScroll: true });
   }
 });
 $("#search").addEventListener("input", (e) => { state.query = e.target.value; renderDiscover(); });
 const watchSearchEl = $("#watch-search");
 if (watchSearchEl) watchSearchEl.addEventListener("input", (e) => { state.watchQuery = e.target.value; renderWatch(); });
-$("#submit-form").addEventListener("submit", (e) => {
+$("#submit-form").addEventListener("input", saveSubmitDraft);
+$("#submit-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const get = (id) => $(id).value.trim();
-  const entry = { title: get("#f-title"), genre: get("#f-genre"), logline: get("#f-logline"), synopsis: get("#f-synopsis"), type: $("#f-type").value, status: get("#f-status"), name: get("#f-name"), rights: $("#f-rights").value, target: get("#f-target"), email: get("#f-email") };
+  const msg = $("#submit-msg");
+  const get = (id) => { const el = $(id); return el ? el.value.trim() : ""; };
+  const entry = { title: get("#f-title"), genre: get("#f-genre"), logline: get("#f-logline"), synopsis: get("#f-synopsis"), type: $("#f-type").value, status: get("#f-status"), name: get("#f-name"), rights: $("#f-rights").value, target: get("#f-target"), video: get("#f-video"), email: get("#f-email") };
   if (!entry.title || !entry.genre || !entry.logline || !entry.synopsis || !entry.type || !entry.status || !entry.name || !entry.rights || !entry.email || !$("#f-terms").checked) {
-    $("#submit-msg").textContent = "Please complete every required field and agree to the submission terms."; return;
+    msg.textContent = "Please complete every required field, declare the rights position, and agree to the submission terms."; return;
   }
-  state.submissions.push(entry); save("glx2_submissions", state.submissions);
+  if (!sb) {
+    msg.textContent = "Submissions can't be sent right now — the service is unavailable on this device. Your entries are kept in the form; please try again later.";
+    return;
+  }
+  const btn = e.target.querySelector("button[type='submit']");
+  btn.disabled = true;
+  msg.textContent = "Sending your submission…";
+  const row = {
+    user_id: server.user ? server.user.id : null,
+    contact_name: entry.name,
+    contact_email: entry.email,
+    title: entry.title,
+    genre: entry.genre,
+    logline: entry.logline,
+    synopsis: entry.synopsis,
+    production_type: entry.type,
+    dev_status: entry.status,
+    // The rights declaration is enforced here in the form: the submitter had
+    // to state their rights position and agree to the terms above.
+    rights_declaration: true,
+    funding_target_usd: entry.target ? parseInt(entry.target, 10) : null,
+    pitch_video_url: entry.video || null,
+    notes: null
+  };
+  const { data, error } = await sb.from("submissions").insert(row).select("id").single();
+  btn.disabled = false;
+  if (error) {
+    msg.textContent = "That didn't send: " + error.message + " Your entries are still in the form — please try again.";
+    return;
+  }
   e.target.reset();
-  $("#submit-msg").textContent = "Received on this device — submissions are reviewed before publication; the review system opens with the platform launch.";
-  renderSubmissions();
+  save("glx2_submit_draft", {});
+  msg.textContent = "Received — thank you. Your submission is with the GreenlitX review team; nothing is published automatically. Reference: " + data.id.slice(0, 6) + "…" +
+    (server.user ? " Track its status under Account → My submissions." : " Create a free account before submitting next time to track its status.");
+});
+$("#pro-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const msg = $("#pro-msg");
+  const name = $("#p-name").value.trim(), email = $("#p-email").value.trim(), role = $("#p-role").value;
+  const portfolio = $("#p-portfolio").value.trim(), note = $("#p-note").value.trim();
+  if (!name || !email || !role) { msg.textContent = "Please add your name, email, and what you do."; return; }
+  if (!sb) {
+    msg.textContent = "Interest can't be registered right now — the service is unavailable on this device. Your entries are kept in the form; please try again later.";
+    return;
+  }
+  const btn = e.target.querySelector("button[type='submit']");
+  btn.disabled = true;
+  msg.textContent = "Registering your interest…";
+  const { data, error } = await sb.from("pro_interest").insert({
+    user_id: server.user ? server.user.id : null,
+    name: name,
+    email: email,
+    role_category: role,
+    portfolio_url: portfolio || null,
+    note: note || null
+  }).select("id").single();
+  btn.disabled = false;
+  if (error) {
+    msg.textContent = "That didn't send: " + error.message + " Your entries are still in the form — please try again.";
+    return;
+  }
+  e.target.reset();
+  msg.textContent = "Interest registered — welcome aboard. Reference: " + data.id.slice(0, 6) + "… This is an expression of interest only, not a job offer; the team will reach out when productions are staffed.";
 });
 window.addEventListener("hashchange", render);
 window.addEventListener("pageshow", (e) => { if (e.persisted) render(); });
