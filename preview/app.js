@@ -28,7 +28,75 @@ const state = {
   query: ""
 };
 const filmById = (id) => FILMS.find((f) => f.id === id);
-const voteCount = (film) => (state.votes.has(film.id) ? 1 : 0);
+
+/* ---------- backend (Supabase) ---------- */
+const SB_URL = "https://fjrdjspecrnvetlsxxos.supabase.co";
+const SB_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqcmRqc3BlY3JudmV0bHN4eG9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI4NzQ4MTAsImV4cCI6MjEwODQ1MDgxMH0.FuSoy9qytnRDbLWJolkvy1bTk2CB2AAkNNO09H3QpW0";
+const sb = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SB_URL, SB_ANON) : null;
+const server = { user: null, counts: {}, ready: false };
+const voteCount = (film) => {
+  const base = server.counts[film.id] || 0;
+  if (server.user) return base; // server counts include my vote when signed in
+  return base + (state.votes.has(film.id) ? 1 : 0); // guest: my on-device vote adds to the public total
+};
+async function sbFetchCounts() {
+  if (!sb) return;
+  try {
+    const { data, error } = await sb.from("vote_counts").select("film_id, votes");
+    if (!error && data) { server.counts = {}; data.forEach((r) => { server.counts[r.film_id] = r.votes; }); }
+  } catch (e) {}
+}
+async function sbFetchMine() {
+  if (!sb || !server.user) return;
+  try {
+    const [{ data: v }, { data: f }] = await Promise.all([
+      sb.from("votes").select("film_id").eq("user_id", server.user.id),
+      sb.from("follows").select("film_id").eq("user_id", server.user.id)
+    ]);
+    if (v) state.votes = new Set(v.map((r) => r.film_id));
+    if (f) state.follows = new Set(f.map((r) => r.film_id));
+  } catch (e) {}
+}
+async function sbMigrateGuest() {
+  // one-time: turn this device's guest votes/follows into real account votes
+  if (!sb || !server.user) return;
+  const gv = load("glx2_votes", []), gf = load("glx2_follows", []);
+  try {
+    if (gv.length) await sb.from("votes").upsert(gv.map((film_id) => ({ user_id: server.user.id, film_id })));
+    if (gf.length) await sb.from("follows").upsert(gf.map((film_id) => ({ user_id: server.user.id, film_id })));
+  } catch (e) {}
+  save("glx2_votes", []); save("glx2_follows", []);
+}
+async function sbToggle(kind, filmId, turnOn) {
+  if (!sb || !server.user) return;
+  const table = kind === "vote" ? "votes" : "follows";
+  try {
+    if (turnOn) await sb.from(table).insert({ user_id: server.user.id, film_id: filmId });
+    else await sb.from(table).delete().eq("user_id", server.user.id).eq("film_id", filmId);
+    if (kind === "vote") { server.counts[filmId] = Math.max(0, (server.counts[filmId] || 0) + (turnOn ? 1 : -1)); }
+  } catch (e) {}
+}
+async function sbInit() {
+  if (!sb) return;
+  try {
+    const { data } = await sb.auth.getSession();
+    server.user = data && data.session ? data.session.user : null;
+    if (server.user) { await sbMigrateGuest(); await sbFetchMine(); }
+    await sbFetchCounts();
+    server.ready = true;
+    updateAccountNav(); refreshDynamic();
+    sb.auth.onAuthStateChange(async (_evt, session) => {
+      server.user = session ? session.user : null;
+      if (server.user) { await sbMigrateGuest(); await sbFetchMine(); } else { state.votes = new Set(load("glx2_votes", [])); state.follows = new Set(load("glx2_follows", [])); }
+      await sbFetchCounts();
+      updateAccountNav(); refreshDynamic();
+    });
+  } catch (e) {}
+}
+function updateAccountNav() {
+  const link = document.querySelector('[data-nav="account"]');
+  if (link) link.textContent = server.user ? "My Account" : "Account";
+}
 
 /* ---------- posters ---------- */
 const GENRE_HUES = [
@@ -116,7 +184,7 @@ function showcaseHtml() {
       '<p class="showcase-log">' + escapeHtml(f.logline) + "</p>" +
       '<div class="showcase-actions"><a class="btn btn-play" href="#/film/' + f.id + '">View project</a>' +
       '<button type="button" class="btn btn-ghost" data-scroll="teaser">▶ Teaser</button>' +
-      '<span class="showcase-meta">' + escapeHtml(f.genre) + " · " + escapeHtml(f.runtime) + " · " + voteCount(f) + " Green Lights</span></div>" +
+      '<span class="showcase-meta">' + escapeHtml(f.genre) + " · " + escapeHtml(f.runtime) + " · " + fmtMoney(f.budget) + " · " + voteCount(f) + " Green Lights</span></div>" +
       "</div></div></div>";
   }).join("");
   const dots = slides.map((s, i) => '<button type="button" data-slide="' + i + '" aria-current="' + (i === 0) + '" aria-label="Showcase slide ' + (i + 1) + '"></button>').join("");
@@ -223,7 +291,7 @@ function renderFilmDetail(id) {
     '<div class="detail-rail">' +
     '<div class="action-panel"><h3>Give a Green Light</h3>' +
     '<p class="big-count">' + voteCount(film) + ' <small>Green Lights</small></p>' +
-    '<p class="panel-note">One Green Light per person, per film. It costs nothing — it tells the filmmakers, and us, what the audience wants made.</p>' +
+    '<p class="panel-note">One Green Light per person, per film. It costs nothing — it tells the filmmakers, and us, what the audience wants made. ' + (server.user ? "Your Green Light is saved to your account and counts on every device." : 'You are voting as a guest on this device — <a href="#/account">create a free account</a> to make it count everywhere.') + "</p>" +
     '<button type="button" class="btn ' + (voted ? "btn-voted" : "btn-primary") + '" data-action="vote" data-id="' + film.id + '" aria-pressed="' + voted + '">' + (voted ? "Green Light given — tap to withdraw" : "Give a Green Light") + "</button> " +
     '<button type="button" class="btn btn-ghost" data-action="follow" data-id="' + film.id + '" aria-pressed="' + followed + '">' + (followed ? "Following ✓" : "Follow project") + "</button></div>" +
     '<div class="action-panel"><h3>Back this film</h3>' +
@@ -232,6 +300,74 @@ function renderFilmDetail(id) {
     '<p class="panel-note">Conditional pledges — $5 / $10 / $25 / $50 / $100 or a custom amount — open with founding memberships in January 2027. A pledge is only ever charged if the project reaches its funding goal by its deadline.</p>' +
     '<button type="button" class="btn" disabled>Pledging opens January 2027</button></div>' +
     "</div></div>";
+}
+
+/* ---------- account ---------- */
+function filmLinks(ids) {
+  if (!ids.length) return "<p class='fineprint'>None yet — give a film a Green Light and it will appear here.</p>";
+  return "<ul>" + ids.map((id) => { const f = filmById(id); return f ? '<li><a href="#/film/' + f.id + '">' + escapeHtml(f.title) + "</a></li>" : ""; }).join("") + "</ul>";
+}
+async function renderAccount() {
+  const el = $("#account-body");
+  if (!el) return;
+  if (!sb) { el.innerHTML = "<p>Accounts are temporarily unavailable (the sign-in service could not be loaded). Guest Green Lights still work on this device.</p>"; return; }
+  if (!server.user) {
+    el.innerHTML =
+      "<p class='section-intro' style='padding-left:0'>Create a free account to make your Green Light count on every device — one per person per film, protected against duplicates. As a guest, your Green Lights still count on this device.</p>" +
+      "<form id='auth-form' novalidate>" +
+      "<div class='field'><label for='a-email'>Email</label><input id='a-email' type='email' autocomplete='email' required></div>" +
+      "<div class='field'><label for='a-pass'>Password</label><input id='a-pass' type='password' autocomplete='current-password' required></div>" +
+      "<button class='btn btn-primary' type='submit' name='mode' value='signin'>Sign in</button> " +
+      "<button class='btn' type='submit' name='mode' value='signup'>Create account</button>" +
+      "<p class='form-msg' id='auth-msg' role='status'></p>" +
+      "<p class='fineprint'>New accounts confirm by email first. We store your email, an optional display name, your Green Lights and follows — nothing else. No ads, no selling data.</p></form>";
+    $("#auth-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const mode = e.submitter && e.submitter.value === "signup" ? "signup" : "signin";
+      const email = $("#a-email").value.trim(), pass = $("#a-pass").value;
+      const msg = $("#auth-msg");
+      msg.textContent = mode === "signup" ? "Creating your account…" : "Signing you in…";
+      try {
+        if (mode === "signup") {
+          const { data, error } = await sb.auth.signUp({ email, password: pass });
+          if (error) throw error;
+          msg.textContent = data.session ? "Account created — welcome to GreenlitX." : "Account created. Check your email and tap the confirmation link, then sign in.";
+        } else {
+          const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+          if (error) throw error;
+          msg.textContent = "Signed in.";
+        }
+      } catch (err) { msg.textContent = "That didn't work: " + (err.message || "unknown error"); }
+    });
+    return;
+  }
+  const u = server.user;
+  let profileName = "";
+  try { const { data } = await sb.from("profiles").select("display_name").eq("id", u.id).single(); if (data) profileName = data.display_name || ""; } catch (e) {}
+  el.innerHTML =
+    "<p>Signed in as <strong>" + escapeHtml(u.email || "") + "</strong></p>" +
+    "<form id='profile-form' novalidate><div class='field'><label for='a-name'>Display name (optional, shown with your support)</label><input id='a-name' value='" + escapeHtml(profileName) + "'></div>" +
+    "<button class='btn' type='submit'>Save name</button> <span class='form-msg' id='profile-msg' role='status'></span></form>" +
+    "<h3 style='margin-top:2rem'>My Green Lights (" + state.votes.size + ")</h3>" + filmLinks(Array.from(state.votes)) +
+    "<h3 style='margin-top:1.6rem'>Projects I follow (" + state.follows.size + ")</h3>" + filmLinks(Array.from(state.follows)) +
+    "<p style='margin-top:2rem'><button type='button' class='btn' id='signout-btn'>Sign out</button> " +
+    "<button type='button' class='btn btn-ghost' id='deletedata-btn'>Delete my Green Lights, follows and profile</button></p>" +
+    "<p class='form-msg' id='account-msg' role='status'></p>" +
+    "<p class='fineprint'>Deleting removes your votes, follows and display name from GreenlitX immediately. To remove the login itself, contact us and we will delete the account completely.</p>";
+  $("#profile-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = $("#a-name").value.trim();
+    const { error } = await sb.from("profiles").upsert({ id: u.id, display_name: name || null });
+    $("#profile-msg").textContent = error ? "Could not save: " + error.message : "Saved.";
+  });
+  $("#signout-btn").addEventListener("click", async () => { await sb.auth.signOut(); });
+  $("#deletedata-btn").addEventListener("click", async () => {
+    await sb.from("votes").delete().eq("user_id", u.id);
+    await sb.from("follows").delete().eq("user_id", u.id);
+    await sb.from("profiles").delete().eq("id", u.id);
+    await sb.auth.signOut();
+    $("#account-msg").textContent = "Your data has been deleted and you are signed out.";
+  });
 }
 
 /* ---------- professionals & submissions ---------- */
@@ -248,7 +384,7 @@ function renderSubmissions() {
 }
 
 /* ---------- routing ---------- */
-const VIEWS = ["home", "discover", "film", "professionals", "submit"];
+const VIEWS = ["home", "discover", "film", "professionals", "submit", "account"];
 function parseRoute() {
   const h = (location.hash || "#/home").replace(/^#\//, "");
   const parts = h.split("/");
@@ -269,6 +405,7 @@ function render() {
   if (r.view === "film") renderFilmDetail(r.id);
   if (r.view === "professionals") renderPros();
   if (r.view === "submit") renderSubmissions();
+  if (r.view === "account") renderAccount();
   window.scrollTo(0, 0);
   const focusEl = $("#view-" + r.view + " h1, #view-" + r.view + " h2");
   if (focusEl) focusEl.focus({ preventScroll: true });
@@ -306,11 +443,17 @@ document.addEventListener("click", (e) => {
   if (!btn) return;
   const id = btn.dataset.id;
   if (btn.dataset.action === "vote") {
-    state.votes.has(id) ? state.votes.delete(id) : state.votes.add(id);
-    save("glx2_votes", Array.from(state.votes)); refreshDynamic();
+    const turnOn = !state.votes.has(id);
+    turnOn ? state.votes.add(id) : state.votes.delete(id);
+    if (server.user) { sbToggle("vote", id, turnOn).then(refreshDynamic); }
+    else save("glx2_votes", Array.from(state.votes));
+    refreshDynamic();
   } else if (btn.dataset.action === "follow") {
-    state.follows.has(id) ? state.follows.delete(id) : state.follows.add(id);
-    save("glx2_follows", Array.from(state.follows)); refreshDynamic();
+    const turnOn = !state.follows.has(id);
+    turnOn ? state.follows.add(id) : state.follows.delete(id);
+    if (server.user) { sbToggle("follow", id, turnOn).then(refreshDynamic); }
+    else save("glx2_follows", Array.from(state.follows));
+    refreshDynamic();
   } else if (btn.dataset.action === "pro") {
     const cat = btn.dataset.cat;
     state.proInterest.has(cat) ? state.proInterest.delete(cat) : state.proInterest.add(cat);
@@ -335,3 +478,4 @@ $("#submit-form").addEventListener("submit", (e) => {
 window.addEventListener("hashchange", render);
 window.addEventListener("pageshow", (e) => { if (e.persisted) render(); });
 render();
+sbInit();

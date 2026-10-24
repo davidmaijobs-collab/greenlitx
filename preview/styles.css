@@ -53,8 +53,8 @@ body.no-fixed-pad { padding-top: 0; }
 
 /* ---------- showcase hero ---------- */
 .showcase { position: relative; height: min(82vh, 760px); min-height: 520px; overflow: hidden; background: #000; }
-.showcase-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1.1s ease; pointer-events: none; }
-.showcase-slide.active { opacity: 1; pointer-events: auto; }
+.showcase-slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity 0.9s ease, visibility 0s linear 0.9s; pointer-events: none; }
+.showcase-slide.active { opacity: 1; visibility: visible; transition: opacity 0.9s ease; pointer-events: auto; }
 .showcase-slide img.backdrop { width: 100%; height: 100%; object-fit: cover; display: block; }
 .showcase-slide .backdrop-gradient { position: absolute; inset: 0; background: linear-gradient(165deg, hsl(var(--hue,210) 46% 15%) 0%, hsl(var(--hue,210) 52% 8%) 60%, #05070a 100%); }
 .showcase-shade { position: absolute; inset: 0; background:

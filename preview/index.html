@@ -8,7 +8,7 @@
 <link rel="icon" href="logo.webp">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#05070a">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 
@@ -20,6 +20,7 @@
     <a href="#/discover" data-nav="discover">Discover Films</a>
     <a href="#/professionals" data-nav="professionals">For Professionals</a>
     <a href="#/submit" data-nav="submit">Submit Your Film</a>
+    <a href="#/account" data-nav="account">Account</a>
   </nav>
 </header>
 
@@ -133,6 +134,14 @@
     </div>
   </section>
 
+  <!-- ============ VIEW: ACCOUNT ============ -->
+  <section id="view-account" class="view" hidden aria-label="Your account">
+    <div class="section">
+      <h2 tabindex="-1">Your account</h2>
+      <div id="account-body"><p class="section-intro" style="padding-left:0">Loading…</p></div>
+    </div>
+  </section>
+
 </main>
 
 <footer class="site-footer">
@@ -144,7 +153,8 @@
 
 <noscript><p class="noscript-note">GreenlitX needs JavaScript enabled to display film projects.</p></noscript>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="data.js?v=3"></script>
-<script src="app.js?v=3"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>
