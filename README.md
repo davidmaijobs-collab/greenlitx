@@ -18,7 +18,7 @@ Early prototype development. Everything on the site is demonstration content.
 | File         | Purpose                                                        |
 | ------------ | -------------------------------------------------------------- |
 | `index.html` | Page structure and all views (single-page app)                 |
-| `styles.css` | Cinematic dark theme — layered glowing hero, key-art film posters, opaque sticky header, scroll reveal, accessible contrast |
+| `styles.css` | Cinematic dark theme — mobile-first compact hamburger header, slogan-centred hero, key-art film posters, compact prototype notice, scroll reveal, accessible contrast |
 | `logo.webp`  | Official GreenlitX logo — the unmodified master used on Instagram @greenlitx |
 | `data.js`    | Fictional demonstration film data and reward tiers             |
 | `app.js`     | Routing, rendering, demo voting, simulated pledges, demo form  |
@@ -47,6 +47,9 @@ as-is. Deployment is intentionally **not** configured in this prototype step.
 
 - Homepage with hero, featured projects, "How GreenlitX works", audience,
   filmmaker, actor and supporter sections
+- Compact mobile navigation — below 860px the header collapses to the logo
+  plus a hamburger menu (in-flow panel, closes on selection, Escape, or route
+  change; full keyboard and screen-reader support)
 - Film discovery grid with genre filtering and sorting (popularity, funding
   progress, title)
 - Individual project pages with synopsis, creative vision, filmmaker profile,

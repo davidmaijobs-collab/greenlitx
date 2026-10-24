@@ -275,6 +275,7 @@ function posterSVG(film, context) {
   const vigId = "vig-" + context + "-" + film.id;
   const fadeId = "fade-" + context + "-" + film.id;
   const grainId = "grain-" + context + "-" + film.id;
+  const topId = "top-" + context + "-" + film.id;
   const motif = MOTIFS[p.motif] ? MOTIFS[p.motif](p, film.id + context, glowId) : "";
   const title = film.title.toUpperCase();
   const titleSize = title.length <= 14 ? 34 : (title.length <= 18 ? 29 : 25);
@@ -287,16 +288,19 @@ function posterSVG(film, context) {
     '<radialGradient id="' + glowId + '" cx="0.5" cy="0.5" r="0.5">' +
     '<stop offset="0" stop-color="' + p.accent + '" stop-opacity="0.5"/><stop offset="1" stop-color="' + p.accent + '" stop-opacity="0"/></radialGradient>' +
     '<radialGradient id="' + vigId + '" cx="0.5" cy="0.42" r="0.78">' +
-    '<stop offset="0.6" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0.52"/></radialGradient>' +
+    '<stop offset="0.6" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0.58"/></radialGradient>' +
     '<linearGradient id="' + fadeId + '" x1="0" y1="0" x2="0" y2="1">' +
     '<stop offset="0" stop-color="#000000" stop-opacity="0"/><stop offset="0.35" stop-color="#000000" stop-opacity="0.45"/>' +
     '<stop offset="1" stop-color="#000000" stop-opacity="0.82"/></linearGradient>' +
+    '<linearGradient id="' + topId + '" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0" stop-color="#ffffff" stop-opacity="0.14"/><stop offset="0.45" stop-color="#ffffff" stop-opacity="0"/></linearGradient>' +
     '<filter id="' + grainId + '" x="0" y="0" width="100%" height="100%">' +
     '<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/>' +
     '<feColorMatrix type="saturate" values="0"/></filter>' +
     '</defs>' +
     '<rect width="400" height="600" fill="url(#' + gid + ')"/>' +
     motif +
+    '<rect width="400" height="600" fill="url(#' + topId + ')"/>' +
     '<rect width="400" height="600" fill="url(#' + vigId + ')"/>' +
     '<rect x="0" y="418" width="400" height="182" fill="url(#' + fadeId + ')"/>' +
     '<rect x="173" y="472" width="54" height="3" fill="' + p.accent + '"/>' +
@@ -319,15 +323,17 @@ function filmCard(film, context) {
     '<a class="poster-link" href="#/film/' + film.id + '" aria-label="View project: ' + escapeHtml(film.title) + '">' +
     '<div class="poster">' + posterSVG(film, context) + '</div></a>' +
     '<div class="card-body">' +
+    '<h3><a href="#/film/' + film.id + '">' + escapeHtml(film.title) + '</a></h3>' +
     '<div class="card-meta"><span class="chip">' + escapeHtml(film.genre) + '</span>' +
     '<span class="chip chip-status">' + escapeHtml(film.status) + '</span></div>' +
-    '<h3><a href="#/film/' + film.id + '">' + escapeHtml(film.title) + '</a></h3>' +
     '<p class="logline">' + escapeHtml(film.logline) + '</p>' +
     '<p class="byline">by ' + escapeHtml(film.filmmaker) + '</p>' +
+    '<div class="card-foot">' +
     '<p class="support-line">' + fmtNum(supportCount(film)) + ' supporters <span class="demo-tag">(demonstration figure)</span></p>' +
     '<div class="progress" role="img" aria-label="Demonstration funding progress: ' + pct + ' percent"><div class="bar" style="width:' + pct + '%"></div></div>' +
     '<p class="fund-line"><strong>' + fmtMoney(pledgedTotal(film)) + '</strong> of ' + fmtMoney(film.budget) + ' demo goal · ' + pct + '%</p>' +
-    '<a class="btn btn-primary btn-small" href="#/film/' + film.id + '">View Project</a>' +
+    '</div>' +
+    '<a class="btn btn-primary" href="#/film/' + film.id + '">View Project</a>' +
     '</div></article>';
 }
 
@@ -354,14 +360,45 @@ function renderTiers() {
   }).join("");
 }
 
-/* Hero poster collage — decorative strip of the six demo posters */
-function renderHeroCollage() {
-  const el = $("#hero-collage");
-  if (!el) return;
-  el.innerHTML = FILMS.map(function (f, i) {
-    return '<div class="hero-poster" style="--tilt:' + (i % 2 ? "2.2deg" : "-2.2deg") + '">' +
-      posterSVG(f, "hero") + '</div>';
-  }).join("");
+/* ---------------- Mobile navigation ----------------
+   The hamburger toggles an in-flow panel inside the sticky header.
+   The menu closes on toggle, on destination click, on Escape (focus
+   returns to the toggle) and on every route change. */
+
+function setMobileMenu(open, toggle, panel) {
+  toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  panel.hidden = !open;
+  const openIcon = toggle.querySelector(".menu-icon-open");
+  const closeIcon = toggle.querySelector(".menu-icon-close");
+  if (openIcon) openIcon.hidden = open;
+  if (closeIcon) closeIcon.hidden = !open;
+}
+
+function closeMobileMenu() {
+  const toggle = document.getElementById("menu-toggle");
+  const panel = document.getElementById("mobile-menu");
+  if (toggle && panel && !panel.hidden) setMobileMenu(false, toggle, panel);
+}
+
+function initMobileMenu() {
+  const toggle = document.getElementById("menu-toggle");
+  const panel = document.getElementById("mobile-menu");
+  if (!toggle || !panel) return;
+  toggle.addEventListener("click", function () {
+    setMobileMenu(panel.hidden, toggle, panel);
+  });
+  panel.querySelectorAll("a").forEach(function (link) {
+    link.addEventListener("click", function () {
+      setMobileMenu(false, toggle, panel);
+    });
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape" && !panel.hidden) {
+      setMobileMenu(false, toggle, panel);
+      toggle.focus();
+    }
+  });
 }
 
 /* Scroll reveal — purely decorative. The .js gate class is only added here,
@@ -439,7 +476,7 @@ function renderFilmDetail(id) {
     '<div><dt>Intended production budget</dt><dd>' + fmtMoney(film.budget) + ' <span class="fineprint">(demo)</span></dd></div>' +
     '<div><dt>Audience support</dt><dd>' + fmtNum(supportCount(film)) + ' <span class="fineprint">(demo)</span></dd></div>' +
     '</dl>' +
-    '<div class="progress" role="img" aria-label="Demonstration funding progress: ' + pct + ' percent"><div class="bar" style="width:' + pct + '%"></div></div>' +
+    '<div class="progress progress-lg" role="img" aria-label="Demonstration funding progress: ' + pct + ' percent"><div class="bar" style="width:' + pct + '%"></div></div>' +
     '<p class="fund-line big"><strong>' + fmtMoney(pledgedTotal(film)) + '</strong> pledged of ' + fmtMoney(film.budget) + ' demonstration goal · ' + pct + '%</p>' +
     '<p class="fineprint">Current development stage: ' + escapeHtml(film.stage) + '</p>' +
 
@@ -616,6 +653,7 @@ function parseRoute() {
 }
 
 function route() {
+  closeMobileMenu();
   const r = parseRoute();
   VIEWS.forEach(function (v) {
     document.getElementById("view-" + v).hidden = v !== r.view;
@@ -658,9 +696,9 @@ function init() {
   renderStats();
   renderFeatured();
   renderTiers();
-  renderHeroCollage();
   renderExplore();
   renderSubmissions();
+  initMobileMenu();
   initSubmissionForm();
   route();
   initReveal();

@@ -1,7 +1,9 @@
 /* GreenlitX — prototype stylesheet.
    Cinematic dark theme: near-black #0b0e11, deep panel #10161c,
-   neon green accent #7CFC00. Mobile-first, accessible contrast,
-   no external assets — every visual is CSS/SVG generated in code. */
+   neon green accent #7CFC00. Mobile-first: compact hamburger header,
+   slogan-centred hero, compact prototype notice, quiet card statistics.
+   Accessible contrast, no external assets — every visual is CSS/SVG
+   generated in code. */
 
 :root {
   --bg: #0b0e11;
@@ -18,11 +20,15 @@
   --error: #ff8a8a;
   --radius: 14px;
   --maxw: 1120px;
+  --header-h: 64px;
 }
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
 
 body {
   margin: 0;
@@ -31,7 +37,10 @@ body {
   font-family: "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
   line-height: 1.55;
   font-size: 16px;
+  overflow-x: hidden;
 }
+
+img, svg, video { max-width: 100%; }
 
 h1, h2, h3 {
   font-family: Georgia, "Times New Roman", serif;
@@ -49,11 +58,17 @@ a:hover { text-decoration-thickness: 2px; }
   border-radius: 4px;
 }
 
-/* ---------- Header (fully opaque: scrolled content never bleeds through) ---------- */
+/* Anchor jumps must land below the sticky header */
+.section[id] { scroll-margin-top: calc(var(--header-h) + 20px); }
+
+/* ---------- Header: compact sticky bar + in-flow mobile menu ----------
+   Fully opaque, so scrolled content never bleeds through. The menu panel
+   lives inside the header and expands it in-flow — it never overlays
+   page content. */
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: 30;
   background: #0b0e11;
   border-bottom: 1px solid var(--border);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
@@ -61,65 +76,134 @@ a:hover { text-decoration-thickness: 2px; }
 .header-inner {
   max-width: var(--maxw);
   margin: 0 auto;
-  padding: 0.55rem 1rem;
+  padding: 0 1.25rem;
+  height: var(--header-h);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  flex-wrap: wrap;
 }
 .logo {
+  display: inline-flex;
+  align-items: center;
   color: var(--text);
   text-decoration: none;
-  font-weight: 900;
-  letter-spacing: 0.14em;
-  font-size: 1.15rem;
 }
 .logo-img { height: 52px; width: 52px; display: block; }
 .footer-logo-img { height: 76px; width: 76px; display: block; }
-.main-nav { display: flex; gap: 1.1rem; align-items: center; flex-wrap: wrap; }
+
+.main-nav { display: flex; gap: 1.1rem; align-items: center; }
 .main-nav a {
   color: var(--text);
   text-decoration: none;
   font-size: 0.95rem;
   font-weight: 600;
+  padding: 0.35rem 0.1rem;
 }
 .main-nav a:hover { color: var(--accent); }
 .main-nav a[aria-current="page"] { color: var(--accent); border-bottom: 2px solid var(--accent); }
 .main-nav .nav-cta {
   border: 1px solid var(--accent);
-  padding: 0.4rem 0.85rem;
+  padding: 0.45rem 0.9rem;
   border-radius: 999px;
 }
-/* Slimmer header on phones */
-@media (max-width: 640px) {
-  .header-inner { padding: 0.4rem 0.8rem; gap: 0.55rem; }
+
+/* Hamburger: desktop hidden, mobile shown (≥44px touch target) */
+.menu-toggle { display: none; }
+.mobile-menu { display: none; }
+
+@media (max-width: 859px) {
+  :root { --header-h: 56px; }
+  .header-inner { padding: 0 1rem; }
   .logo-img { height: 40px; width: 40px; }
-  .main-nav { gap: 0.7rem; }
-  .main-nav a { font-size: 0.86rem; }
-  .main-nav .nav-cta { padding: 0.28rem 0.62rem; }
+  .main-nav { display: none; }
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-left: auto;
+    padding: 0;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .menu-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  .menu-icon { pointer-events: none; }
+  .menu-icon[hidden] { display: none; }
+  .mobile-menu {
+    border-top: 1px solid var(--border);
+    background: #0b0e11;
+    padding: 0.5rem 1rem 0.75rem;
+  }
+  .mobile-menu:not([hidden]) { display: block; }
+  .mobile-menu a {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0.4rem 0.6rem;
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 8px;
+  }
+  .mobile-menu a:hover { color: var(--accent); background: var(--surface); }
+  .mobile-menu a[aria-current="page"] {
+    color: var(--accent);
+    box-shadow: inset 3px 0 0 var(--accent);
+  }
 }
 
-/* ---------- Demo banner ---------- */
-.demo-banner {
-  background: #1c1503;
-  color: #ffd9a0;
-  border-bottom: 1px solid #4a3a10;
+/* ---------- Compact prototype notice (replaces the old brown banner) ---------- */
+.proto-notice {
+  background: #141a1f;
+  border-bottom: 1px solid var(--border);
+  border-left: 4px solid var(--warn);
+  color: #c7d2cb;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  padding: 0.5rem 1.25rem;
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
   text-align: center;
-  padding: 0.55rem 1rem;
-  font-size: 0.88rem;
 }
-.demo-banner strong { color: var(--warn); letter-spacing: 0.04em; }
+.proto-chip {
+  background: var(--warn);
+  color: #141a1f;
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  flex: 0 0 auto;
+}
+@media (max-width: 640px) {
+  .proto-notice { justify-content: flex-start; text-align: left; padding: 0.5rem 1rem; }
+}
 
 /* ---------- Layout & section rhythm ---------- */
 main { display: block; }
 .section {
   max-width: var(--maxw);
   margin: 0 auto;
-  padding: 3rem 1rem;
+  padding: 3.5rem 1.25rem;
 }
+@media (max-width: 640px) {
+  .section { padding: 2.25rem 1rem; }
+}
+.section h1 { font-size: clamp(1.7rem, 5vw, 2.4rem); }
 .section h2 {
-  font-size: clamp(1.7rem, 3.6vw, 2.35rem);
+  font-size: clamp(1.55rem, 4.5vw, 2.2rem);
   letter-spacing: -0.01em;
 }
 .section h2::after {
@@ -130,7 +214,7 @@ main { display: block; }
   margin-top: 0.5rem;
   border-radius: 2px;
   background: var(--accent);
-  box-shadow: 0 0 10px var(--accent-soft);
+  box-shadow: 0 0 8px rgba(124, 252, 0, 0.25);
 }
 .section-alt {
   background: var(--panel);
@@ -152,21 +236,26 @@ main { display: block; }
 }
 .section-link { font-weight: 700; text-decoration: none; }
 .section-intro { color: var(--muted); max-width: 65ch; }
-.page-head { padding-top: 2.4rem; }
+.page-head { padding-top: 2rem; }
 .narrow { max-width: 720px; }
 .fineprint { color: var(--muted); font-size: 0.85rem; }
 
-/* ---------- Hero (full-width, layered, cinematic) ---------- */
+/* ---------- Hero: the slogan is the centrepiece ----------
+   Calm, layered backdrop (soft green glow + a faint ghost X), no
+   outline box, no poster clutter — posters live in discovery now. */
 .hero {
   position: relative;
   overflow: hidden;
   text-align: center;
-  padding: 4.4rem 1rem 2.6rem;
+  padding: 4.25rem 1.25rem 3rem;
   border-bottom: 1px solid var(--border);
   background:
     radial-gradient(640px 320px at 50% -70px, rgba(124, 252, 0, 0.17), rgba(124, 252, 0, 0) 70%),
     radial-gradient(900px 480px at 85% 110%, rgba(124, 252, 0, 0.05), rgba(124, 252, 0, 0) 60%),
     linear-gradient(180deg, #0d1216 0%, var(--bg) 55%, #05070a 100%);
+}
+@media (max-width: 640px) {
+  .hero { padding: 3rem 1rem 2.25rem; }
 }
 .hero-x {
   position: absolute;
@@ -179,6 +268,9 @@ main { display: block; }
   color: rgba(124, 252, 0, 0.05);
   pointer-events: none;
   user-select: none;
+}
+@media (max-width: 640px) {
+  .hero-x { font-size: 16rem; top: -4.5rem; right: -2rem; }
 }
 .hero-inner {
   position: relative;
@@ -194,68 +286,41 @@ main { display: block; }
   margin: 0 0 1.3rem;
 }
 .hero-slogan {
-  font-size: clamp(2.4rem, 7vw, 4.2rem);
-  line-height: 1.05;
+  font-size: clamp(2.1rem, 6.5vw, 3.8rem);
+  line-height: 1.08;
   letter-spacing: -0.015em;
   margin-bottom: 1.1rem;
+  text-wrap: balance;
   text-shadow: 0 4px 34px rgba(0, 0, 0, 0.6);
 }
 .hero-slogan .accent {
   color: var(--accent);
   display: block;
-  text-shadow: 0 0 26px rgba(124, 252, 0, 0.35);
+  text-shadow: 0 0 22px rgba(124, 252, 0, 0.3);
 }
 .hero-sub {
-  font-size: clamp(1.05rem, 2.6vw, 1.35rem);
+  font-size: clamp(1.05rem, 2.6vw, 1.3rem);
   color: var(--muted);
   max-width: 60ch;
   margin: 0 auto 1.9rem;
 }
 .hero-actions {
-  display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap;
-  margin-bottom: 2.1rem;
+  display: flex; gap: 0.8rem; justify-content: center; align-items: center; flex-wrap: wrap;
+  margin-bottom: 1.6rem;
 }
+/* Demo statistics: one compact, quiet row — present and labelled,
+   never the headline act. */
 .hero-stats {
-  display: flex; gap: 2.6rem; justify-content: center; flex-wrap: wrap;
-  margin: 0 0 0.4rem;
+  display: flex; gap: 1.75rem; justify-content: center; flex-wrap: wrap;
+  margin: 0;
 }
-.hero-stats div { text-align: center; }
-.hero-stats dt {
-  font-size: 2.35rem;
-  font-weight: 800;
-  color: var(--accent);
-  text-shadow: 0 0 20px rgba(124, 252, 0, 0.45);
+.hero-stats div { display: flex; align-items: baseline; gap: 0.45rem; }
+.hero-stats dt { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+.hero-stats dd {
+  margin: 0; color: var(--muted); font-size: 0.78rem;
+  letter-spacing: 0.08em; text-transform: uppercase;
 }
-.hero-stats dd { margin: 0.15rem 0 0; color: var(--muted); font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; }
-
-/* Poster collage strip along the hero's bottom edge */
-.hero-collage {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  gap: 0.9rem;
-  justify-content: center;
-  align-items: flex-end;
-  max-width: var(--maxw);
-  margin: 2.7rem auto 0;
-}
-.hero-poster {
-  width: 118px;
-  flex: 0 0 auto;
-  aspect-ratio: 2 / 3;
-  border-radius: 10px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.65);
-  transform: rotate(var(--tilt, 0deg)) translateY(8px);
-}
-.hero-poster svg { width: 100%; height: 100%; display: block; }
-@media (max-width: 760px) {
-  .hero { padding-top: 3.2rem; }
-  .hero-poster { width: 88px; }
-  .hero-poster:nth-child(n+4) { display: none; }
-  .hero-x { font-size: 19rem; top: -5rem; right: -2.5rem; }
-}
+.hero .fineprint { margin: 0.5rem 0 0; }
 
 /* Gentle entrance for the hero (disabled under prefers-reduced-motion) */
 @keyframes heroRise {
@@ -267,15 +332,13 @@ main { display: block; }
 .hero .hero-sub,
 .hero .hero-actions,
 .hero .hero-stats,
-.hero .fineprint,
-.hero .hero-collage {
+.hero .fineprint {
   animation: heroRise 0.8s ease both;
 }
 .hero .hero-slogan { animation-delay: 0.08s; }
 .hero .hero-sub { animation-delay: 0.16s; }
 .hero .hero-actions { animation-delay: 0.24s; }
 .hero .hero-stats, .hero .fineprint { animation-delay: 0.32s; }
-.hero .hero-collage { animation-delay: 0.4s; }
 
 /* Scroll reveal — the .js gate is added by app.js only when reveals can
    actually run, so content is fully visible if JavaScript fails. */
@@ -288,12 +351,17 @@ main { display: block; }
 
 /* ---------- Buttons ---------- */
 .btn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font: inherit;
+  font-size: 1rem;
   font-weight: 700;
   text-decoration: none;
+  text-align: center;
   border-radius: 999px;
-  padding: 0.7rem 1.5rem;
+  padding: 0.75rem 1.4rem;
+  min-height: 44px;
   border: 1px solid transparent;
   cursor: pointer;
   transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
@@ -307,13 +375,16 @@ main { display: block; }
 .btn-primary:hover { background: #93ff2e; box-shadow: 0 0 30px rgba(124, 252, 0, 0.5); }
 .btn-ghost { background: transparent; color: var(--text); border-color: var(--border); box-shadow: none; }
 .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
-.btn-link { background: none; border: none; color: var(--accent); padding: 0.7rem 0.4rem; box-shadow: none; }
+.btn-link { background: none; border: none; color: var(--accent); padding: 0.75rem 0.5rem; box-shadow: none; }
 .btn-link:hover { text-decoration: underline; }
-.btn-small { padding: 0.45rem 1rem; font-size: 0.9rem; }
+.btn-small { padding: 0.55rem 1.1rem; font-size: 0.92rem; }
 .btn[disabled] { opacity: 0.55; cursor: default; transform: none; }
 .btn-voted { background: transparent; color: var(--accent); border-color: var(--accent); }
 
-/* ---------- Film grid & cards ---------- */
+/* ---------- Film grid & cards ----------
+   Hierarchy: poster → title → genre/status chips → clamped synopsis →
+   one primary action. Supporter statistics live in a quiet footer
+   strip (small text, thin bar, no glow) so they never dominate. */
 .film-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -343,34 +414,48 @@ main { display: block; }
 .poster svg { width: 100%; height: 100%; display: block; transition: transform 0.35s ease; }
 .card:hover .poster svg { transform: scale(1.03); }
 .card-body { padding: 1.05rem 1.15rem 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+.card h3 { margin: 0.1rem 0 0; font-size: 1.15rem; overflow-wrap: break-word; }
+.card h3 a { color: var(--text); text-decoration: none; }
+.card h3 a:hover { color: var(--accent); }
 .card-meta { display: flex; gap: 0.45rem; flex-wrap: wrap; }
 .chip {
   font-size: 0.72rem; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase;
   border: 1px solid var(--border); border-radius: 999px; padding: 0.18rem 0.6rem; color: var(--muted);
 }
 .chip-status { color: var(--accent); border-color: #2c4a12; background: rgba(124, 252, 0, 0.08); }
-.card h3 { margin: 0.1rem 0 0; font-size: 1.32rem; }
-.card h3 a { color: var(--text); text-decoration: none; }
-.card h3 a:hover { color: var(--accent); }
-.logline { margin: 0; color: var(--muted); font-size: 0.95rem; }
+.logline {
+  margin: 0; color: var(--muted); font-size: 0.95rem; overflow-wrap: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 .byline { margin: 0; font-size: 0.88rem; color: var(--muted); }
-.support-line { margin: 0.2rem 0 0; font-weight: 700; font-size: 0.92rem; }
-.support-line .demo-tag { color: var(--muted); font-weight: 400; font-size: 0.8rem; }
+.card-foot {
+  margin-top: auto;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.support-line { margin: 0; font-weight: 600; font-size: 0.85rem; color: var(--muted); }
+.support-line .demo-tag { font-weight: 400; font-size: 0.78rem; }
 
 .progress {
-  height: 12px; border-radius: 999px; background: #05070a;
+  height: 6px; border-radius: 999px; background: #05070a;
   border: 1px solid var(--border); overflow: hidden;
 }
 .progress .bar {
   height: 100%;
   background: linear-gradient(90deg, #57b800, var(--accent));
   border-radius: 999px;
-  box-shadow: 0 0 10px rgba(124, 252, 0, 0.55);
   transition: width 0.4s ease;
 }
-.fund-line { margin: 0; font-size: 0.88rem; color: var(--muted); }
+.progress-lg { height: 10px; }
+.fund-line { margin: 0; font-size: 0.82rem; color: var(--muted); overflow-wrap: break-word; }
 .fund-line strong { color: var(--text); }
-.card .btn { margin-top: auto; align-self: flex-start; }
+.card .btn { align-self: flex-start; }
 
 /* ---------- Steps / pillars / opportunities ---------- */
 .steps {
@@ -443,17 +528,24 @@ main { display: block; }
 
 /* ---------- Explore toolbar ---------- */
 .toolbar {
-  display: flex; gap: 1.2rem; flex-wrap: wrap; align-items: end;
-  margin-top: 1.2rem;
+  display: flex; gap: 1rem; flex-wrap: wrap; align-items: end;
+  margin-top: 1.25rem;
 }
 .toolbar label { font-weight: 700; font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.35rem; }
 select, input, textarea {
-  font: inherit; color: var(--text);
+  font: inherit; font-size: 1rem; color: var(--text);
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 0.55rem 0.7rem;
+  border-radius: 10px; padding: 0.7rem 0.8rem;
 }
+input, select { min-height: 48px; }
+textarea { min-height: 44px; }
 select:focus, input:focus, textarea:focus { border-color: var(--accent); }
 .results-count { color: var(--muted); margin: 0 0 0.4rem; }
+@media (max-width: 640px) {
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .toolbar label, .toolbar select { width: 100%; }
+  .results-count { margin: 0; }
+}
 
 /* ---------- Film detail ---------- */
 .back-link { font-weight: 700; text-decoration: none; display: inline-block; margin-bottom: 1.2rem; }
@@ -463,15 +555,16 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); }
   border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border);
   box-shadow: 0 18px 38px rgba(0, 0, 0, 0.55);
 }
-.detail-main h1 { font-size: clamp(1.9rem, 4.5vw, 2.8rem); margin-bottom: 0.4rem; }
+.detail-main h1 { font-size: clamp(1.75rem, 5vw, 2.5rem); margin-bottom: 0.4rem; }
 .detail-main .logline { font-size: 1.1rem; }
 .detail-facts {
   display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem 1.4rem;
   margin: 1.4rem 0; padding: 1rem 1.2rem;
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
 }
+@media (max-width: 480px) { .detail-facts { grid-template-columns: 1fr; } }
 .detail-facts dt { color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; }
-.detail-facts dd { margin: 0.15rem 0 0; font-weight: 700; }
+.detail-facts dd { margin: 0.15rem 0 0; font-weight: 700; overflow-wrap: break-word; }
 .detail-section { margin-top: 1.8rem; }
 .detail-section h2 { font-size: 1.45rem; }
 .detail-section h2::after { width: 40px; }
@@ -517,10 +610,11 @@ form { margin-top: 1.4rem; }
   background: var(--surface);
   color: var(--muted);
   text-align: center;
-  padding: 2.2rem 1rem 2.6rem;
+  padding: 2.2rem 1.25rem 2.6rem;
   margin-top: 1rem;
 }
 .footer-logo { color: var(--text); font-weight: 900; letter-spacing: 0.14em; margin: 0 0 0.3rem; }
+.footer-logo-img { margin-left: auto; margin-right: auto; }
 .footer-slogan { font-family: Georgia, serif; font-style: italic; color: var(--text); margin: 0 0 1rem; }
 .site-footer p { max-width: 70ch; margin-left: auto; margin-right: auto; }
 
@@ -534,7 +628,6 @@ form { margin-top: 1.4rem; }
   .hero .hero-sub,
   .hero .hero-actions,
   .hero .hero-stats,
-  .hero .fineprint,
-  .hero .hero-collage { animation: none; }
+  .hero .fineprint { animation: none; }
   .js .reveal { transition: none; transform: none; }
 }
