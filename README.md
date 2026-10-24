@@ -18,7 +18,7 @@ Early prototype development. Everything on the site is demonstration content.
 | File         | Purpose                                                        |
 | ------------ | -------------------------------------------------------------- |
 | `index.html` | Page structure and all views (single-page app)                 |
-| `styles.css` | Cinematic dark theme, responsive layout, accessible contrast   |
+| `styles.css` | Cinematic dark theme — layered glowing hero, key-art film posters, opaque sticky header, scroll reveal, accessible contrast |
 | `logo.webp`  | Official GreenlitX logo — the unmodified master used on Instagram @greenlitx |
 | `data.js`    | Fictional demonstration film data and reward tiers             |
 | `app.js`     | Routing, rendering, demo voting, simulated pledges, demo form  |

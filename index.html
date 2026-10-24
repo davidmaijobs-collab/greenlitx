@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GreenlitX — The audience decides what gets made</title>
 <meta name="description" content="GreenlitX is a film platform where audiences help decide which movies get made. Prototype / demonstration website.">
-<link rel="stylesheet" href="styles.css?v=2">
+<link rel="stylesheet" href="styles.css?v=3">
 <link rel="icon" type="image/webp" href="logo.webp">
 </head>
 <body>
@@ -33,20 +33,24 @@
   <!-- ============ VIEW: HOME ============ -->
   <section id="view-home" class="view" aria-label="Home">
     <div class="hero">
-      <p class="hero-kicker">GREENLIT X — A FILM PLATFORM POWERED BY ITS AUDIENCE</p>
-      <h1 class="hero-slogan" tabindex="-1">Hollywood decides what gets made today. <span class="accent">On GreenlitX, the audience does.</span></h1>
-      <p class="hero-sub">Discover the next great film. Support the stories you believe in. Help decide what gets made.</p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="#/explore">Explore Films</a>
-        <a class="btn btn-ghost" href="#/submit">Submit Your Film</a>
-        <button class="btn btn-link" type="button" data-scroll-to="how-it-works">How It Works</button>
+      <div class="hero-x" aria-hidden="true">X</div>
+      <div class="hero-inner">
+        <p class="hero-kicker">GREENLIT X — A FILM PLATFORM POWERED BY ITS AUDIENCE</p>
+        <h1 class="hero-slogan" tabindex="-1">Hollywood decides what gets made today. <span class="accent">On GreenlitX, the audience does.</span></h1>
+        <p class="hero-sub">Discover the next great film. Support the stories you believe in. Help decide what gets made.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#/explore">Explore Films</a>
+          <a class="btn btn-ghost" href="#/submit">Submit Your Film</a>
+          <button class="btn btn-link" type="button" data-scroll-to="how-it-works">How It Works</button>
+        </div>
+        <dl class="hero-stats" aria-label="Demonstration platform statistics">
+          <div><dt id="stat-projects">–</dt><dd>Demo projects</dd></div>
+          <div><dt id="stat-supporters">–</dt><dd>Demo supporters</dd></div>
+          <div><dt id="stat-pledged">–</dt><dd>Demo pledged</dd></div>
+        </dl>
+        <p class="fineprint">Statistics above are demonstration figures for this prototype.</p>
       </div>
-      <dl class="hero-stats" aria-label="Demonstration platform statistics">
-        <div><dt id="stat-projects">–</dt><dd>Demo projects</dd></div>
-        <div><dt id="stat-supporters">–</dt><dd>Demo supporters</dd></div>
-        <div><dt id="stat-pledged">–</dt><dd>Demo pledged</dd></div>
-      </dl>
-      <p class="fineprint">Statistics above are demonstration figures for this prototype.</p>
+      <div class="hero-collage" id="hero-collage" aria-hidden="true"></div>
     </div>
 
     <section class="section" aria-labelledby="featured-heading">
@@ -135,7 +139,7 @@
       </div>
     </section>
 
-    <section class="section join" aria-labelledby="join-heading">
+    <section class="section section-bleed join" aria-labelledby="join-heading">
       <h2 id="join-heading">Join the GreenlitX community</h2>
       <p>The first audience in film history that does not just watch — it decides. Explore the demonstration projects, cast your first demo vote, and imagine the premiere of a film that exists because you said yes.</p>
       <div class="hero-actions">
@@ -288,7 +292,7 @@
 
 <noscript><p class="noscript-note">This GreenlitX prototype needs JavaScript enabled to display film projects and demonstrations.</p></noscript>
 
-<script src="data.js?v=2"></script>
-<script src="app.js?v=2"></script>
+<script src="data.js?v=3"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>

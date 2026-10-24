@@ -23,7 +23,7 @@ const FILMS = [
     budget: 850000,
     baseSupport: 1284,
     basePledged: 612400,
-    poster: { from: "#0a2440", to: "#0d3b2e", accent: "#7CFC00", motif: "orbit" }
+    poster: { from: "#0a2440", mid: "#083354", to: "#0d3b2e", accent: "#7CFC00", motif: "orbit" }
   },
   {
     id: "harvest-of-salt",
@@ -39,7 +39,7 @@ const FILMS = [
     budget: 420000,
     baseSupport: 862,
     basePledged: 243600,
-    poster: { from: "#2b1538", to: "#93350f", accent: "#ffb35c", motif: "peaks" }
+    poster: { from: "#2b1538", mid: "#5c2244", to: "#93350f", accent: "#ffb35c", motif: "horizon" }
   },
   {
     id: "the-vanishing-reef",
@@ -55,7 +55,7 @@ const FILMS = [
     budget: 260000,
     baseSupport: 1975,
     basePledged: 210600,
-    poster: { from: "#062a3a", to: "#0b5563", accent: "#4dd8e6", motif: "waves" }
+    poster: { from: "#062a3a", mid: "#084a5c", to: "#0b5563", accent: "#4dd8e6", motif: "waves" }
   },
   {
     id: "paper-moons",
@@ -71,7 +71,7 @@ const FILMS = [
     budget: 680000,
     baseSupport: 1533,
     basePledged: 442000,
-    poster: { from: "#1d1140", to: "#4a1259", accent: "#ff8ad8", motif: "rings" }
+    poster: { from: "#1d1140", mid: "#2e1350", to: "#4a1259", accent: "#ff8ad8", motif: "rings" }
   },
   {
     id: "the-night-auditor",
@@ -87,7 +87,7 @@ const FILMS = [
     budget: 540000,
     baseSupport: 689,
     basePledged: 140400,
-    poster: { from: "#0d0d12", to: "#23232e", accent: "#e8e8f0", motif: "skyline" }
+    poster: { from: "#0d0d12", mid: "#16161f", to: "#23232e", accent: "#e8e8f0", motif: "skyline" }
   },
   {
     id: "second-helpings",
@@ -103,7 +103,7 @@ const FILMS = [
     budget: 310000,
     baseSupport: 1047,
     basePledged: 173600,
-    poster: { from: "#40101f", to: "#7a4d0c", accent: "#ffd23f", motif: "sun" }
+    poster: { from: "#40101f", mid: "#5f2413", to: "#7a4d0c", accent: "#ffd23f", motif: "sun" }
   }
 ];
 
