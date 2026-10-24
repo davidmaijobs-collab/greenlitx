@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GreenlitX — The audience decides what gets made</title>
 <meta name="description" content="GreenlitX is a film platform where audiences help decide which movies get made. Prototype / demonstration website.">
-<link rel="stylesheet" href="styles.css?v=8">
+<link rel="stylesheet" href="styles.css?v=9">
 <link rel="icon" type="image/webp" href="logo.webp">
 </head>
 <body>
@@ -42,6 +42,8 @@
   <!-- ============ VIEW: HOME ============ -->
   <section id="view-home" class="view" aria-label="Home">
     <div class="hero">
+      <video class="hero-video" autoplay muted loop playsinline poster="videos/hero-poster.webp" aria-hidden="true" tabindex="-1"><source src="videos/hero-reel.mp4" type="video/mp4"></video>
+      <div class="hero-shade" aria-hidden="true"></div>
       <div class="hero-x" aria-hidden="true">X</div>
       <div class="hero-inner">
         <p class="hero-kicker">GREENLIT X — A FILM PLATFORM POWERED BY ITS AUDIENCE</p>
@@ -60,6 +62,18 @@
         <p class="fineprint">Statistics above are demonstration figures for this prototype.</p>
       </div>
     </div>
+
+    <section class="section teaser-section" aria-labelledby="teaser-heading">
+      <div class="section-head">
+        <h2 id="teaser-heading">The teaser</h2>
+      </div>
+      <p class="section-intro">The whole idea in 23 seconds: who decided what got made for a hundred years — and who decides now.</p>
+      <div class="teaser-frame">
+        <video controls preload="metadata" playsinline poster="videos/teaser-poster.webp" aria-label="GreenlitX teaser — the audience decides">
+          <source src="videos/teaser.mp4" type="video/mp4">
+        </video>
+      </div>
+    </section>
 
     <section class="section" aria-labelledby="featured-heading">
       <div class="section-head">
@@ -295,12 +309,12 @@
   <p class="footer-logo"><img class="footer-logo-img" src="logo.webp" alt="GreenlitX" width="1600" height="1600"></p>
   <p class="footer-slogan">"Hollywood decides what gets made today. On GreenlitX, the audience does."</p>
   <p><strong>Prototype / Demonstration.</strong> All sample projects, filmmakers, votes, pledges and statistics are fictional demonstration content. Voting and pledging are simulated in your browser only; no money is collected and no financial returns are promised or implied.</p>
-  <p class="fineprint">GreenlitX is in early prototype development. Film posters use real photography, credited in the project README; the films themselves are fictional.</p>
+  <p class="fineprint">GreenlitX is in early prototype development. Film posters and concept footage are real photography and film, credited in the project README; the films themselves are fictional.</p>
 </footer>
 
 <noscript><p class="noscript-note">This GreenlitX prototype needs JavaScript enabled to display film projects and demonstrations.</p></noscript>
 
-<script src="data.js?v=8"></script>
-<script src="app.js?v=8"></script>
+<script src="data.js?v=9"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>

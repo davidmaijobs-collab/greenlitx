@@ -319,7 +319,10 @@ function posterSVG(film, context) {
 
 /* Real key art (original generated artwork) lives at posters/<film-id>.webp */
 function posterArt(film) {
-  return '<img class="poster-img" src="posters/' + film.id + '.webp" width="880" height="1320" loading="lazy" alt="Key art for ' + escapeHtml(film.title) + ' — original artwork created for this demonstration project">';
+  return '<img class="poster-img" src="posters/' + film.id + '.webp" width="880" height="1320" loading="lazy" alt="Poster photograph for ' + escapeHtml(film.title) + ' — demonstration project">';
+}
+function posterVideo(film) {
+  return '<video class="poster-video" src="videos/' + film.id + '.mp4" poster="posters/' + film.id + '.webp" autoplay muted loop playsinline aria-label="Concept footage for ' + escapeHtml(film.title) + ' (demonstration)"></video>';
 }
 
 function filmCard(film, context) {
@@ -469,9 +472,8 @@ function renderFilmDetail(id) {
 
   el.innerHTML =
     '<div class="detail-layout">' +
-    '<div><div class="poster detail-poster">' + posterArt(film) + '</div>' +
-    '<div class="trailer-placeholder" role="note"><span class="play-mark" aria-hidden="true">▶</span>' +
-    '<strong>Trailer placeholder</strong>No trailer exists yet for this demonstration project.</div></div>' +
+    '<div><div class="poster detail-poster">' + posterVideo(film) + '</div>' +
+    '<div class="footage-note" role="note">Concept footage — real stock film illustrating this project\'s world. It is not footage from the film itself.</div></div>' +
     '<div class="detail-main">' +
     '<h1 tabindex="-1">' + escapeHtml(film.title) + '</h1>' +
     '<p class="logline">' + escapeHtml(film.logline) + '</p>' +

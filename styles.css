@@ -266,6 +266,21 @@ main { display: block; }
 @media (max-width: 640px) {
   .hero { padding: 3rem 1rem 2.25rem; }
 }
+.hero-video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+}
+.hero-shade {
+  position: absolute; inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(5, 7, 10, 0.62) 0%, rgba(5, 7, 10, 0.48) 45%, rgba(5, 7, 10, 0.78) 100%),
+    radial-gradient(760px 380px at 50% 42%, rgba(5, 7, 10, 0.42), rgba(5, 7, 10, 0) 70%);
+}
 .hero-x {
   position: absolute;
   top: -8.5rem;
@@ -420,7 +435,7 @@ main { display: block; }
 }
 .poster-link { display: block; }
 .poster { aspect-ratio: 2 / 3; background: #000; overflow: hidden; }
-.poster svg, .poster img { width: 100%; height: 100%; display: block; object-fit: cover; transition: transform 0.35s ease; }
+.poster svg, .poster img, .poster video { width: 100%; height: 100%; display: block; object-fit: cover; transition: transform 0.35s ease; }
 .card:hover .poster svg, .card:hover .poster img { transform: scale(1.03); }
 .card-body { padding: 1.05rem 1.15rem 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
 .card h3 { margin: 0.1rem 0 0; font-size: 1.15rem; overflow-wrap: break-word; }
@@ -579,14 +594,19 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); }
 .detail-section h2::after { width: 40px; }
 .detail-section p { color: var(--muted); max-width: 68ch; }
 
-.trailer-placeholder {
-  margin-top: 1.8rem;
-  border: 2px dashed var(--border); border-radius: var(--radius);
-  padding: 2.2rem 1rem; text-align: center; color: var(--muted);
-  background: #05070a;
+.footage-note {
+  margin-top: 0.9rem;
+  font-size: 0.85rem; line-height: 1.5; color: var(--muted);
+  text-align: left;
 }
-.trailer-placeholder .play-mark { font-size: 2rem; color: var(--accent); display: block; margin-bottom: 0.4rem; }
-.trailer-placeholder strong { color: var(--text); display: block; }
+.teaser-frame {
+  max-width: 880px; margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  overflow: hidden;
+}
+.teaser-frame video { width: 100%; height: 100%; display: block; object-fit: cover; }
 
 .action-panel {
   margin-top: 1.8rem;
@@ -631,7 +651,8 @@ form { margin-top: 1.4rem; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .card, .btn, .progress .bar, .poster svg, .poster img { transition: none; }
+  .card, .btn, .progress .bar, .poster svg, .poster img, .poster video { transition: none; }
+  .hero-video { display: none; }
   .hero .hero-kicker,
   .hero .hero-slogan,
   .hero .hero-sub,

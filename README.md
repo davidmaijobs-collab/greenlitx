@@ -102,6 +102,38 @@ as-is. Deployment is intentionally **not** configured in this prototype step.
   Ibañez, Pexels License (free to use), via Pexels:
   https://www.pexels.com/photo/38863226/
 
+## Concept footage credits
+
+Each project page plays a short muted concept clip, and the homepage hero
+runs a showreel cut from the same footage. All footage is real film —
+no AI-generated video — free-licensed as follows:
+
+- **The Last Signal** (hero + project clip) — "La Silla Timelapse", ESO /
+  José Francisco Salgado, CC BY 4.0, via Wikimedia Commons.
+- **Harvest of Salt** — salt-flat mirror footage, via Pixabay (Pixabay
+  Content License): cdn.pixabay.com/video/2022/11/25/140470-775192202
+- **The Vanishing Reef** — "Sea turtle in North Sulawesi", Marwan Mohamad,
+  CC BY-SA 4.0, via Wikimedia Commons.
+- **Paper Moons** — "Releasing sky lanterns at the CAD Khomloy Sky Lantern
+  Festival", ManoiCMU, CC BY 4.0, via Wikimedia Commons.
+- **The Night Auditor** — grand hotel lobby footage, via Pixabay (Pixabay
+  Content License): cdn.pixabay.com/video/2026/07/09/362909
+- **Second Helpings** — Korean street-food market footage, via Pixabay
+  (Pixabay Content License): cdn.pixabay.com/video/2019/06/23/24602-344986228
+
+## Teaser credits
+
+The homepage teaser ("The audience decides", 23 seconds) is cut from:
+
+- **Night of the Living Dead (1968) theatrical trailer** — public domain,
+  via Wikimedia Commons.
+- Film-set, mass-crowd and confetti-crowd clips — via Pixabay (Pixabay
+  Content License): cdn.pixabay.com/video/2015/10/16/992-142621119,
+  cdn.pixabay.com/video/2017/09/05/11832-233049403,
+  cdn.pixabay.com/video/2016/04/03/2657-865412760
+- Sky-lantern footage — ManoiCMU, CC BY 4.0, via Wikimedia Commons (as
+  credited above).
+
 ## Planned next steps
 
 - Real backend with verified accounts and platform-wide voting
