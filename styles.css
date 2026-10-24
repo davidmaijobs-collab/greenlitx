@@ -28,6 +28,7 @@
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  overflow-x: clip; /* clip (unlike hidden) does not break position: sticky */
 }
 
 body {
@@ -38,6 +39,7 @@ body {
   line-height: 1.55;
   font-size: 16px;
   overflow-x: hidden;
+  overflow-x: clip; /* clip (unlike hidden) does not break position: sticky */
 }
 
 img, svg, video { max-width: 100%; }
