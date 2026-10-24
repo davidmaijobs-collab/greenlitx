@@ -472,18 +472,27 @@ async function renderAccount() {
       "<button class='btn' type='submit' name='mode' value='signup'>Create account</button>" +
       "<p class='form-msg' id='auth-msg' role='status'></p>" +
       "<p style='margin-top:0.6rem'><button type='button' class='btn btn-ghost' id='forgot-btn'>Forgot password?</button></p>" +
+      "<div id='forgot-panel' hidden style='margin-top:0.6rem'>" +
+      "<div class='field'><label for='forgot-email'>Email for the reset link</label><input id='forgot-email' type='email' autocomplete='email'></div>" +
+      "<button type='button' class='btn' id='forgot-send'>Send reset email</button>" +
+      "<p class='form-msg' id='forgot-msg' role='status'></p></div>" +
       "<p class='fineprint'>New accounts confirm by email first. We store your email, an optional display name, your Green Lights and follows — nothing else. No ads, no selling data.</p></form>";
-    $("#forgot-btn").addEventListener("click", async () => {
-      const msg = $("#auth-msg");
-      const entered = window.prompt("Enter your account email and we'll send you a password reset link:", $("#a-email").value.trim());
-      if (entered == null) return;
-      const email = entered.trim();
-      if (!email) { msg.textContent = "Enter an email address first, then tap Forgot password."; return; }
-      msg.textContent = "Sending your reset email…";
+    $("#forgot-btn").addEventListener("click", () => {
+      const panel = $("#forgot-panel");
+      const input = $("#forgot-email");
+      if (input && !input.value.trim()) input.value = $("#a-email").value.trim();
+      panel.hidden = !panel.hidden;
+      if (!panel.hidden && input) input.focus();
+    });
+    $("#forgot-send").addEventListener("click", async () => {
+      const status = $("#forgot-msg");
+      const email = $("#forgot-email").value.trim();
+      if (!email) { status.textContent = "Enter your email address to get a reset link."; return; }
+      status.textContent = "Sending your reset email…";
       try {
         const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
-        msg.textContent = error ? "That didn't work: " + error.message : "Reset email sent — check your inbox and tap the link to set a new password.";
-      } catch (err) { msg.textContent = "That didn't work: " + (err.message || "unknown error"); }
+        status.textContent = error ? "That didn't work: " + error.message : "If an account exists for that email, a reset link is on its way.";
+      } catch (err) { status.textContent = "That didn't work: " + (err.message || "unknown error"); }
     });
     $("#auth-form").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -705,6 +714,7 @@ $("#submit-form").addEventListener("submit", async (e) => {
   btn.disabled = true;
   msg.textContent = "Sending your submission…";
   const row = {
+    id: crypto.randomUUID(),
     user_id: server.user ? server.user.id : null,
     contact_name: entry.name,
     contact_email: entry.email,
@@ -721,7 +731,7 @@ $("#submit-form").addEventListener("submit", async (e) => {
     pitch_video_url: entry.video || null,
     notes: null
   };
-  const { data, error } = await sb.from("submissions").insert(row).select("id").single();
+  const { error } = await sb.from("submissions").insert(row);
   btn.disabled = false;
   if (error) {
     msg.textContent = "That didn't send: " + error.message + " Your entries are still in the form — please try again.";
@@ -729,7 +739,7 @@ $("#submit-form").addEventListener("submit", async (e) => {
   }
   e.target.reset();
   save("glx2_submit_draft", {});
-  msg.textContent = "Received — thank you. Your submission is with the GreenlitX review team; nothing is published automatically. Reference: " + data.id.slice(0, 6) + "…" +
+  msg.textContent = "Received — thank you. Your submission is with the GreenlitX review team; nothing is published automatically. Reference: " + row.id.slice(0, 6) + "…" +
     (server.user ? " Track its status under Account → My submissions." : " Create a free account before submitting next time to track its status.");
 });
 $("#pro-form").addEventListener("submit", async (e) => {
@@ -745,21 +755,23 @@ $("#pro-form").addEventListener("submit", async (e) => {
   const btn = e.target.querySelector("button[type='submit']");
   btn.disabled = true;
   msg.textContent = "Registering your interest…";
-  const { data, error } = await sb.from("pro_interest").insert({
+  const proRow = {
+    id: crypto.randomUUID(),
     user_id: server.user ? server.user.id : null,
     name: name,
     email: email,
     role_category: role,
     portfolio_url: portfolio || null,
     note: note || null
-  }).select("id").single();
+  };
+  const { error } = await sb.from("pro_interest").insert(proRow);
   btn.disabled = false;
   if (error) {
     msg.textContent = "That didn't send: " + error.message + " Your entries are still in the form — please try again.";
     return;
   }
   e.target.reset();
-  msg.textContent = "Interest registered — welcome aboard. Reference: " + data.id.slice(0, 6) + "… This is an expression of interest only, not a job offer; the team will reach out when productions are staffed.";
+  msg.textContent = "Interest registered — welcome aboard. Reference: " + proRow.id.slice(0, 6) + "… This is an expression of interest only, not a job offer; the team will reach out when productions are staffed.";
 });
 window.addEventListener("hashchange", render);
 window.addEventListener("pageshow", (e) => { if (e.persisted) render(); });
