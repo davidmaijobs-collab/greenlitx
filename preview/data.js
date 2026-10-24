@@ -7,29 +7,29 @@ const FILMS = [
   "genre": "Sci-fi mystery",
   "productionType": "HYBRID",
   "productionNote": "Physical cab, tunnel and station sets carry the performances, while the drowned city above and the impossible train itself are built as digital environments.",
-  "logline": "In a New York half-surrendered to the sea, night driver Marta Reyes keeps the last subway line running below the waterline — until a train that is not on any schedule arrives carrying passengers who beg her not to reach the final station, because they have already lived what happens there.",
+  "logline": "Forty years after the sea took lower New York, Night Line driver Maren Okafor boards a train that should not exist — lit, dry, and carrying passengers from a future where her own train is already lost — and an old man aboard gives her the date it happens: eleven days from now.",
   "tagline": "Some trains arrive from tomorrow",
-  "synopsis": "Thirty years after the surge walls failed, New York is two cities: the towers above the tide, and the pumped, dripping tunnels below, where driver Marta Reyes runs the night shuttle that keeps the dock wards connected. At 3:12 a.m. a train rolls into Canal Street that matches no roster — its cars dry inside, its passengers calm, its destination board reading a station demolished a decade ago. They know Marta's name. They know her brother Tomas, who drowned at fourteen, is waiting at the end of the line, older than she is. Transit Command orders the train impounded and its passengers erased from the record. Marta, who has driven past her grief every night for twenty years, unhooks the train and drives it herself toward a terminus that should not exist — to learn whether the future below the water is a warning she can still refuse.",
+  "synopsis": "Forty years after the Deluge Years drowned the lower third of New York, the city endures in two halves: the Crown, a glittering archipelago of towers, and the Below — the flooded subway network where the poor live in converted stations and pump crews fight the water. Maren Okafor has driven the Night Line through the drowned tunnels for nineteen years. On the last run of a storm shift, her sonar finds another train on a sealed spur: lit, running, and full of passengers in dry, modern clothes who are terrified of her — because to them, she is a figure from a disaster documentary they watched as children. One passenger knows her name, and the date her train will be lost with all hands: the equinox storm surge, eleven days away.",
   "characters": [
    {
-    "name": "Marta Reyes",
-    "role": "Night subway driver, 44",
-    "note": "A former transit engineer who took the night runs after her brother drowned in the first tunnel flood. She wants one thing she will not say aloud: a version of events in which she was on that platform in time."
+    "name": "Maren Okafor",
+    "role": "Night Line driver, 41",
+    "note": "Daughter of a pump engineer who died in the Deluge Years; she was meant to be on his last evacuation detail and was late. She survives by routine — and must break every rule of the timetable to save her passengers."
    },
    {
-    "name": "Tomas Reyes",
-    "role": "Passenger, impossibly aged 34",
-    "note": "Marta's brother, dead at fourteen in every record that exists, rides the mystery train as a grown man with a conductor's key. He is trying to deliver a warning without collapsing the future that sent him back."
+    "name": "Doyle Reyes",
+    "role": "Chief dispatcher, 58",
+    "note": "Maren's mentor and closest thing to family. He lost a train and eleven passengers in his second year and has run the network scared ever since; he must choose between the timetable and the woman telling him it is a lie."
    },
    {
-    "name": "Inspector June Halloway",
-    "role": "Transit Command investigator",
-    "note": "Tasked with proving the train is a hoax before morning rush. Halloway lost her own family to the surge and built a career on never believing in miracles; the passenger manifest carries her handwriting."
+    "name": "The Old Man — \"Passenger Zero\"",
+    "role": "Phantom-train passenger, 80s",
+    "note": "The only passenger who speaks to Maren aboard the impossible train. In his timeline she is a cautionary tale told to trainee drivers. Ghost, survivor, or a warning the future sent itself — he knows her better than she knows herself."
    },
    {
-    "name": "Ezra Cole",
-    "role": "Signal technician and Marta's only friend below ground",
-    "note": "A cheerful agoraphobe who has not surfaced in eleven years and knows every abandoned spur by ear. He wants Marta to live; he is the first to understand the train is not asking her to."
+    "name": "Ines Okafor",
+    "role": "Crown hydrologist, 34",
+    "note": "Maren's younger sister, whose surge models are suppressed by the Harbor Authority because they would panic the property market. Estranged since their father's funeral; the sisters must reconcile science and instinct — and each other — before the equinox."
    }
   ],
   "runtime": "112 min",
@@ -198,29 +198,29 @@ const FILMS = [
   "genre": "Sci-fi epic",
   "productionType": "AI FILM",
   "productionNote": "A planetary-scale event — two moons over every skyline on Earth, ancient sites seen at impossible scales — is precisely the imagery generative production renders at epic scope on an independent budget.",
-  "logline": "On a single ordinary night, a second moon rises over the whole Earth at once — pale, craterless, and exactly where the oldest star charts in human history insist something used to be.",
+  "logline": "A second moon rises over the Earth that was not there at sunset. Lunar geologist Yuki Amamiya is the first to prove it is not arriving but returning — on a 3,700-year cycle that ended the Bronze Age — and that the true danger is the night it turns solid, when its gravity arrives all at once.",
   "tagline": "The sky changed. So did we",
-  "synopsis": "It appears between one midnight and the next: a second moon, smaller, smooth as an egg, raising wrong tides and older questions. It has mass but no heat, and its surface reflects cities upside down. While governments argue physics and crowds split between worship and panic, lunar geologist Ines Halvorsen sees what the news cycles miss: the orbit is not natural but kept, adjusted in increments matching inscriptions at Göbekli Tepe, Nan Madol and a drowned temple off Okinawa. The second moon is not arriving. It is returning to an orbit it held when humans first looked up, tended by something that has waited for us to notice. As tides climb and an intercept mission is rushed upward, Ines must translate a message written in orbital mechanics — before every navy on Earth treats it as a target.",
+  "synopsis": "On a clear October night, a second moon rises over the whole Earth at once. Smaller and darker than the first, it casts no shadow and radar passes through it — yet within days the tides begin answering to it, and so does something older: carved stones, tide temples, and a bronze mechanism raised from a Bronze Age shipwreck all depict two moons, and all stop depicting anything shortly after. Dr. Yuki Amamiya, a lunar geologist whose career stalled with her cancelled mission, proves the impossible: the moon is phasing back into visibility on a cycle of roughly 3,700 years, as it did over the Bronze Age world shortly before that world collapsed. Governments treat it as a defense problem; cults as a god; Yuki as a deadline.",
   "characters": [
    {
-    "name": "Ines Halvorsen",
-    "role": "Lunar geologist, 39",
-    "note": "She lost her research post for insisting ancient sky myths were data, not decoration. The second moon vindicates her life's work at the exact moment the world stops rewarding people for being right."
+    "name": "Dr. Yuki Amamiya",
+    "role": "Lunar geologist, 38",
+    "note": "Brilliant, abrasive, and professionally radioactive since she publicly accused her agency of fudging mission data. She has been right and ignored before, at cost; this time the cost of being ignored is the coastline of the world."
    },
    {
-    "name": "Commander David Oyelaran",
-    "role": "Intercept mission commander",
-    "note": "The astronaut chosen to fly to the object because he is calm, televisable and expendable in that order. He carries his grandmother's star stories the way other men carry orders."
+    "name": "Commander Ruth Okafor-Vance",
+    "role": "Head of the Orbital Anomaly Directorate, 52",
+    "note": "A career officer tasked with keeping twelve governments from shooting at a moon. She becomes Yuki's reluctant patron and only bridge to power, and must choose between containment and publishing everything, live."
    },
    {
-    "name": "President Mara Whitlock",
-    "role": "U.S. President facing a sky she cannot classify",
-    "note": "A former science teacher governing a species split between kneeling and aiming. Her motivation is time: every faction wants her to decide before anyone understands, and understanding is her only weapon."
+    "name": "Niko Petrakis",
+    "role": "Aegean salvage diver, 45",
+    "note": "Ex-navy diver who pulls the first two-moon artifact from a wreck he was hired — by persons unknown — specifically to find. His thread uncovers that the mechanism's makers did not fear the second moon's arrival. They feared its departure."
    },
    {
-    "name": "old Tenzin",
-    "role": "Ladakhi sky-watcher and keeper of a 900-year observational record",
-    "note": "His monastery's scrolls logged the second moon's last visit in the year their calendar calls the Listening. He is not surprised by its return; he is frightened by how late it is."
+    "name": "Tomás Irrarázaval and Elian",
+    "role": "Lighthouse keeper, 60, and his brother, 57",
+    "note": "Tomás keeps the light on the Atacama coast and cares for Elian, who does not speak — and whose paintings, dismissed for a decade as symptoms, rendered the second moon's exact orbital drift years before it appeared. In the final movement, Elian paints something new."
    }
   ],
   "runtime": "138 min",
@@ -313,29 +313,29 @@ const FILMS = [
   "genre": "Animated fantasy",
   "productionType": "ANIMATION",
   "productionNote": "Hand-crafted animation is the story itself: lost objects built from mismatched, salvaged materials let the film's world wear its theme in every frame.",
-  "logline": "When eleven-year-old Wren Alvarez loses her late mother's voice from the family answering machine, she follows a escaped umbrella into the Hollow — the country where every forgotten thing wakes up alive, and where memories are being stolen by a Keeper who has forgotten why he collects them.",
+  "logline": "Eleven-year-old Wren Halloway falls through her linen closet into the Hollow — the twilight world where forgotten things wake up alive — and finds Mr. Buttons, the bear she lost, alive there and a stranger. She has until the long dusk ends to be loved by him again for who he is now, before he dissolves into the Mothlight.",
   "tagline": "Everything lost is waiting somewhere",
-  "synopsis": "The Hollow lies behind every lost-and-found in the world, and it is in trouble: a one-legged ballerina music box, a battalion of single socks, a brave and increasingly transparent library book — citizens going Quiet, fading grey as the humans who loved them forget them completely. Eleven-year-old Wren Alvarez arrives chasing the last recording of her mother's laugh, erased when her father replaced the answering machine. The Hollow's Keeper, a vast gentle hoarder built from other people's childhoods, has been stealing memories from the fading to keep himself remembered — and the greying is speeding toward the one memory Wren cannot lose twice. Her only guide is a cowardly umbrella who once belonged to a king. Her only weapon is an offer no one has ever made the Keeper: to be remembered on purpose, by someone, for the first time.",
+  "synopsis": "Everyone knows where lost things go in stories. Nobody asks what happens to them when they are not lost, just forgotten: the umbrella left on a train in 1987, the imaginary friend of a boy who turned ten. They go to the Hollow, a twilight world grown from everything humanity has stopped remembering, where forgotten objects wake up alive — an umbrella becomes a gangly heron-like bird, a house key a brass fox trotting toward a door that no longer exists, a teddy bear something close to a king. Wren Halloway, eleven, is being sent to live with an aunt while her mother undergoes treatment no one will describe honestly. On her last night at home she cannot find Mr. Buttons, the bear her late father gave her — and falls through the linen closet into the Hollow, where Buttons is alive, and does not know her.",
   "characters": [
    {
-    "name": "Wren Alvarez",
-    "role": "Eleven-year-old girl, the last Rememberer",
-    "note": "Practical, furious and funny, Wren keeps inventories of everything so nothing can ambush her the way grief did. Her journey is not learning to let go; it is learning that remembering is a verb, not an archive."
+    "name": "Wren Halloway",
+    "role": "Eleven-year-old girl",
+    "note": "Fierce, funny, and furious at adults who keep saying 'grown-up reasons.' She manages grief by refusing to lose. Motivation: recover Mr. Buttons before the move — if she can keep one thing from her old life, she can pretend the rest is not changing. Arc: from grasping to gratitude."
    },
    {
-    "name": "Bumbershoot",
-    "role": "A king's umbrella, deserter of the Hollow Guard",
-    "note": "Once held over royalty, now terrified of rain, Bumbershoot abandoned his post when the Quiet took his regiment. He guides Wren for the coward's reason — she is the first human in years who looks at him properly — and stays for a braver one."
+    "name": "Mr. Buttons",
+    "role": "A teddy bear, steward of the Nursery Glades",
+    "note": "A bear of considerable dignity, where newly forgotten toys arrive frightened and small. Kind to everyone, remembering no one — he experiences his forgetting not as tragedy but as peace, and comes to love Wren as a new friend: both her hope, and the knife in it."
+   },
+   {
+    "name": "Pell, the Brass Fox",
+    "role": "A house key, the Hollow’s oldest creature",
+    "note": "A door-key from a demolished house, still trying to get home after a century. Comic, cowardly, and the only creature who remembers everything — a key's nature is to fit one specific lock; he cannot forget without ceasing to exist. Wren's guide, and the film's secret historian."
    },
    {
     "name": "The Keeper",
-    "role": "Hoarder of the Hollow, built of memories",
-    "note": "A mountain of a creature assembled from ten thousand childhoods, none of them his — he was the first toy ever forgotten and never had a child of his own. He steals memories because being remembered is the only proof he exists; he is a villain made entirely of loneliness."
-   },
-   {
-    "name": "Pilar Alvarez",
-    "role": "Wren's father, present in memory and at home",
-    "note": "A kind man dismantling his late wife's belongings one box at a time because standing still hurts worse. He erased the answering machine in a spasm of love, and his daughter's disappearance into the Hollow is the bill arriving."
+    "role": "Shepherd of the Hollow",
+    "note": "Immense, slow, kind-eyed, assembled from lost wedding rings, left gloves, unsent letters, and ten thousand imaginary friends. Not a villain — something sadder: it has carried everyone else's forgetting so long it has begun, deliberately, to set things down — including, soon, itself."
    }
   ],
   "runtime": "96 min",
@@ -504,29 +504,29 @@ const FILMS = [
   "genre": "Legal sci-fi thriller",
   "productionType": "HYBRID",
   "productionNote": "Courtrooms and offices stay resolutely physical and real — the impossible element is only ever the footage itself, rendered as seamless digital insertions into a believable world.",
-  "logline": "Prosecutor Elena Marsh receives a time-stamped video of a murder seventy-two hours before it happens, showing a face she knows: her own star witness. To prevent the killing she must build a case against a man for a crime that does not exist — without destroying the trial, or the future, that produced the tape.",
+  "logline": "Senior prosecutor Ada Okonkwo receives a drive containing flawless video of a murder — timestamped tomorrow, 11:47 p.m. The victim is alive, the evidence is real, and the company that produced it has been selling 'pre-witness material' for two years. She has twenty-six hours to stop a killing her proof may be causing.",
   "tagline": "The evidence hasn't happened yet",
-  "synopsis": "The package contains no note, just a drive: ninety seconds of ordinary security footage showing fixer Anton Vega shot dead in a parking structure — dated three days from now. Prosecutor Elena Marsh is building the corruption case of her career on Vega's testimony, which makes her the one person who cannot dismiss the tape. Warn him, and she contaminates her case; protect him, and she abets whoever is filming the future. Forensics calls the footage physically real and technologically impossible; her investigator finds the camera it was shot from — installed next Tuesday. Then a defense attorney begins filing motions citing evidence not yet in existence, one move ahead, politely. A courtroom thriller about the moment proof stops being the hard part: the tape is genuine, the danger is genuine, and a man's recorded death can only be argued in grammar — past tense versus future.",
+  "synopsis": "Adaeze 'Ada' Okonkwo is her city's youngest senior prosecutor and its most careful: she has never charged a case she could not prove twice. Her record is not ambition — it is penance. At nineteen, her older brother Chidi was convicted of murder on eyewitness testimony she always believed was wrong; he served eleven years before DNA freed him. On the night before her biggest trial, an anonymous drive is left at her office. On it: bodycam-quality video of a murder. The victim is Daniel Reyes, fixer for the man she is prosecuting. The killer's face is visible. The timestamp is tomorrow, 11:47 p.m. And Reyes is alive. Three labs confirm the footage is not fake — its provenance is impossible rather than forged. Worse, the video is not unique: Meridian Analytics has been selling 'pre-witness material' to insurers and governments for two years.",
   "characters": [
    {
-    "name": "Elena Marsh",
-    "role": "Deputy district attorney, 43",
-    "note": "A prosecutor famous for losing gracefully never — her conviction rate is her identity. Her motivation is the case of her career, until the tape makes her choose between the verdict she has built for two years and the life of the man who would deliver it."
+    "name": "Adaeze \"Ada\" Okonkwo",
+    "role": "Senior prosecutor, 36",
+    "note": "Precise, controlled, funny only in footnotes. The case is her career's summit and her family's wound in one file. Arc: from trusting only what she can prove to acting on what she can only believe — then defending that act under oath."
    },
    {
-    "name": "Anton Vega",
-    "role": "The witness, fixer, and the man in the footage",
-    "note": "A professional intermediary who has laundered favors for a decade and is trading testimony for immunity. Told he is going to die on Friday, he becomes the film's wild card: a man with seventy-two hours, a lifetime of other people's secrets, and no reason left to keep any of them."
+    "name": "Chidi Okonkwo",
+    "role": "Her brother, exonerated after eleven years, 44",
+    "note": "Now running a legal-aid clinic, estranged from his sister. The film's moral counterweight and its evidence of what certainty does; his refusal to let her 'use' his story powers the third act."
    },
    {
-    "name": "Silas Crane",
-    "role": "Defense counsel who knows too much",
-    "note": "The opposing attorney files motions referencing evidence that does not yet exist, politely, in advance. Whether he is the tape's source, its author or its other recipient is the question Marsh cannot afford to ask out loud in her own courtroom."
+    "name": "Daniel Reyes",
+    "role": "The fixer marked for death, 41",
+    "note": "Charming, corrupt, and genuinely terrified — he has seen the video too, and parts of it are wrong in ways only he would know. Ada's unwilling client and hostile witness; eventually the only person who understands her position exactly."
    },
    {
-    "name": "Detective June Park",
-    "role": "Marsh's investigator",
-    "note": "A methodical former crime-lab chief who trusts physics over people. Park is the only one who treats the tape as a crime scene rather than a prophecy — and the only one frightened by what the camera angles prove about who must have filmed it."
+    "name": "Julian Voss",
+    "role": "The face of Meridian Analytics, 48",
+    "note": "A former actuary who speaks about predictive evidence the way priests speak about providence — and who may not know whether his model predicts murders or schedules them."
    }
   ],
   "runtime": "116 min",
@@ -999,29 +999,29 @@ const FILMS = [
   "genre": "Supernatural horror",
   "productionType": "LIVE ACTION",
   "productionNote": "Horror this intimate is built on a real voice in a real booth at 3 a.m.; practical production keeps the dread grounded in performance and sound.",
-  "logline": "Night-shift radio host Daniel Okafor's call-in show for insomniacs starts receiving regulars who give their names, their streets — and their dates of death, all decades ago.",
+  "logline": "Overnight radio host Viv Cross despises her station's 'Ghost Week' stunt — until a caller named Ruthie describes the night she drowned in 1952 in details no living person could assemble, and the dead begin queueing to be heard, in the order of a single night in 1979.",
   "tagline": "Don't answer after midnight",
-  "synopsis": "Daniel Okafor, 44, hosts 'The Night Frequency' on a fading AM station in Cleveland — four hours of talk for truckers, nurses and the chronically awake. His producer keeps a log of the 'ghost callers': polite, specific people who describe the city as it was in 1962, 1978, 1994, and always, eventually, mention the night they died. Daniel treats it as a running gag until a caller describes Daniel's own childhood kitchen, the fire that took his younger brother, and a detail no report ever printed. Researching the callers in the station's own tape archive, Daniel and the station's young engineer find the calls arrive in a pattern tied to the AM band's dead spots across the city — and that the pattern is counting down to a date three weeks away, on which the next caller, according to the archive, will be Daniel himself.",
+  "synopsis": "KDXL, 1210 AM, broadcasts to truckers, insomniacs, and the lonely from a crumbling studio above a closed diner outside Bakersfield. Its overnight show, The Night Desk, is hosted by Vivian 'Viv' Cross, a former investigative reporter ruined by a libel suit and a bottle. On the first night of the ratings stunt she despises — Ghost Week — a caller named Ruthie describes the night the 1952 flood took her street. Ruthie Ellison drowned in 1952. She was nine. The call airs live; by the next night, the dead are queueing. Viv verifies — names, dates, details no living person could assemble. And she hears a pattern no one else can: the dead are calling in the order of a single night, building toward a death in that studio in 1979 — and toward one final call, from her brother, who died at seventeen in a car she was driving.",
   "characters": [
    {
-    "name": "Daniel Okafor",
-    "role": "Radio host, protagonist",
-    "note": "Warm, funny and completely armored; the show is where he hides from a brother's death he has never discussed on air. The callers know it, and they are patient."
+    "name": "Vivian \"Viv\" Cross",
+    "role": "Overnight host, 47",
+    "note": "Ex-investigative reporter; sardonic, meticulous, a functioning alcoholic whose fact-checking is the last load-bearing wall of her self-respect. Arc: from using the dead as a comeback to protecting them as sources — what a journalist owes the dead, and what a sister owes."
    },
    {
-    "name": "Ruth Calloway (caller)",
-    "role": "Recurring ghost caller",
-    "note": "A retired schoolteacher who died in 1987 and calls every Tuesday with perfect manners and terrifying specifics. She claims she is not haunting Daniel — she is warning him, and she is running out of credit."
+    "name": "Marlowe \"Marl\" Quinn",
+    "role": "Station engineer, 71",
+    "note": "KDXL's engineer since 1974 — the only living person who was in the building the night the original host died. He knows exactly what the frequency does: he built the modification that lets it happen, in 1979, for a woman whose voice he still cannot forget."
    },
    {
-    "name": "Jess Marlowe",
-    "role": "Station engineer",
-    "note": "Twenty-six, skeptical, and the only other person who has heard the tapes. Her signal-mapping of the calls turns folklore into geography, and geography into a deadline."
+    "name": "Denise Okafor-Pryce",
+    "role": "Debunking podcaster, 39",
+    "note": "Host of the hit podcast Cold Open and Viv's former protégée, who publicly dismantles each call as fraud — and privately recognizes one caller as her own grandfather. Antagonist turned unwilling corroborator; the cost of a brand built on certainty."
    },
    {
-    "name": "Frank Della",
-    "role": "Station owner",
-    "note": "Seventy, selling the station to a syndicate at the end of the month. The ghost callers are the best ratings the station has ever had, and Frank is not asking questions he would have to answer."
+    "name": "The Callers",
+    "role": "The dead, in order",
+    "note": "Principally Ruthie (nine, 1952), the audience's heart; the Pianist (1963), who is not calling to speak to the living at all but to make sure someone specific is listening; and, withheld until the climax, Daniel Cross — seventeen, dead twenty-eight years, Viv's brother."
    }
   ],
   "runtime": "101 min",

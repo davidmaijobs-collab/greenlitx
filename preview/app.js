@@ -257,4 +257,5 @@ $("#submit-form").addEventListener("submit", (e) => {
   renderSubmissions();
 });
 window.addEventListener("hashchange", render);
+window.addEventListener("pageshow", (e) => { if (e.persisted) render(); });
 render();
