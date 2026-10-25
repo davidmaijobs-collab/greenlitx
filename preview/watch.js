@@ -1,4 +1,4 @@
-/* GreenlitX — Watch Free catalog. ERA-ONLY 1970–2019 (owner decision 2026-10-24): 33 verified titles; every embed was checked against its official source (see watchfree/ for the verification records and rights notes). Entries with a watch-covers/ posterUrl use covers created in-house (generated thematic art + the film's real title) because the source provided no presentable cover; all other posters are the providers' own. */
+/* GreenlitX — Watch Free catalog. Replaced in Wave A (2026-10-25) with master/watchfree-verified.json: 33 verified titles, era-only 1970-2019 (owner decision 2026-10-24), incl. 3 metadata repairs (Star Wreck rights note; Valkaama director Tim Baumann + rights note). Every embed was checked against its official source; entries with a watch-covers/ posterUrl use covers created in-house. */
 window.WATCH_FREE = [
  {
   "category": "modern",
@@ -235,7 +235,7 @@ window.WATCH_FREE = [
   ],
   "id": "star-wreck-in-the-pirkinning",
   "posterUrl": "watch-covers/star-wreck-in-the-pirkinning.webp",
-  "rightsNote": "Released free by its producers, Energia Productions, under a Creative Commons license (officially CC BY-NC-ND 3.0) — the basis relied on here. Note: this Internet Archive item carries a CC BY-SA 3.0 mark that does not match the producers' stated license, and it is a third-party upload of the producers' free release. Verified via archive.org metadata API: item StarWreckInThePirkining, complete film (6,211s).",
+  "rightsNote": "Basis relied on: the producers' own free release — Energia Productions released the film under Creative Commons BY-NC-ND 3.0, which permits non-commercial sharing of the unmodified film; this shelf embeds it unmodified through the Internet Archive's official player and does not re-host it. Do NOT cite this Archive item's own license mark (CC BY-SA 3.0, a third-party upload) as the basis — it does not match the producers' stated license. Verified via archive.org metadata API: item StarWreckInThePirkining, complete film (6,211s).",
   "runtimeMinutes": 103,
   "source": "archive",
   "sourcePageUrl": "https://archive.org/details/StarWreckInThePirkining",
@@ -280,7 +280,7 @@ window.WATCH_FREE = [
  },
  {
   "category": "modern",
-  "director": "Tim Baier",
+  "director": "Tim Baumann",
   "embedUrl": "https://archive.org/embed/valkaama",
   "genres": [
    "Fantasy",
@@ -289,7 +289,7 @@ window.WATCH_FREE = [
   ],
   "id": "valkaama",
   "posterUrl": "watch-covers/valkaama.webp",
-  "rightsNote": "Open-source feature released by its makers under Creative Commons — the item is marked CC BY-SA 4.0. Verified via archive.org metadata API: item valkaama, full-length stream (5,592s).",
+  "rightsNote": "Open-source feature released by its makers under Creative Commons — the item is marked CC BY-SA 4.0. Verified via archive.org metadata API: item valkaama, full-length stream (5,592s). Director credit corrected in the 2026-10-25 audit: the filmmaker is Tim Baumann (Internet Archive creator field for this item; Creative Commons case study 'Valkaama', director/producer Tim Baumann) — the earlier credit 'Tim Baier' named a different person (a VFX compositor) and has been removed. License-version note: this Archive item is marked CC BY-SA 4.0; the Creative Commons case study records the project's license as CC BY-SA 3.0 — either version permits this free, attributed, unmodified embedding.",
   "runtimeMinutes": 93,
   "source": "archive",
   "sourcePageUrl": "https://archive.org/details/valkaama",
