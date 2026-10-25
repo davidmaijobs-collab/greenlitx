@@ -26,7 +26,7 @@ FILMS.forEach((f) => { BACKDROPS[f.id] = 1; });
 const FEATURED = ["the-last-train-below", "the-second-moon", "the-devils-frequency", "the-keeper-of-forgotten-things", "tomorrows-witness"];
 /* ---------- i18n (Wave B, Stage 1f) ---------- */
 const I18N = window.GLX_I18N || { ui: {}, films: {}, sectionLabels: {}, legalKeys: [], draftNotice: {}, languages: ["en"] };
-const LANGS = ["en", "es", "de", "fr", "pt-BR", "it"];
+const LANGS = ["en", "es", "pt-BR", "de"];
 let lang = load("glx_lang", "en"); if (!LANGS.includes(lang)) lang = "en";
 function t(key, vars) {
   let s = (I18N.ui[lang] && I18N.ui[lang][key]) || (I18N.ui.en && I18N.ui.en[key]) || key;
@@ -62,7 +62,8 @@ document.documentElement.lang = lang;
 /* ---------- discovery state (Wave B, Stage 2d — local only, no tracking) --- */
 const savedFilms = new Set(load("glx_saved", []));
 const watchSaved = new Set(load("glx_watch_saved", []));
-let favGenres = new Set(load("glx_fav_genres", []));
+/* glx_fav_genres (favorite-genre chips) retired with the Final2 Wave 2
+   Discover redesign — stored values are left on the device, unconsumed. */
 let recentFilms = load("glx_recent", []);
 function pushRecent(id) {
   recentFilms = [id].concat(recentFilms.filter((x) => x !== id)).slice(0, 8);
@@ -73,6 +74,17 @@ const TEASERS = { "the-last-train-below": "teasers/the-last-train-below.mp4", "t
 /* Communication preferences (Stage 2b): Supabase user_preferences when the
    table exists (master/schema-additions.sql); localStorage is the clearly
    interim store until that migration is applied. */
+const ARTWORK = window.GLX_ARTWORK || {};
+const artworkFor = (id) => ARTWORK[id] || [
+  { file: "posters/" + id + ".webp", kind: "poster", subject: "Poster artwork", created: "2026-10-24" },
+  { file: "backdrops/" + id + ".webp", kind: "backdrop", subject: "Backdrop artwork", created: "2026-10-24" }
+];
+function slugifyName(v) { return String(v || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""); }
+function translatedCharacters(film) {
+  const rec = I18N.films && I18N.films[film.id];
+  if (rec && rec[lang] && Array.isArray(rec[lang].characters) && rec[lang].characters.length) return rec[lang].characters;
+  return film.characters;
+}
 const PREF_CATS = [
   { key: "pref_followed_updates", label: "Updates about projects I follow" },
   { key: "pref_new_projects", label: "New projects added to GreenlitX" },
@@ -107,7 +119,8 @@ function load(key, fallback) { try { const v = JSON.parse(localStorage.getItem(k
 function save(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {} }
 const state = {
   follows: new Set(load("glx2_follows", [])),
-  genreFilter: "All",
+  genreExact: "All",
+  stageFilter: "All",
   typeFilter: "All",
   query: "",
   watchQuery: "",
@@ -122,10 +135,56 @@ const SB_URL = "https://fjrdjspecrnvetlsxxos.supabase.co";
 const SB_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqcmRqc3BlY3JudmV0bHN4eG9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI4NzQ4MTAsImV4cCI6MjEwODQ1MDgxMH0.FuSoy9qytnRDbLWJolkvy1bTk2CB2AAkNNO09H3QpW0";
 const sb = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SB_URL, SB_ANON) : null;
 window.GLX_DB = sb;
+/* ---------- Final2 P1: auth redirect + helpers ---------- */
+/* Pin auth email redirects explicitly to the preview root. Never derive this
+   from location.origin / location.pathname: a bare-origin redirect lands on
+   the GitHub Pages 404 at the domain root (the Pages site lives under
+   /greenlitx/), which is exactly the landing the owner hit on 2026-10-25.
+   The dashboard Site URL / allowlist are verified correct — this pin makes
+   the code independent of them. */
+const AUTH_REDIRECT = "https://greenlitx.com/preview/";
+const AUTH_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function authValidEmail(v) { return AUTH_EMAIL_RE.test(String(v || "").trim()); }
+/* Map Supabase auth errors (and thrown fetch failures) to plain language. */
+function authMapError(err) {
+  const code = (err && (err.code || err.error_code)) || "";
+  const status = err && err.status;
+  const msg = String((err && err.message) || (typeof err === "string" ? err : "") || "");
+  const low = msg.toLowerCase();
+  if ((err && err.name === "AuthRetryableFetchError") || (err instanceof TypeError) || low.includes("failed to fetch") || low.includes("network")) return t("auth2.errNetwork");
+  if (status === 429 || code === "over_email_send_rate_limit" || code === "over_request_rate_limit" || low.includes("rate limit")) return t("auth2.errRateLimit");
+  if (code === "email_address_invalid" || code === "validation_failed" || low.includes("validate email") || low.includes("invalid format")) return t("auth2.errInvalidEmail");
+  if (code === "weak_password" || low.includes("password should be")) return t("auth2.errWeakPassword");
+  if (code === "user_already_exists" || low.includes("already registered") || low.includes("already been registered")) return t("auth2.errDuplicate");
+  if (code === "invalid_credentials" || low.includes("invalid login credentials")) return t("auth2.errInvalidCredentials");
+  if (low.includes("email not confirmed")) return t("auth2.errNotConfirmed");
+  return t("auth2.errGeneric", { detail: msg || "unknown error" });
+}
+/* Intended destination for gated actions (e.g. the pledge CTA): remembered
+   across the account detour and consumed once after sign-in. */
+function authSetReturnTo(path) { try { if (path) sessionStorage.setItem("glx_return_to", path); } catch (e) {} }
+function authTakeReturnTo() { try { const v = sessionStorage.getItem("glx_return_to"); sessionStorage.removeItem("glx_return_to"); return v; } catch (e) { return null; } }
+/* After supabase-js has consumed an email-link fragment, normalize the hash
+   to the account route so the router and shared links never see tokens. */
+function authForceAccountRoute() {
+  try { history.replaceState(null, "", location.pathname + location.search + "#/account"); } catch (e) {}
+  try { if ((location.hash || "") !== "#/account") location.hash = "#/account"; } catch (e) {}
+}
+function authNormalizeReturnHash(force) {
+  const h = location.hash || "";
+  /* supabase-js strips the auth fragment itself while consuming it, so by the
+     time this runs the hash may already be clean — when the boot classification
+     flagged a confirmed return (force), route to the account view anyway so
+     the one-time notice is actually seen. */
+  if (!force && !/(access_token=|refresh_token=|type=(signup|recovery|magiclink|invite|email))/.test(h)) return;
+  authForceAccountRoute();
+}
+function authConfirmedPending() {
+  try { return sessionStorage.getItem("glx_just_confirmed") === "1"; } catch (e) { return false; }
+}
 let recoveryMode = false; // true while a password-recovery link flow is in progress
 const server = { user: null, pledgeTotals: {}, myPledges: [], ready: false };
 const PLEDGE_AMOUNTS = [500, 1000, 2500, 5000, 10000];
-const PLEDGE_MICRO = "Nonbinding pledge interest: no card is charged, no payment is authorized, this is not a commitment, and Stripe is not active on GreenlitX.";
 const pledgeMicro = () => t("pledge.nonbinding") + (lang !== "en" && isLegalKey("pledge.nonbinding") ? "" : "");
 let pledgePick = { filmId: null, cents: 2500 };
 const fmtCents = (c) => "$" + (Number(c || 0) / 100).toLocaleString("en-US", { maximumFractionDigits: 0 });
@@ -133,12 +192,12 @@ const fmtCents = (c) => "$" + (Number(c || 0) / 100).toLocaleString("en-US", { m
 const supporterCount = (film) => Number((server.pledgeTotals[film.id] || {}).backers || 0);
 const supporterTotal = (film) => Number((server.pledgeTotals[film.id] || {}).pledged_cents || 0);
 function fundingFactsHtml(film) {
-  const n = supporterCount(film), t = supporterTotal(film);
+  const n = supporterCount(film), tot = supporterTotal(film);
   return '<dl class="funding-facts">' +
-    '<div><dt>Estimated production budget</dt><dd>' + fmtMoney(film.budget) + '</dd></div>' +
-    '<div><dt>Audience funding target</dt><dd>To be determined</dd></div>' +
-    '<div><dt>Supporter interest</dt><dd>' + (n ? n + (n === 1 ? " supporter" : " supporters") + " · " + fmtCents(t) + " interest recorded" : "No supporter interest recorded yet") + '</dd></div>' +
-    '<div><dt>Funds collected</dt><dd>$0 — payments are not yet active</dd></div></dl>';
+    '<div><dt>' + escapeHtml(t("funding.budgetLabel")) + '</dt><dd>' + fmtMoney(film.budget) + '</dd></div>' +
+    '<div><dt>' + escapeHtml(t("funding.targetLabel")) + '</dt><dd>' + escapeHtml(t("funding.targetTBD")) + '</dd></div>' +
+    '<div><dt>' + escapeHtml(t("funding.supporterInterestLabel")) + '</dt><dd>' + (n ? escapeHtml(t(n === 1 ? "funding.supporterLineOne" : "funding.supporterLineMany", { count: n, amount: fmtCents(tot) })) : escapeHtml(t("funding.noSupporterInterest"))) + '</dd></div>' +
+    '<div><dt>' + escapeHtml(t("funding.collectedLabel")) + '</dt><dd>' + escapeHtml(t("funding.collectedValue")) + '</dd></div></dl>';
 }
 async function sbFetchCounts() {
   if (!sb) return;
@@ -176,12 +235,33 @@ async function sbToggleFollow(filmId, turnOn) {
 }
 async function sbInit() {
   if (!sb) return;
-  if (location.hash.includes("type=recovery")) recoveryMode = true;
+  /* Final2 P1: classify an email-link return BEFORE supabase-js consumes the
+     fragment, so the account view can show the right one-time notice. An
+     #error=... landing (expired/invalid link) must surface a clear notice,
+     not break the router or silently show the plain form. */
+  const bootHash = location.hash || "";
+  if (bootHash.includes("type=recovery")) recoveryMode = true;
+  if (/[#&]error=/.test(bootHash) || bootHash.includes("error_code=")) {
+    try { sessionStorage.setItem("glx_auth_link_error", "1"); } catch (e) {}
+  } else if (bootHash.includes("access_token=") && bootHash.includes("type=signup")) {
+    try { sessionStorage.setItem("glx_just_confirmed", "1"); } catch (e) {}
+  } else if (bootHash.includes("access_token=") && bootHash.includes("type=recovery")) {
+    recoveryMode = true;
+  } else if (!bootHash.includes("access_token=")) {
+    /* Ordinary load: drop any stale landing flags from an earlier visit so a
+       notice can never resurface outside the landing that produced it. */
+    try { sessionStorage.removeItem("glx_just_confirmed"); sessionStorage.removeItem("glx_auth_link_error"); } catch (e) {}
+  }
   try {
     const { data } = await sb.auth.getSession();
     server.user = data && data.session ? data.session.user : null;
+    if (server.user) authNormalizeReturnHash(authConfirmedPending());
     if (server.user) { await sbMigrateGuest(); await sbFetchMine(); }
     await sbFetchCounts();
+    /* A dead email link (#error=...) leaves no session; supabase-js may also
+       have stripped the fragment, which would route the refresh home. Force
+       the account route so the link-error notice is actually seen. */
+    try { if (sessionStorage.getItem("glx_auth_link_error") === "1") authForceAccountRoute(); } catch (e) {}
     server.ready = true;
     updateAccountNav(); refreshDynamic();
     sb.auth.onAuthStateChange(async (_evt, session) => {
@@ -195,13 +275,18 @@ async function sbInit() {
       server.user = session ? session.user : null;
       if (server.user) { await sbMigrateGuest(); await sbFetchMine(); } else { state.follows = new Set(load("glx2_follows", [])); }
       await sbFetchCounts();
+      if (server.user) authNormalizeReturnHash(authConfirmedPending());
       updateAccountNav(); refreshDynamic();
+      if (_evt === "SIGNED_IN" && session) {
+        const dest = authTakeReturnTo();
+        if (dest && dest !== "#/account" && (location.hash || "") !== dest) location.hash = dest;
+      }
     });
   } catch (e) {}
 }
 function updateAccountNav() {
   const link = document.querySelector('[data-nav="account"]');
-  if (link) link.textContent = server.user ? "My Account" : "Account";
+  if (link) link.textContent = server.user ? t("nav.myAccount") : t("nav.account");
 }
 
 /* ---------- posters ---------- */
@@ -212,23 +297,27 @@ const GENRE_HUES = [
 ];
 function genreHue(film) { for (const [re, h] of GENRE_HUES) if (re.test(film.genre)) return h; return 210; }
 function posterHtml(film) {
-  const badge = '<span class="ptype-badge">' + escapeHtml(film.productionType) + "</span>";
+  /* Poster-first (Final2 Wave 2): no production-type badge on the poster. */
   if (POSTER_READY[film.id]) {
-    return badge + '<img src="posters/' + film.id + '.webp" width="880" height="1320" loading="lazy" alt="' + escapeHtml(t("card.posterAlt", { title: film.title })) + '">';
+    return '<img src="posters/' + film.id + '.webp" width="880" height="1320" loading="lazy" alt="' + escapeHtml(t("card.posterAlt", { title: film.title })) + '">';
   }
-  return badge +
-    '<div class="poster-typo" style="--hue:' + genreHue(film) + '">' +
+  return '<div class="poster-typo" style="--hue:' + genreHue(film) + '">' +
     '<div class="typo-tag">' + escapeHtml(film.tagline) + '</div>' +
     '<div class="typo-title">' + escapeHtml(film.title) + "</div></div>";
 }
+/* Small bookmark toggle overlaid on a card poster corner. */
+const BOOKMARK_SVG = '<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false"><path d="M6.5 3.5h11v17l-5.5-3.8-5.5 3.8z"/></svg>';
+function bookmarkBtnHtml(action, id, on, labelKey, title) {
+  return '<button type="button" class="bookmark-btn" data-action="' + action + '" data-id="' + id + '" aria-pressed="' + on + '"' +
+    ' aria-label="' + escapeHtml(t(labelKey, { title })) + '" title="' + escapeHtml(t(on ? "follow.saved" : "follow.save")) + '">' + BOOKMARK_SVG + "</button>";
+}
 function cardHtml(film) {
+  const saved = savedFilms.has(film.id);
   return '<figure class="card">' +
-    '<a class="poster-link" href="#/film/' + film.id + '" aria-label="' + escapeHtml(t("card.viewProject", { title: film.title })) + '">' +
+    '<div class="poster-wrap"><a class="poster-link" href="#/film/' + film.id + '" aria-label="' + escapeHtml(t("card.viewProject", { title: film.title })) + '">' +
     '<div class="poster">' + posterHtml(film) + "</div></a>" +
-    '<figcaption><p class="card-title">' + escapeHtml(film.title) + '</p>' +
-    '<p class="card-meta">' + escapeHtml(film.genre) + " · " + escapeHtml(film.runtime) + " · " + fmtMoney(film.budget) + "</p>" +
-    '<p class="card-support"><b>' + supporterCount(film) + "</b> supporter interest" + (supporterTotal(film) ? " · " + fmtCents(supporterTotal(film)) + " pledged interest" : "") + "</p>" +
-    '<p class="card-actions"><button type="button" class="btn btn-small btn-ghost" data-action="save" data-id="' + film.id + '" aria-pressed="' + savedFilms.has(film.id) + '">' + (savedFilms.has(film.id) ? t("follow.saved") : t("follow.save")) + "</button></p></figcaption></figure>";
+    bookmarkBtnHtml("save", film.id, saved, saved ? "follow.savedFilm" : "follow.saveFilm", film.title) + "</div>" +
+    '<figcaption><p class="card-title">' + escapeHtml(film.title) + "</p></figcaption></figure>";
 }
 
 /* ---------- sections (home rows) ---------- */
@@ -245,18 +334,18 @@ function bucket(film, name) {
   }
 }
 const SECTIONS = [
-  { title: "Featured Projects", films: () => FLAGSHIPS.map(filmById).filter(Boolean) },
-  { title: "Science Fiction", films: () => FILMS.filter((f) => bucket(f, "scifi")) },
-  { title: "Thrillers and Horror", films: () => FILMS.filter((f) => bucket(f, "thriller")) },
-  { title: "Historical and Adventure", films: () => FILMS.filter((f) => bucket(f, "history")) },
-  { title: "Romance and Drama", films: () => FILMS.filter((f) => bucket(f, "romance")) },
-  { title: "Comedy", films: () => FILMS.filter((f) => bucket(f, "comedy")) },
-  { title: "Animation and Family", films: () => FILMS.filter((f) => bucket(f, "animation")) },
-  { title: "AI Films", films: () => FILMS.filter((f) => f.productionType === "AI FILM") },
-  { title: "Live-Action Films", films: () => FILMS.filter((f) => f.productionType === "LIVE ACTION") },
-  { title: "Hybrid Productions", films: () => FILMS.filter((f) => f.productionType === "HYBRID") },
-  { title: "Newly Added", films: () => FILMS.slice().sort((a, b) => b.n - a.n) },
-  { title: "Discover All 40", films: () => FILMS.slice(), link: "#/discover" }
+  { title: "Featured Projects", key: "section.featured", films: () => FLAGSHIPS.map(filmById).filter(Boolean) },
+  { title: "Science Fiction", key: "section.scifi", films: () => FILMS.filter((f) => bucket(f, "scifi")) },
+  { title: "Thrillers and Horror", key: "section.thriller", films: () => FILMS.filter((f) => bucket(f, "thriller")) },
+  { title: "Historical and Adventure", key: "section.history", films: () => FILMS.filter((f) => bucket(f, "history")) },
+  { title: "Romance and Drama", key: "section.romance", films: () => FILMS.filter((f) => bucket(f, "romance")) },
+  { title: "Comedy", key: "section.comedy", films: () => FILMS.filter((f) => bucket(f, "comedy")) },
+  { title: "Animation and Family", key: "section.animation", films: () => FILMS.filter((f) => bucket(f, "animation")) },
+  { title: "AI Films", key: "section.aiFilms", films: () => FILMS.filter((f) => f.productionType === "AI FILM") },
+  { title: "Live-Action Films", key: "section.liveAction", films: () => FILMS.filter((f) => f.productionType === "LIVE ACTION") },
+  { title: "Hybrid Productions", key: "section.hybrid", films: () => FILMS.filter((f) => f.productionType === "HYBRID") },
+  { title: "Newly Added", key: "section.newlyAdded", films: () => FILMS.slice().sort((a, b) => b.n - a.n) },
+  { title: "Discover All 40", key: "section.discoverAll", films: () => FILMS.slice(), link: "#/discover" }
 ];
 /* ---------- showcase (home hero) ---------- */
 let showcaseTimer = null;
@@ -272,12 +361,12 @@ function showcaseHtml() {
       return '<div class="showcase-slide' + (i === 0 ? " active" : "") + '">' +
         '<div class="backdrop-gradient" style="--hue:150"></div><div class="showcase-shade"></div>' +
         '<div class="showcase-content"><div class="showcase-inner">' +
-        '<p class="showcase-kicker">GreenlitX — a film platform powered by its audience</p>' +
-        '<h1 class="showcase-title" tabindex="-1">Hollywood decides what gets made today. <span class="accent">On GreenlitX, the audience does.</span></h1>' +
-        '<p class="showcase-log">Forty original films are in development — live action, AI, hybrid and animation. Discover them, follow them, and record nonbinding pledge interest to help bring them to life.</p>' +
-        '<div class="showcase-actions"><a class="btn btn-primary" href="#/discover">Discover Films</a>' +
-        '<a class="btn btn-ghost" href="#/watch">Watch Free</a></div>' +
-        '<div class="hero-steps" aria-label="How it works"><span><b>1</b>&nbsp; DISCOVER FILMS</span><span><b>2</b>&nbsp; SUPPORT FILMS</span><span><b>3</b>&nbsp; WATCH FREE</span></div>' +
+        '<p class="showcase-kicker">' + escapeHtml(t("hero.kicker")) + '</p>' +
+        '<h1 class="showcase-title" tabindex="-1">' + escapeHtml(t("hero.titleStart")) + ' <span class="accent">' + escapeHtml(t("hero.titleAccent")) + '</span></h1>' +
+        '<p class="showcase-log">' + escapeHtml(t("hero.logline")) + '</p>' +
+        '<div class="showcase-actions"><a class="btn btn-primary" href="#/discover">' + escapeHtml(t("nav.discover")) + '</a>' +
+        '<a class="btn btn-ghost" href="#/watch">' + escapeHtml(t("nav.watchFree")) + '</a></div>' +
+        '<div class="hero-steps" aria-label="' + escapeHtml(t("hero.stepsLabel")) + '"><span><b>1</b>&nbsp; ' + escapeHtml(t("hero2.step1")) + '</span><span><b>2</b>&nbsp; ' + escapeHtml(t("hero2.step2")) + '</span><span><b>3</b>&nbsp; ' + escapeHtml(t("hero2.step3")) + '</span></div>' +
         "</div></div></div>";
     }
     const f = s;
@@ -285,16 +374,15 @@ function showcaseHtml() {
       '<img class="backdrop" src="backdrops/' + f.id + '.webp" width="1600" height="900" alt="" aria-hidden="true">' +
       '<div class="showcase-shade"></div>' +
       '<div class="showcase-content"><div class="showcase-inner">' +
-      '<p class="showcase-kicker">Featured · ' + escapeHtml(f.productionType) + "</p>" +
+      '<p class="showcase-kicker">' + escapeHtml(t("home2.featuredKicker", { type: f.productionType })) + "</p>" +
       '<p class="showcase-title">' + escapeHtml(f.title) + "</p>" +
-      '<p class="showcase-tag">' + escapeHtml(f.tagline) + "</p>" +
-      '<p class="showcase-log">' + escapeHtml(f.logline) + "</p>" +
-      '<div class="showcase-actions"><a class="btn btn-play" href="#/film/' + f.id + '">View project</a>' +
-      '<button type="button" class="btn btn-ghost" data-scroll="trailer">▶ Trailer</button>' +
-      '<span class="showcase-meta">' + escapeHtml(f.genre) + " · " + escapeHtml(f.runtime) + " · " + fmtMoney(f.budget) + " · " + supporterCount(f) + " supporter interest</span></div>" +
+      '<p class="showcase-tag">' + escapeHtml(filmText(f, "tagline")) + "</p>" +
+      '<p class="showcase-log">' + escapeHtml(filmText(f, "logline")) + "</p>" +
+      '<div class="showcase-actions"><a class="btn btn-play" href="#/film/' + f.id + '">' + escapeHtml(t("card.exploreFilm")) + '</a>' +
+      '<span class="showcase-meta">' + escapeHtml(f.genre) + " · " + escapeHtml(f.runtime) + "</span></div>" +
       "</div></div></div>";
   }).join("");
-  const dots = slides.map((s, i) => '<button type="button" data-slide="' + i + '" aria-current="' + (i === 0) + '" aria-label="Showcase slide ' + (i + 1) + '"></button>').join("");
+  const dots = slides.map((s, i) => '<button type="button" data-slide="' + i + '" aria-current="' + (i === 0) + '" aria-label="' + escapeHtml(t("hero.slideLabel", { n: i + 1 })) + '"' + (i + 1) + '"></button>').join("");
   return slideHtml + '<div class="showcase-dots">' + dots + "</div>";
 }
 function startShowcaseRotationOnly() {
@@ -316,83 +404,123 @@ function startShowcase() {
   if (showcaseTimer) clearInterval(showcaseTimer);
   startShowcaseRotationOnly();
 }
+function latestArtworkHtml() {
+  const fresh = [];
+  FILMS.forEach((f) => { artworkFor(f.id).forEach((a) => { if (a.created === "2026-10-25") fresh.push({ film: f, a }); }); });
+  if (!fresh.length) return "";
+  const picked = [], usedFilms = new Set();
+  for (const kind of ["portrait", "location", "moment", "detail", "portrait", "location", "moment", "portrait", "location", "moment"]) {
+    const hit = fresh.find((x) => x.a.kind === kind && !usedFilms.has(x.film.id) && !picked.includes(x));
+    if (hit) { picked.push(hit); usedFilms.add(hit.film.id); }
+    if (picked.length >= 10) break;
+  }
+  for (const x of fresh) { if (picked.length >= 10) break; if (!picked.includes(x)) picked.push(x); }
+  return '<section class="row-section" aria-label="' + escapeHtml(t("home.latestArtwork")) + '">' +
+    '<div class="section-head"><h2>' + escapeHtml(t("home.latestArtwork")) + '</h2><span class="fineprint">' + escapeHtml(t("home.latestArtworkDate")) + '</span></div>' +
+    '<div class="poster-row artwork-row">' + picked.map(({ film, a }) =>
+      '<figure class="card artwork-tile"><div class="poster-wrap"><a class="poster-link" href="#/film/' + film.id + '">' +
+      '<div class="poster artwork-thumb"><img src="' + escapeHtml(a.file) + '" loading="lazy" alt="' + escapeHtml(t("gallery.view", { caption: t("artworkKind." + a.kind) + " — " + a.subject })) + '"></div></a></div>' +
+      '<figcaption><p class="card-title">' + escapeHtml(film.title) + '</p><p class="fineprint">' + escapeHtml(t("artworkKind." + a.kind)) + "</p></figcaption></figure>").join("") + "</div></section>";
+}
 function renderHome() {
   startShowcase();
   const tonight = WATCH.filter((w) => w.category === "modern");
   const watchRow = tonight.length ?
-    '<section class="row-section" aria-label="Watch Free tonight">' +
-    '<div class="section-head"><h2>Watch Free tonight</h2><a class="section-link" href="#/watch">All free films →</a></div>' +
+    '<section class="row-section" aria-label="' + escapeHtml(t("home.watchTonight")) + '">' +
+    '<div class="section-head"><h2>' + escapeHtml(t("home.watchTonight")) + '</h2><a class="section-link" href="#/watch">' + escapeHtml(t("home.allFreeFilms")) + '</a></div>' +
     '<div class="poster-row">' + tonight.map(watchCardHtml).join("") + "</div></section>" : "";
   const recentRow = recentFilms.length ?
-    '<section class="row-section" aria-label="Recently viewed"><div class="section-head"><h2>Recently viewed</h2></div>' +
+    '<section class="row-section" aria-label="' + escapeHtml(t("home2.recentlyViewed")) + '"><div class="section-head"><h2>' + escapeHtml(t("home2.recentlyViewed")) + '</h2></div>' +
     '<div class="poster-row">' + recentFilms.map(filmById).filter(Boolean).map(cardHtml).join("") + "</div></section>" : "";
-  $("#home-rows").innerHTML = watchRow + recentRow + SECTIONS.map((s) => {
+  $("#home-rows").innerHTML = watchRow + recentRow + latestArtworkHtml() + SECTIONS.map((s) => {
     const films = s.films();
     if (!films.length) return "";
-    return '<section class="row-section" aria-label="' + escapeHtml(s.title) + '">' +
-      '<div class="section-head"><h2>' + escapeHtml(s.title) + "</h2>" +
-      (s.link ? '<a class="section-link" href="' + s.link + '">View all →</a>' : "") + "</div>" +
+    const title = s.key ? t(s.key) : s.title;
+    return '<section class="row-section" aria-label="' + escapeHtml(title) + '">' +
+      '<div class="section-head"><h2>' + escapeHtml(title) + "</h2>" +
+      (s.link ? '<a class="section-link" href="' + s.link + '">' + escapeHtml(t("home.viewAll")) + '</a>' : "") + "</div>" +
       '<div class="poster-row">' + films.map(cardHtml).join("") + "</div></section>";
   }).join("");
 }
 
 /* ---------- discover ---------- */
-const GENRE_FILTERS = ["All", "Science Fiction", "Thrillers & Horror", "Historical & Adventure", "Romance & Drama", "Comedy", "Animation & Family"];
-const GENRE_BUCKET = { "Science Fiction": "scifi", "Thrillers & Horror": "thriller", "Historical & Adventure": "history", "Romance & Drama": "romance", "Comedy": "comedy", "Animation & Family": "animation" };
+/* Final2 Wave 2 (Part 13): search + genre <select> (distinct film.genre
+   values) + production-type chips + development-stage <select> (distinct
+   film.status values). The old genre-bucket chips and favorite-genre
+   sorting were removed with this redesign; the home rails still use
+   bucket() for their curated rows. Saved glx_fav_genres data is left
+   untouched on the device, simply no longer consumed. */
 function chipsHtml(items, current, attr) {
-  const fav = attr === "genre" ? items.filter((i) => i !== "All").map((i) =>
-    '<button type="button" class="chip chip-fav" data-action="genre-fav" data-genre-name="' + escapeHtml(i) + '" aria-pressed="' + favGenres.has(i) + '" title="Favorite genre">' + (favGenres.has(i) ? "★ " : "☆ ") + escapeHtml(i) + "</button>").join("") : "";
-  return '<span class="chip-label">' + (attr === "genre" ? escapeHtml(t("discover.filterGenre")) : escapeHtml(t("discover.filterMethod"))) + "</span>" + items.map((i) =>
-    '<button type="button" class="chip" data-' + attr + '="' + escapeHtml(i) + '" aria-pressed="' + (current === i) + '">' + escapeHtml(i) + "</button>").join("") + fav;
+  return '<span class="chip-label">' + escapeHtml(t("discover.filterMethod")) + "</span>" + items.map((i) =>
+    '<button type="button" class="chip" data-' + attr + '="' + escapeHtml(i) + '" aria-pressed="' + (current === i) + '">' + escapeHtml(i) + "</button>").join("");
 }
 function renderChips() {
-  $("#genre-chips").innerHTML = chipsHtml(GENRE_FILTERS, state.genreFilter, "genre");
-  $("#type-chips").innerHTML = chipsHtml(["All"].concat(TYPES), state.typeFilter, "type");
+  const el = $("#type-chips");
+  if (el) el.innerHTML = chipsHtml(["All"].concat(TYPES), state.typeFilter, "type");
+}
+function distinctFilmValues(field) {
+  const out = [];
+  FILMS.forEach((f) => { if (f[field] && !out.includes(f[field])) out.push(f[field]); });
+  return out;
+}
+function stageLabel(status) { return status === "In Development" ? t("film.statusInDevelopment") : status; }
+function renderFilterSelects() {
+  const genreSel = $("#genre-select");
+  if (genreSel) {
+    genreSel.innerHTML = '<option value="All">' + escapeHtml(t("discover.allGenres")) + "</option>" +
+      distinctFilmValues("genre").map((g) => '<option value="' + escapeHtml(g) + '">' + escapeHtml(g) + "</option>").join("");
+    genreSel.value = state.genreExact;
+  }
+  const stageSel = $("#stage-select");
+  if (stageSel) {
+    stageSel.innerHTML = '<option value="All">' + escapeHtml(t("discover.allStages")) + "</option>" +
+      distinctFilmValues("status").map((s) => '<option value="' + escapeHtml(s) + '">' + escapeHtml(stageLabel(s)) + "</option>").join("");
+    stageSel.value = state.stageFilter;
+  }
 }
 function filteredFilms() {
   const q = state.query.trim().toLowerCase();
   return FILMS.filter((f) => {
-    if (state.genreFilter !== "All" && !bucket(f, GENRE_BUCKET[state.genreFilter])) return false;
+    if (state.genreExact !== "All" && f.genre !== state.genreExact) return false;
+    if (state.stageFilter !== "All" && f.status !== state.stageFilter) return false;
     if (state.typeFilter !== "All" && f.productionType !== state.typeFilter) return false;
     if (q) {
-      const hay = (f.title + " " + f.genre + " " + f.logline + " " + f.synopsis + " " + f.characters.map((c) => c.name + " " + c.role).join(" ")).toLowerCase();
+      const hay = (f.title + " " + f.genre + " " + filmText(f, "logline") + " " + filmText(f, "tagline") + " " + f.synopsis + " " + f.characters.map((c) => c.name + " " + c.role).join(" ")).toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
   });
 }
 function renderDiscover() {
+  renderFilterSelects();
   renderChips();
-  let list = filteredFilms();
-  if (state.genreFilter === "All" && favGenres.size) {
-    list = list.slice().sort((a, b) => {
-      const ga = GENRE_FILTERS.find((g) => GENRE_BUCKET[g] && bucket(a, GENRE_BUCKET[g])) || "";
-      const gb = GENRE_FILTERS.find((g) => GENRE_BUCKET[g] && bucket(b, GENRE_BUCKET[g])) || "";
-      return (favGenres.has(gb) ? 1 : 0) - (favGenres.has(ga) ? 1 : 0);
-    });
-  }
+  const list = filteredFilms();
   $("#results-count").textContent = t("discover.resultsCount", { shown: list.length, total: FILMS.length });
   $("#discover-grid").innerHTML = list.map(cardHtml).join("");
+  const empty = $("#discover-empty");
+  if (empty) empty.innerHTML = list.length ? "" :
+    '<p class="empty-text">' + escapeHtml(t("discover.noResults")) + '</p>' +
+    '<button type="button" class="btn" data-action="clear-filters">' + escapeHtml(t("discover.clearFilters")) + "</button>";
 }
 
 /* ---------- watch free ---------- */
 const WATCH = (window.WATCH_FREE || []).slice();
 const WATCH_CATS = [
-  { key: "All", label: "All" },
-  { key: "classic", label: "Classics" },
-  { key: "modern", label: "Modern Independent" },
-  { key: "short", label: "Short Films" },
-  { key: "documentary", label: "Documentaries" }
+  { key: "All", labelKey: "watch.cat.all" },
+  { key: "classic", labelKey: "watch.cat.classics" },
+  { key: "modern", labelKey: "watch.cat.modern" },
+  { key: "short", labelKey: "watch.cat.shorts" },
+  { key: "documentary", labelKey: "watch.cat.documentaries" }
 ];
-const watchCatLabel = (key) => { const c = WATCH_CATS.find((x) => x.key === key); return c ? c.label : key; };
+const watchCatLabel = (key) => { const c = WATCH_CATS.find((x) => x.key === key); return c ? t(c.labelKey) : key; };
 const watchById = (id) => WATCH.find((w) => w.id === id);
 function watchCardHtml(w) {
+  const saved = watchSaved.has(w.id);
   return '<figure class="card">' +
-    '<a class="poster-link" href="#/watch/' + w.id + '" aria-label="Watch free: ' + escapeHtml(w.title) + '">' +
-    '<div class="poster"><img src="' + escapeHtml(w.posterUrl) + '" width="880" height="1320" loading="lazy" alt="Poster for ' + escapeHtml(w.title) + '"></div></a>' +
-    '<figcaption><p class="card-title">' + escapeHtml(w.title) + '</p>' +
-    '<p class="card-meta">' + w.year + " · " + w.runtimeMinutes + " min · " + escapeHtml(watchCatLabel(w.category)) + "</p>" +
-    '<p class="card-actions"><button type="button" class="btn btn-small btn-ghost" data-action="watch-save" data-id="' + w.id + '" aria-pressed="' + watchSaved.has(w.id) + '">' + (watchSaved.has(w.id) ? "Saved to watchlist ✓" : "Save to watchlist") + "</button></p></figcaption></figure>";
+    '<div class="poster-wrap"><a class="poster-link" href="#/watch/' + w.id + '" aria-label="' + escapeHtml(t("card.watchFree", { title: w.title })) + '">' +
+    '<div class="poster"><img src="' + escapeHtml(w.posterUrl) + '" width="880" height="1320" loading="lazy" alt="' + escapeHtml(t("card.watchPosterAlt", { title: w.title })) + '"></div></a>' +
+    '<button type="button" class="bookmark-btn" data-action="watch-save" data-id="' + w.id + '" aria-pressed="' + saved + '" aria-label="' + escapeHtml(t(saved ? "watch2.savedToWatchlist" : "watch2.saveToWatchlist") + ": " + w.title) + '" title="' + escapeHtml(t(saved ? "watch2.savedToWatchlist" : "watch2.saveToWatchlist")) + '">' + BOOKMARK_SVG + "</button></div>" +
+    '<figcaption><p class="card-title">' + escapeHtml(w.title) + "</p></figcaption></figure>";
 }
 function watchFiltered() {
   const q = state.watchQuery.trim().toLowerCase();
@@ -408,45 +536,47 @@ function watchFiltered() {
 function renderWatch() {
   const chipsEl = $("#watch-chips");
   if (chipsEl) chipsEl.innerHTML = WATCH_CATS.map((c) =>
-    '<button type="button" class="chip" data-wcat="' + c.key + '" aria-pressed="' + (state.watchCategory === c.key) + '">' + escapeHtml(c.label) + "</button>").join("");
+    '<button type="button" class="chip" data-wcat="' + c.key + '" aria-pressed="' + (state.watchCategory === c.key) + '">' + escapeHtml(t(c.labelKey)) + "</button>").join("");
   const list = watchFiltered();
   const countEl = $("#watch-count");
-  if (countEl) countEl.textContent = "Showing " + list.length + " of " + WATCH.length + " free films";
+  if (countEl) countEl.textContent = t("watch.resultsCount", { shown: list.length, total: WATCH.length });
   const savedList = list.filter((w) => watchSaved.has(w.id));
   const savedRow = savedList.length ?
-    '<section class="row-section" aria-label="My Watchlist"><div class="section-head"><h2>My Watchlist</h2></div>' +
+    '<section class="row-section" aria-label="' + escapeHtml(t("home2.myWatchlist")) + '"><div class="section-head"><h2>' + escapeHtml(t("home2.myWatchlist")) + '</h2></div>' +
     '<div class="poster-row">' + savedList.map(watchCardHtml).join("") + "</div></section>" : "";
   const groups = WATCH_CATS.slice(1)
     .map((c) => ({ cat: c, films: list.filter((w) => w.category === c.key) }))
     .filter((g) => g.films.length);
-  $("#watch-rows").innerHTML = savedRow + (groups.length ? groups.map((g) =>
-    '<section class="row-section" aria-label="' + escapeHtml(g.cat.label) + '">' +
-    '<div class="section-head"><h2>' + escapeHtml(g.cat.label) + "</h2></div>" +
+  const draftNote = lang !== "en" ? '<p class="fineprint draft-notice" style="padding:0 1.1rem">' + escapeHtml(t("watch.draftNotice")) + "</p>" : "";
+  $("#watch-rows").innerHTML = draftNote + savedRow + (groups.length ? groups.map((g) =>
+    '<section class="row-section" aria-label="' + escapeHtml(t(g.cat.labelKey)) + '">' +
+    '<div class="section-head"><h2>' + escapeHtml(t(g.cat.labelKey)) + "</h2></div>" +
     '<div class="poster-row">' + g.films.map(watchCardHtml).join("") + "</div></section>").join("")
-    : '<p class="section-intro">No free films match your search yet.</p>');
+    : '<p class="section-intro">' + escapeHtml(t("watch.noResults")) + '</p>');
 }
 function renderWatchDetail(id) {
   const el = $("#watch-detail");
   const w = watchById(id);
   if (!w) {
-    el.innerHTML = '<div class="section"><h2 tabindex="-1">Film not found</h2><p>This free film does not exist. <a href="#/watch">Browse Watch Free</a>.</p></div>';
+    el.innerHTML = '<div class="section"><h2 tabindex="-1">' + escapeHtml(t("watch.notFound")) + '</h2><p>' + escapeHtml(t("watch.notFoundText")) + ' <a href="#/watch">' + escapeHtml(t("watch.browseWatch")) + "</a>.</p></div>";
     return;
   }
-  const sourceName = w.source === "youtube" ? "YouTube" : "the Internet Archive";
+  const sourceName = w.source === "youtube" ? t("watch.sourceYoutube") : t("watch.sourceArchive");
   const related = WATCH.filter((x) => x.category === w.category && x.id !== w.id);
   el.innerHTML =
     '<div class="section watch-detail">' +
-    '<p class="watch-back"><a href="#/watch">&larr; All Watch Free films</a></p>' +
+    '<p class="watch-back"><a href="#/watch">' + escapeHtml(t("watch.backAll")) + "</a></p>" +
     '<h1 tabindex="-1">' + escapeHtml(w.title) + "</h1>" +
-    '<p class="watch-meta">' + w.year + " · " + w.runtimeMinutes + " min · Directed by " + escapeHtml(w.director) + " · " + escapeHtml(watchCatLabel(w.category)) + "</p>" +
-    '<div class="player-wrap"><iframe src="' + escapeHtml(w.embedUrl) + '" title="' + escapeHtml(w.title) + ' — free streaming player" loading="lazy" allowfullscreen frameborder="0" referrerpolicy="no-referrer-when-downgrade"></iframe></div>' +
+    '<p class="watch-meta">' + escapeHtml(t("watch.metaLine", { year: w.year, minutes: w.runtimeMinutes, director: w.director, category: watchCatLabel(w.category) })) + "</p>" +
+    '<div class="player-wrap"><iframe src="' + escapeHtml(w.embedUrl) + '" title="' + escapeHtml(t("watch.playerTitle", { title: w.title })) + '" loading="lazy" allowfullscreen frameborder="0" referrerpolicy="no-referrer-when-downgrade"></iframe></div>' +
     '<p class="watch-synopsis">' + escapeHtml(w.synopsis) + "</p>" +
-    '<p><button type="button" class="btn btn-ghost" data-action="watch-save" data-id="' + w.id + '" aria-pressed="' + watchSaved.has(w.id) + '">' + (watchSaved.has(w.id) ? "Saved to watchlist ✓" : "Save to watchlist") + "</button></p>" +
-    '<p class="watch-attribution">Streaming via ' + sourceName + ". " + escapeHtml(w.rightsNote) + "</p>" +
-    '<p><a class="btn btn-ghost" href="' + escapeHtml(w.sourcePageUrl) + '" target="_blank" rel="noopener">Watch on the source site</a></p>' +
+    (lang !== "en" ? '<p class="fineprint draft-notice">' + escapeHtml(t("watch.draftNotice")) + "</p>" : "") +
+    '<p><button type="button" class="btn btn-ghost" data-action="watch-save" data-id="' + w.id + '" aria-pressed="' + watchSaved.has(w.id) + '">' + escapeHtml(t(watchSaved.has(w.id) ? "watch2.savedToWatchlist" : "watch2.saveToWatchlist")) + "</button></p>" +
+    '<p class="watch-attribution">' + escapeHtml(t("watch.streamingVia", { source: sourceName })) + " " + escapeHtml(w.rightsNote) + "</p>" +
+    '<p><a class="btn btn-ghost" href="' + escapeHtml(w.sourcePageUrl) + '" target="_blank" rel="noopener">' + escapeHtml(t("watch.watchOnSource")) + "</a></p>" +
     "</div>" +
     (related.length ?
-      '<section class="row-section" aria-label="More like this"><div class="section-head"><h2>More like this</h2></div>' +
+      '<section class="row-section" aria-label="' + escapeHtml(t("watch.moreLikeThis")) + '"><div class="section-head"><h2>' + escapeHtml(t("watch.moreLikeThis")) + '</h2></div>' +
       '<div class="poster-row">' + related.map(watchCardHtml).join("") + "</div></section>" : "");
 }
 
@@ -458,28 +588,154 @@ function pledgePanelHtml(film) {
   let action = "";
   if (!server.user) {
     action = '<div class="pledge-amounts" aria-hidden="true">' + PLEDGE_AMOUNTS.map((c) => '<span class="chip chip-static">' + fmtCents(c) + "</span>").join("") + "</div>" +
-      '<a class="btn btn-primary" href="#/account">Create a free account to record pledge interest</a>' +
-      '<p class="panel-note">Recording pledge interest needs a free account, so your interest is saved to you and can be cancelled any time.</p>';
+      '<a class="btn btn-primary" href="#/account" data-action="pledge-gate" data-id="' + film.id + '">' + escapeHtml(t("pledge2.createAccountFull")) + '</a>' +
+      '<p class="panel-note">' + escapeHtml(t("pledge.accountNote")) + '</p>';
   } else if (mine) {
-    action = '<p class="panel-note"><strong>You have recorded ' + fmtCents(mine.amount_cents) + '</strong> of nonbinding pledge interest in this film. No card has been charged and no payment is authorized.</p>' +
-      '<button type="button" class="btn btn-ghost" data-action="pledge-cancel" data-id="' + film.id + '">Cancel my pledge interest</button>';
+    action = '<p class="panel-note"><strong>' + escapeHtml(t("pledge.youPledged", { amount: fmtCents(mine.amount_cents) })) + '</strong></p>' +
+      '<button type="button" class="btn btn-ghost" data-action="pledge-cancel" data-id="' + film.id + '">' + escapeHtml(t("pledge2.cancelInterest")) + '</button>';
   } else {
-    action = '<div class="pledge-amounts" role="group" aria-label="Choose your pledge amount">' +
+    action = '<div class="pledge-amounts" role="group" aria-label="' + escapeHtml(t("pledge.amountGroupLabel")) + '">' +
       PLEDGE_AMOUNTS.map((c) => '<button type="button" class="chip" data-action="pledge-pick" data-cents="' + c + '" aria-pressed="' + (pledgePick.cents === c) + '">' + fmtCents(c) + "</button>").join("") + "</div>" +
-      '<div class="field" style="margin:0.6rem 0"><label for="pledge-custom" style="font-size:0.9rem">Or a custom amount (USD)</label>' +
-      '<input id="pledge-custom" type="number" min="1" step="1" placeholder="e.g. 75"></div>' +
-      '<button type="button" class="btn btn-primary" data-action="pledge-submit" data-id="' + film.id + '">Record ' + fmtCents(pledgePick.cents) + " pledge interest</button>" +
-      '<p class="panel-note">You can cancel your recorded interest any time from this page or your account.</p>';
+      '<div class="field" style="margin:0.6rem 0"><label for="pledge-custom" style="font-size:0.9rem">' + escapeHtml(t("pledge.customLabel")) + '</label>' +
+      '<input id="pledge-custom" type="number" min="1" step="1" placeholder="' + escapeHtml(t("pledge.customPlaceholder")) + '"></div>' +
+      '<button type="button" class="btn btn-primary" data-action="pledge-submit" data-id="' + film.id + '">' + escapeHtml(t("pledge.submitButton", { amount: fmtCents(pledgePick.cents) })) + "</button>" +
+      '<p class="panel-note">' + escapeHtml(t("pledge.termsNote")) + '</p>';
   }
   return '<div class="action-panel" id="support-panel"><h3>' + escapeHtml(t("pledge.supportThisFilm")) + '</h3>' +
     '<p class="support-sub">' + escapeHtml(t("pledge.chooseAmount")) + '</p>' +
     '<p class="panel-note"><strong>' + escapeHtml(pledgeMicro()) + '</strong>' + draftNoteHtml("pledge.nonbinding") + '</p>' +
     action +
-    fundingFactsHtml(film) +
-    '<p class="testmode-note">' + PLEDGE_MICRO + '</p></div>';
+    '<p class="testmode-note">' + escapeHtml(t("pledge.nonbinding")) + '</p></div>';
 }
 
-const ROADMAP = ["Concept development", "Script & treatment", "Audience support campaign", "Conditional financing", "Production", "Release"];
+const ROADMAP_KEYS = ["roadmap.1", "roadmap.2", "roadmap.3", "roadmap.4", "roadmap.5", "roadmap.6"];
+/* ---------- lightbox (concept artwork gallery) ---------- */
+let lightboxState = null;
+function closeLightbox() {
+  if (!lightboxState) return;
+  const { el, trigger } = lightboxState;
+  lightboxState = null;
+  if (el && el.parentNode) el.parentNode.removeChild(el);
+  if (trigger && trigger.focus) trigger.focus();
+}
+function showLightboxItem() {
+  if (!lightboxState) return;
+  const { assets, idx, img, cap } = lightboxState;
+  const a = assets[idx];
+  const caption = galleryCaption(lightboxState.film, a);
+  img.src = a.file; img.alt = caption;
+  cap.textContent = caption;
+  lightboxState.idx = idx;
+}
+function stepLightbox(delta) {
+  if (!lightboxState) return;
+  const n = lightboxState.assets.length;
+  lightboxState.idx = (lightboxState.idx + delta + n) % n;
+  showLightboxItem();
+}
+function openLightbox(film, assets, idx, trigger) {
+  if (!document.body || !document.createElement) return;
+  closeLightbox();
+  const overlay = document.createElement("div");
+  overlay.className = "lightbox";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.innerHTML =
+    '<button type="button" class="lightbox-close" data-lb="close" aria-label="' + escapeHtml(t("gallery.close")) + '">×</button>' +
+    '<button type="button" class="lightbox-nav" data-lb="prev" aria-label="' + escapeHtml(t("gallery.prev")) + '">‹</button>' +
+    '<figure class="lightbox-figure"><img class="lightbox-img" src="" alt=""><figcaption class="lightbox-cap"></figcaption></figure>' +
+    '<button type="button" class="lightbox-nav" data-lb="next" aria-label="' + escapeHtml(t("gallery.next")) + '">›</button>';
+  document.body.appendChild(overlay);
+  const img = overlay.querySelector(".lightbox-img");
+  const cap = overlay.querySelector(".lightbox-cap");
+  lightboxState = { el: overlay, assets, idx, film, img, cap, trigger: trigger || null };
+  overlay.addEventListener("click", (e) => {
+    const btn = e.target.closest ? e.target.closest("[data-lb]") : null;
+    if (btn) {
+      if (btn.dataset.lb === "close") closeLightbox();
+      else if (btn.dataset.lb === "prev") stepLightbox(-1);
+      else if (btn.dataset.lb === "next") stepLightbox(1);
+      return;
+    }
+    if (e.target === overlay) closeLightbox();
+  });
+  showLightboxItem();
+  const closeBtn = overlay.querySelector(".lightbox-close");
+  if (closeBtn && closeBtn.focus) closeBtn.focus();
+}
+function galleryCaption(film, a) {
+  if (a.kind === "poster") return t("film2.artworkPosterCaption");
+  if (a.kind === "backdrop") return t("film2.artworkBackdropCaption");
+  return t("artworkKind." + a.kind) + " — " + a.subject;
+}
+function galleryHtml(film) {
+  const assets = artworkFor(film.id);
+  return '<div class="detail-section"><h2>' + escapeHtml(t("film3.galleryHeading")) + '</h2>' +
+    '<p class="fineprint gallery-label">' + escapeHtml(t("film2.artworkHeading")) + "</p>" +
+    '<div class="concept-gallery">' +
+    assets.map((a, i) =>
+      '<figure><button type="button" class="gallery-item" data-lightbox-film="' + film.id + '" data-lightbox-idx="' + i + '" aria-label="' + escapeHtml(t("gallery.view", { caption: galleryCaption(film, a) })) + '">' +
+      '<img src="' + escapeHtml(a.file) + '" loading="lazy" alt="' + escapeHtml(galleryCaption(film, a)) + '"></button>' +
+      "<figcaption>" + escapeHtml(galleryCaption(film, a)) + "</figcaption></figure>").join("") +
+    "</div></div>";
+}
+function charactersHtml(film) {
+  const chars = translatedCharacters(film);
+  const portraits = artworkFor(film.id).filter((a) => a.kind === "portrait");
+  const used = new Set();
+  const matchFor = (c) => {
+    const slug = slugifyName(c.name);
+    let hit = portraits.find((pt) => {
+      const stem = pt.file.split("/").pop().replace(/^portrait-/, "").replace(/\.webp$/, "");
+      return slug === stem || slug.includes(stem) || stem.includes(slug);
+    });
+    if (hit && used.has(hit.file)) hit = null;
+    if (!hit) hit = portraits.find((pt) => !used.has(pt.file)) || null;
+    if (hit) used.add(hit.file);
+    return hit;
+  };
+  return chars.map((c) => {
+    const pt = matchFor(c);
+    const note = String(c.note || "");
+    const first = (note.split(/(?<=\.)\s+/)[0] || note);
+    const img = pt ? '<img class="char-portrait" src="' + escapeHtml(pt.file) + '" width="1200" height="1800" loading="lazy" alt="' + escapeHtml(t("artworkKind.portrait") + " — " + c.name) + '">' : "";
+    return '<div class="char-card">' + img + "<h3>" + escapeHtml(c.name) + '</h3><p class="char-role">' + escapeHtml(c.role) + "</p><p>" + escapeHtml(first) + "</p>" +
+      (note && note !== first ? '<details class="char-bio"><summary>' + escapeHtml(t("film3.readBio")) + "</summary><p>" + escapeHtml(note) + "</p></details>" : "") + "</div>";
+  }).join("");
+}
+function progressHtml(film) {
+  const assets = artworkFor(film.id);
+  const items = [
+    [t("progress.m1"), true],
+    [t("progress.m2"), assets.some((a) => a.kind === "location")],
+    [t("progress.m3"), FLAGSHIPS.includes(film.id) && !!TEASERS[film.id]],
+    [t("progress.m4"), assets.length >= 10],
+    [t("progress.m5"), false]
+  ];
+  return '<div class="greenlight-status"><h3>' + escapeHtml(t("progress.heading")) + '</h3>' +
+    '<p class="goal-pending"><strong>' + escapeHtml(t("progress.goalPending")) + '</strong></p>' +
+    '<ul class="milestone-list">' + items.map(([label, done], i) =>
+      '<li class="' + (done ? "done" : "pending") + '"><span class="milestone-mark" aria-hidden="true">' + (done ? "✓" : "○") + "</span> " + escapeHtml(label) +
+      ' <span class="fineprint">(' + escapeHtml(done ? t("progress.achieved") : t("progress.notYet")) + ")</span>" +
+      (i === 4 ? '<p class="fineprint milestone-note">' + escapeHtml(t("progress.m5note")) + "</p>" : "") + "</li>").join("") + "</ul></div>";
+}
+function relatedFilms(film) {
+  const out = [];
+  const add = (list) => { for (const f of list) { if (f.id !== film.id && !out.includes(f)) out.push(f); } };
+  add(FILMS.filter((f) => f.genre === film.genre));
+  add(FILMS.filter((f) => f.productionType === film.productionType));
+  add(FILMS.filter((f) => bucket(f, "scifi") === bucket(film, "scifi") && bucket(f, "thriller") === bucket(film, "thriller") && bucket(f, "history") === bucket(film, "history") && bucket(f, "romance") === bucket(film, "romance") && bucket(f, "comedy") === bucket(film, "comedy") && bucket(f, "animation") === bucket(film, "animation")));
+  add(FILMS);
+  return out.slice(0, 5);
+}
+function journalText(entry) {
+  if (lang === "en") return entry;
+  for (let i = 1; i <= 4; i++) {
+    const enVal = I18N.ui.en && I18N.ui.en["journal.entry" + i];
+    if (enVal && entry === enVal) return t("journal.entry" + i);
+  }
+  return entry;
+}
 function renderFilmDetail(id) {
   const el = $("#film-detail");
   const film = filmById(id);
@@ -491,71 +747,69 @@ function renderFilmDetail(id) {
   const followed = state.follows.has(film.id);
   const isSaved = savedFilms.has(film.id);
   const isFlagship = FLAGSHIPS.includes(film.id);
-  const chars = film.characters.map((c) =>
-    '<div class="char-card"><h3>' + escapeHtml(c.name) + '</h3><p class="char-role">' + escapeHtml(c.role) + "</p><p>" + escapeHtml(c.note) + "</p></div>").join("");
   const rd = film.roadmapData || {};
-  const roadmapHtml =
-    '<p class="roadmap-status"><strong>Status: ' + escapeHtml(rd.currentStatus || "Concept Development") + '</strong> — ' + escapeHtml(t("film.roadmapNote")) + "</p>" +
-    (rd.completedMilestones && rd.completedMilestones.length ? "<h3>Completed</h3><ul>" + rd.completedMilestones.map((m) => "<li>" + escapeHtml(m) + "</li>").join("") + "</ul>" : "") +
-    "<ol>" + ROADMAP.map((s, i) => "<li" + (i === 0 ? ' aria-current="step"><strong>' + escapeHtml(s) + " " + escapeHtml(t("film.youAreHere")) + "</strong>" : ">" + escapeHtml(s)) + "</li>").join("") + "</ol>" +
-    (rd.nextSteps && rd.nextSteps.length ? "<h3>Next steps</h3><ul>" + rd.nextSteps.map((m) => "<li>" + escapeHtml(m) + "</li>").join("") + "</ul>" : "");
-  const journalHtml = (film.journalEntries && film.journalEntries.length) ?
-    '<div class="detail-section"><h2>Development journal</h2>' +
-    film.journalEntries.map((j) => '<article class="journal-entry"><p class="journal-date">' + escapeHtml(j.date) + "</p><p>" + escapeHtml(j.entry) + "</p></article>").join("") + "</div>" : "";
+  const statusText = (rd.currentStatus === "Concept Development") ? t("roadmap.1") : (rd.currentStatus || t("roadmap.1"));
+  const roadmapInner =
+    '<p class="roadmap-status"><strong>' + escapeHtml(t("film2.statusLabel", { status: statusText })) + '</strong> — ' + escapeHtml(t("film.roadmapNote")) + "</p>" +
+    (rd.completedMilestones && rd.completedMilestones.length ? "<h3>" + escapeHtml(t("film2.completedHeading")) + "</h3><ul>" + rd.completedMilestones.map((m) => "<li>" + escapeHtml(m) + "</li>").join("") + "</ul>" : "") +
+    "<ol>" + ROADMAP_KEYS.map((k, i) => "<li" + (i === 0 ? ' aria-current="step"><strong>' + escapeHtml(t(k)) + " " + escapeHtml(t("film.youAreHere")) + "</strong>" : ">" + escapeHtml(t(k))) + "</li>").join("") + "</ol>" +
+    (rd.nextSteps && rd.nextSteps.length ? "<h3>" + escapeHtml(t("film2.nextStepsHeading")) + "</h3><ul>" + rd.nextSteps.map((m) => "<li>" + escapeHtml(m) + "</li>").join("") + "</ul>" : "");
+  const journalInner = (film.journalEntries && film.journalEntries.length) ?
+    film.journalEntries.map((j) => '<article class="journal-entry"><p class="journal-date">' + escapeHtml(j.date) + "</p><p>" + escapeHtml(journalText(j.entry)) + "</p></article>").join("") : "";
   const vision = film.creativeVision || {};
-  const visionHtml = (vision.tone || vision.themes || vision.visualIdentity) ?
-    '<div class="detail-section"><h2>Creative vision</h2>' +
-    (vision.tone ? "<p><strong>Tone.</strong> " + escapeHtml(vision.tone) + "</p>" : "") +
-    (vision.themes ? "<p><strong>Themes.</strong> " + escapeHtml(vision.themes) + "</p>" : "") +
-    (vision.visualIdentity ? "<p><strong>Visual identity.</strong> " + escapeHtml(vision.visualIdentity) + "</p>" : "") + "</div>" : "";
+  const visionInner = (vision.tone || vision.themes || vision.visualIdentity) ?
+    (vision.tone ? "<p><strong>" + escapeHtml(t("film2.visionTone")) + "</strong> " + escapeHtml(vision.tone) + "</p>" : "") +
+    (vision.themes ? "<p><strong>" + escapeHtml(t("film2.visionThemes")) + "</strong> " + escapeHtml(vision.themes) + "</p>" : "") +
+    (vision.visualIdentity ? "<p><strong>" + escapeHtml(t("film2.visionVisual")) + "</strong> " + escapeHtml(vision.visualIdentity) + "</p>" : "") : "";
   const teaserHtml = (isFlagship && TEASERS[film.id]) ?
-    '<div class="detail-section"><h2>Concept teaser</h2>' +
-    '<div class="trailer-frame"><video controls preload="none" playsinline loading="lazy" poster="backdrops/' + film.id + '.webp" aria-label="Concept teaser for ' + escapeHtml(film.title) + '"><source src="' + TEASERS[film.id] + '" type="video/mp4"></video></div>' +
-    '<p class="fineprint">Concept Teaser — not footage from the finished film. Assembled from concept artwork and existing concept motion material.</p></div>' : "";
-  const galleryHtml =
-    '<div class="detail-section"><h2>Concept artwork</h2><div class="concept-gallery">' +
-    '<figure><img src="posters/' + film.id + '.webp" width="880" height="1320" loading="lazy" alt="Concept poster artwork for ' + escapeHtml(film.title) + '"><figcaption>Concept artwork — poster</figcaption></figure>' +
-    '<figure><img src="backdrops/' + film.id + '.webp" width="1600" height="900" loading="lazy" alt="Concept backdrop artwork for ' + escapeHtml(film.title) + '"><figcaption>Concept artwork — backdrop</figcaption></figure>' +
-    "</div></div>";
-  const similar = FILMS.filter((f) => f.id !== film.id && (f.genre === film.genre || f.productionType === film.productionType)).slice(0, 8);
-  const similarHtml = similar.length ?
-    '<section class="row-section" aria-label="More like this"><div class="section-head"><h2>' + escapeHtml(t("watch.moreLikeThis")) + '</h2></div><div class="poster-row">' + similar.map(cardHtml).join("") + "</div></section>" : "";
+    '<div class="detail-section"><h2>' + (lang === "en" ? "Concept Teaser" : escapeHtml(t("film2.teaserHeading"))) + '</h2>' +
+    '<div class="trailer-frame"><video controls preload="none" playsinline loading="lazy" poster="backdrops/' + film.id + '.webp" aria-label="' + escapeHtml(t("film2.teaserAria", { title: film.title })) + '"><source src="' + TEASERS[film.id] + '" type="video/mp4"></video></div>' +
+    '<p class="fineprint">' + escapeHtml(t("film2.teaserNote")) + "</p></div>" : "";
   const heroArt = BACKDROPS[film.id]
     ? '<img class="backdrop" src="backdrops/' + film.id + '.webp" width="1600" height="900" alt="" aria-hidden="true">'
     : '<div class="backdrop-gradient" style="--hue:' + genreHue(film) + '"></div>';
+  const related = relatedFilms(film);
   el.innerHTML =
     '<div class="detail-hero">' + heroArt + '<div class="detail-hero-shade"></div>' +
-    '<div class="detail-hero-inner"><div class="poster">' + posterHtml(film) + "</div>" +
-    '<div><p class="showcase-kicker">' + escapeHtml(film.productionType) + " · " + escapeHtml(film.genre) + (isFlagship ? ' · <span class="featured-badge">Featured Project</span>' : "") + "</p>" +
+    '<div class="detail-hero-inner"><div>' +
+    '<p class="showcase-kicker">' + escapeHtml(film.genre) + " · " + escapeHtml(film.runtime) + " · " + escapeHtml(film.productionType) + (isFlagship ? ' · <span class="featured-badge">' + escapeHtml(t("film2.featuredBadge")) + "</span>" : "") + "</p>" +
     '<h1 tabindex="-1">' + escapeHtml(film.title) + "</h1>" +
     '<p class="tagline">' + escapeHtml(filmText(film, "tagline")) + "</p>" +
-    '<p class="hero-meta">' + escapeHtml(film.runtime) + " · " + escapeHtml(film.status) + " · " + escapeHtml(t("film.budgetWord")) + " " + fmtMoney(film.budget) + " · For " + escapeHtml(film.audience) + "</p></div>" +
-    "</div></div>" +
+    "</div></div></div>" +
     '<div class="detail-layout">' +
     '<div class="detail-main">' +
+    '<div class="detail-section"><h2>' + escapeHtml(t("film3.exploreStory")) + '</h2>' +
     '<p class="logline">' + escapeHtml(filmText(film, "logline")) + "</p>" +
-    '<div class="detail-section"><h2>' + escapeHtml(sectionLabel("theStory", t("film.story"))) + '</h2><p>' + escapeHtml(filmText(film, "synopsis")) + "</p></div>" +
+    "<p>" + escapeHtml(filmText(film, "synopsis")) + "</p></div>" +
+    '<div class="detail-section"><h2>' + escapeHtml(sectionLabel("mainCharacters", t("film.characters"))) + '</h2><div class="char-grid">' + charactersHtml(film) + "</div></div>" +
+    galleryHtml(film) +
     teaserHtml +
-    '<div class="detail-section"><h2>' + escapeHtml(sectionLabel("mainCharacters", t("film.characters"))) + '</h2><div class="char-grid">' + chars + "</div></div>" +
-    visionHtml +
-    '<div class="detail-section"><h2>' + escapeHtml(sectionLabel("howItWillBeMade", t("film.howMade"))) + '</h2><p><strong>' + escapeHtml(film.productionType) + ".</strong> " + escapeHtml(film.productionApproach || film.productionNote) + "</p>" +
-    "<p><strong>Estimated production budget:</strong> " + fmtMoney(film.budget) + " — " + escapeHtml(film.budgetNote) + "</p>" +
-    (film.audiencePositioning ? "<p><strong>Audience.</strong> " + escapeHtml(film.audiencePositioning) + "</p>" : "") + "</div>" +
-    galleryHtml +
-    '<div class="detail-section"><h2>Help bring this film to life</h2>' +
-    (film.financingNote ? '<p>' + escapeHtml(film.financingNote) + "</p>" : "") +
-    '<p>Your Green Light starts with a pledge. Support for this film is recorded as <strong>nonbinding pledge interest</strong> only — the estimated production budget above is a planning estimate, not a fundraising goal, and this project\'s audience funding target is to be determined. See <a href="#/funding">Funding Transparency</a>.</p></div>' +
-    '<div class="detail-section"><h2>' + escapeHtml(sectionLabel("developmentRoadmap", t("film.roadmap"))) + "</h2>" + roadmapHtml + "</div>" +
-    journalHtml +
-    (film.treatmentHtml ? '<div class="detail-section"><details class="treatment-wrap"><summary>' + escapeHtml(t("film.treatmentToggle")) + '</summary><p class="fineprint">' + escapeHtml(t("film.treatmentNote")) + '</p><div class="treatment">' + film.treatmentHtml + "</div></details></div>" : "") +
+    '<div class="detail-section"><h2>' + escapeHtml(t("film3.productionFinancing")) + '</h2>' +
+    "<p><strong>" + escapeHtml(film.productionType) + ".</strong> " + escapeHtml(film.productionApproach || film.productionNote) + "</p>" +
+    fundingFactsHtml(film) +
+    "<p><strong>" + escapeHtml(t("funding.budgetLabel")) + ":</strong> " + fmtMoney(film.budget) + " — " + escapeHtml(film.budgetNote) + "</p>" +
+    (film.audiencePositioning ? "<p><strong>" + escapeHtml(t("film2.audienceLabel")) + "</strong> " + escapeHtml(film.audiencePositioning) + "</p>" : "") +
+    (film.financingNote ? "<p>" + escapeHtml(film.financingNote) + "</p>" : "") + "</div>" +
+    '<div class="detail-section"><h2>' + escapeHtml(t("film3.developmentInfo")) + "</h2>" +
+    '<details class="detail-details"><summary>' + escapeHtml(sectionLabel("developmentRoadmap", t("film.roadmap"))) + "</summary>" + roadmapInner + "</details>" +
+    (journalInner ? '<details class="detail-details"><summary>' + escapeHtml(t("film2.journalHeading")) + "</summary>" + journalInner + "</details>" : "") +
+    (visionInner ? '<details class="detail-details"><summary>' + escapeHtml(t("film2.visionHeading")) + "</summary>" + visionInner + "</details>" : "") +
+    (film.treatmentHtml ? '<details class="detail-details treatment-wrap"><summary>' + escapeHtml(t("film.treatmentToggle")) + '</summary><p class="fineprint">' + escapeHtml(t("film.treatmentNote")) + '</p><div class="treatment">' + film.treatmentHtml + "</div></details>" : "") +
+    "</div>" +
     "</div>" +
     '<div class="detail-rail">' +
-    '<div class="action-panel"><h3>Follow this project</h3>' +
-    '<p class="panel-note">Following is free and keeps this project in your account. A follow is not a pledge — to support the film, record pledge interest below.</p>' +
+    '<div class="action-panel"><h3>' + escapeHtml(t("film2.followHeading")) + "</h3>" +
+    '<p class="panel-note">' + escapeHtml(t("film2.followNote")) + "</p>" +
     '<button type="button" class="btn btn-ghost" data-action="follow" data-id="' + film.id + '" aria-pressed="' + followed + '">' + (followed ? escapeHtml(t("follow.following")) : escapeHtml(t("follow.follow"))) + "</button> " +
     '<button type="button" class="btn btn-ghost" data-action="save" data-id="' + film.id + '" aria-pressed="' + isSaved + '">' + (isSaved ? escapeHtml(t("follow.saved")) : escapeHtml(t("follow.save"))) + "</button></div>" +
+    '<div class="detail-section support-section"><h2>' + escapeHtml(t("pledge.helpBringToLife")) + "</h2>" +
+    "<p>" + escapeHtml(t("film2.greenLightNote")) + "</p></div>" +
     pledgePanelHtml(film) +
-    "</div></div>" + similarHtml;
+    progressHtml(film) +
+    "</div></div>" +
+    '<section class="row-section" aria-label="' + escapeHtml(t("film3.continueExploring")) + '"><div class="section-head"><h2>' + escapeHtml(t("film3.continueExploring")) + '</h2></div>' +
+    '<p class="section-intro">' + escapeHtml(t("film3.relatedNote")) + '</p>' +
+    '<div class="poster-row">' + related.map(cardHtml).join("") + "</div></section>";
 }
 
 /* ---------- account ---------- */
@@ -567,6 +821,22 @@ async function renderAccount() {
   const el = $("#account-body");
   if (!el) return;
   if (!sb) { el.innerHTML = "<p>Accounts are temporarily unavailable (the sign-in service could not be loaded). You can still browse films and Watch Free.</p>"; return; }
+  /* Final2 P1: one-time notices set by sbInit when an email link lands here. */
+  /* One-time landing notices, replay-safe: renderAccount runs several times
+     in quick succession around an email-link landing (initial render, session
+     load, auth-state replay) and only the LAST render is what the user sees —
+     so every render while a landing flag is set includes the banner, and the
+     flags are cleared on a short delay (see the setTimeout in both branches)
+     once a banner render has landed. sbInit also drops stale flags on the
+     next ordinary page load. */
+  let justConfirmed = false, linkError = false;
+  try {
+    justConfirmed = sessionStorage.getItem("glx_just_confirmed") === "1";
+    linkError = sessionStorage.getItem("glx_auth_link_error") === "1";
+  } catch (e) {}
+  const authBanners =
+    (justConfirmed ? "<div role='status' style='border:2px solid #1e7d32;background:#eef7ee;color:#14301a;padding:1rem 1.2rem;margin:0 0 1.2rem;border-radius:6px'><strong>" + escapeHtml(t("auth2.confirmedTitle")) + "</strong><p style='margin:0.3rem 0 0'>" + escapeHtml(t("auth2.confirmedBody")) + "</p></div>" : "") +
+    (linkError ? "<div role='alert' style='border:2px solid #b3261e;background:#fdeceb;color:#5f1710;padding:1rem 1.2rem;margin:0 0 1.2rem;border-radius:6px'><strong>" + escapeHtml(t("auth2.linkErrorTitle")) + "</strong><p style='margin:0.3rem 0 0'>" + escapeHtml(t("auth2.linkErrorBody")) + "</p></div>" : "");
   if (recoveryMode) {
     el.innerHTML =
       "<p class='section-intro' style='padding-left:0'>You followed a password reset link. Choose a new password for your GreenlitX account.</p>" +
@@ -596,11 +866,16 @@ async function renderAccount() {
   if (!server.user) {
     el.innerHTML =
       "<p class='section-intro' style='padding-left:0'>Create a free account to follow projects and record nonbinding pledge interest you can manage from here. Payments are not active — no card is ever charged.</p>" +
+      authBanners +
+      "<div id='auth-success-panel'></div>" +
       "<form id='auth-form' novalidate>" +
-      "<div class='field'><label for='a-email'>Email</label><input id='a-email' type='email' autocomplete='email' required></div>" +
-      "<div class='field'><label for='a-pass'>Password</label><input id='a-pass' type='password' autocomplete='current-password' required></div>" +
-      "<button class='btn btn-primary' type='submit' name='mode' value='signin'>Sign in</button> " +
-      "<button class='btn' type='submit' name='mode' value='signup'>Create account</button>" +
+      "<div class='field'><label for='a-email'>Email</label><input id='a-email' type='email' autocomplete='email' required aria-describedby='a-email-err'>" +
+      "<p class='form-msg' id='a-email-err' role='alert' style='color:#b3261e'></p></div>" +
+      "<div class='field'><label for='a-pass'>Password</label><input id='a-pass' type='password' autocomplete='current-password' required aria-describedby='a-pass-hint a-pass-err'>" +
+      "<p class='fineprint' id='a-pass-hint' style='margin:0.25rem 0 0'>" + escapeHtml(t("auth2.passwordRule")) + "</p>" +
+      "<p class='form-msg' id='a-pass-err' role='alert' style='color:#b3261e'></p></div>" +
+      "<button class='btn btn-primary' type='submit' name='mode' value='signin' id='auth-signin-btn'>Sign in</button> " +
+      "<button class='btn' type='submit' name='mode' value='signup' id='auth-signup-btn'>Create account</button>" +
       "<p class='form-msg' id='auth-msg' role='status'></p>" +
       "<p style='margin-top:0.6rem'><button type='button' class='btn btn-ghost' id='forgot-btn'>Forgot password?</button></p>" +
       "<div id='forgot-panel' hidden style='margin-top:0.6rem'>" +
@@ -608,6 +883,7 @@ async function renderAccount() {
       "<button type='button' class='btn' id='forgot-send'>Send reset email</button>" +
       "<p class='form-msg' id='forgot-msg' role='status'></p></div>" +
       "<p class='fineprint'>New accounts confirm by email first. We store your email, an optional display name, your follows and your recorded pledge interest — nothing else. No ads, no selling data.</p></form>";
+    if (justConfirmed || linkError) setTimeout(() => { try { sessionStorage.removeItem("glx_just_confirmed"); sessionStorage.removeItem("glx_auth_link_error"); } catch (e) {} }, 1500);
     $("#forgot-btn").addEventListener("click", () => {
       const panel = $("#forgot-panel");
       const input = $("#forgot-email");
@@ -617,34 +893,93 @@ async function renderAccount() {
     });
     $("#forgot-send").addEventListener("click", async () => {
       const status = $("#forgot-msg");
+      const btn = $("#forgot-send");
       const email = $("#forgot-email").value.trim();
-      if (!email) { status.textContent = "Enter your email address to get a reset link."; return; }
-      status.textContent = "Sending your reset email…";
+      if (!authValidEmail(email)) { status.textContent = t("auth2.errInvalidEmail"); return; }
+      btn.disabled = true;
+      status.textContent = t("auth2.sendingReset");
       try {
-        const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
-        status.textContent = error ? "That didn't work: " + error.message : "If an account exists for that email, a reset link is on its way.";
-      } catch (err) { status.textContent = "That didn't work: " + (err.message || "unknown error"); }
+        const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: AUTH_REDIRECT });
+        if (error) throw error;
+        status.textContent = t("auth2.resetSent");
+      } catch (err) { status.textContent = authMapError(err); }
+      btn.disabled = false;
     });
     $("#auth-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       const mode = e.submitter && e.submitter.value === "signup" ? "signup" : "signin";
-      const email = $("#a-email").value.trim(), pass = $("#a-pass").value;
+      const emailEl = $("#a-email"), passEl = $("#a-pass");
+      const email = emailEl.value.trim(), pass = passEl.value;
       const msg = $("#auth-msg");
-      msg.textContent = mode === "signup" ? "Creating your account…" : "Signing you in…";
+      const emailErr = $("#a-email-err"), passErr = $("#a-pass-err");
+      /* Client-side validation BEFORE any network call, shown next to the field. */
+      emailErr.textContent = ""; passErr.textContent = ""; msg.textContent = "";
+      let valid = true;
+      if (!authValidEmail(email)) { emailErr.textContent = t("auth2.errInvalidEmail"); valid = false; }
+      if (pass.length < 6) { passErr.textContent = t("auth2.errWeakPassword"); valid = false; }
+      if (!valid) { (emailErr.textContent ? emailEl : passEl).focus(); return; }
+      /* Visible click response: disable both buttons, working label on the one used. */
+      const signinBtn = $("#auth-signin-btn"), signupBtn = $("#auth-signup-btn");
+      const signinLabel = signinBtn.textContent, signupLabel = signupBtn.textContent;
+      const activeBtn = mode === "signup" ? signupBtn : signinBtn;
+      signinBtn.disabled = true; signupBtn.disabled = true;
+      activeBtn.textContent = mode === "signup" ? t("auth2.creating") : t("auth2.signingIn");
+      msg.textContent = activeBtn.textContent;
+      const restore = () => { signinBtn.disabled = false; signupBtn.disabled = false; signinBtn.textContent = signinLabel; signupBtn.textContent = signupLabel; };
       try {
         if (mode === "signup") {
-          const { data, error } = await sb.auth.signUp({ email, password: pass });
+          const { data, error } = await sb.auth.signUp({ email, password: pass, options: { emailRedirectTo: AUTH_REDIRECT } });
           if (error) throw error;
-          msg.textContent = data.session ? "Account created — welcome to GreenlitX." : "Account created. Check your email and tap the confirmation link, then sign in.";
-        } else {
-          const { error } = await sb.auth.signInWithPassword({ email, password: pass });
-          if (error) throw error;
-          msg.textContent = "Signed in.";
+          /* With email confirmation on, re-signing-up an existing address
+             returns a user with an EMPTY identities array (no error). */
+          if (data && data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+            msg.textContent = "";
+            emailErr.textContent = t("auth2.errDuplicate");
+            restore();
+            emailEl.focus();
+            return;
+          }
+          if (data && data.session) {
+            /* Confirmation not required for this account: signed in now. */
+            server.user = data.session.user;
+            restore();
+            const dest = authTakeReturnTo();
+            if (dest && dest !== "#/account") { location.hash = dest; return; }
+            await renderAccount();
+            return;
+          }
+          /* Signup success, confirmation pending: PROMINENT success panel,
+             form hidden so the next step cannot be missed. */
+          const panel = $("#auth-success-panel");
+          if (panel) {
+            panel.innerHTML = "<div role='status' style='border:2px solid #1e7d32;background:#eef7ee;color:#14301a;padding:1rem 1.2rem;margin:0 0 1.2rem;border-radius:6px'>" +
+              "<h3 style='margin:0 0 0.4rem'>" + escapeHtml(t("auth2.successTitle")) + "</h3>" +
+              "<p style='margin:0 0 0.4rem'>" + escapeHtml(t("auth2.successBody", { email })) + "</p>" +
+              "<p style='margin:0' class='fineprint'>" + escapeHtml(t("auth2.successNote")) + "</p></div>";
+            if (panel.scrollIntoView) panel.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+          const form = $("#auth-form"); if (form) form.hidden = true;
+          msg.textContent = "";
+          restore();
+          return;
         }
-      } catch (err) { msg.textContent = "That didn't work: " + (err.message || "unknown error"); }
+        const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+        if (error) throw error;
+        if (data && data.session) server.user = data.session.user;
+        restore();
+        /* Land visibly signed in: return to the gated destination if one was
+           remembered, otherwise re-render the account dashboard. */
+        const dest = authTakeReturnTo();
+        if (dest && dest !== "#/account") { location.hash = dest; return; }
+        await renderAccount();
+      } catch (err) {
+        restore();
+        msg.textContent = authMapError(err);
+      }
     });
     return;
   }
+
   const u = server.user;
   let profileName = "";
   try { const { data } = await sb.from("profiles").select("display_name").eq("id", u.id).single(); if (data) profileName = data.display_name || ""; } catch (e) {}
@@ -673,7 +1008,7 @@ async function renderAccount() {
   const prefsHtml = PREF_CATS.map((c) =>
     '<label class="pref-row"><input type="checkbox" data-pref="' + c.key + '"' + (commPrefs[c.key] ? " checked" : "") + "> " + escapeHtml(c.label) + "</label>").join("") +
     '<p class="fineprint">' + (prefsRemote ? "Preferences are saved to your account." : "Preferences are saved on this device for now (interim store) and will sync to your account when the preferences table is enabled.") + "</p>";
-  el.innerHTML =
+  el.innerHTML = authBanners +
     "<p>Signed in as <strong>" + escapeHtml(u.email || "") + "</strong></p>" +
     "<h3 style='margin-top:1.6rem'>Membership</h3>" +
     "<p><strong>Free member</strong> — free membership is live. The founding membership campaign is planned — not yet open; no paid membership can be bought today. See <a href='#/membership'>Membership</a>.</p>" +
@@ -691,6 +1026,7 @@ async function renderAccount() {
     "<button type='button' class='btn btn-ghost' id='deletedata-btn'>Delete my follows, pledges and profile</button></p>" +
     "<p class='form-msg' id='account-msg' role='status'></p>" +
     "<p class='fineprint'>Deleting removes your follows, recorded pledge interest and display name from GreenlitX immediately. To remove the login itself, contact us and we will delete the account completely.</p>";
+  if (justConfirmed || linkError) setTimeout(() => { try { sessionStorage.removeItem("glx_just_confirmed"); sessionStorage.removeItem("glx_auth_link_error"); } catch (e) {} }, 1500);
   $("#profile-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const name = $("#a-name").value.trim();
@@ -713,70 +1049,61 @@ async function renderAccount() {
 /* ---------- membership & about (Wave B, Stage 2a) ---------- */
 function renderMembership() {
   const el = $("#membership-body"); if (!el) return;
+  const tt = (k, vars) => escapeHtml(t(k, vars));
+  const proposedCard = (n) =>
+    '<div class="tier-card"><p class="tier-badge">' + tt("membership2.proposedBadge") + '</p>' +
+    "<h3>" + tt("membership2.tier" + n + "Name") + "</h3>" +
+    "<p>" + tt("membership2.discussedAmount", { amount: t("membership2.tier" + n + "Amount") }) + "</p>" +
+    "<p>" + tt("membership2.discussedTerm", { term: t("membership2.tier" + n + "Term") }) + "</p></div>";
   el.innerHTML =
-    '<p class="draft-banner" role="note">Free membership is live. The founding membership campaign is planned — not yet open. No paid membership can be bought today.</p>' +
-    "<h2 tabindex='-1'>Membership at GreenlitX</h2>" +
-    '<p class="footer-slogan">Hollywood decides what gets made today. On GreenlitX, the audience does.</p>' +
-    "<p>Membership is how you take part. As a member, you can discover original projects in development, follow the ones you care about, record your interest, and watch films in the Watch Free collection.</p>" +
-    "<h3>Free membership — live now</h3>" +
-    "<p>Free membership is live and real. Accounts exist today, and you can create a free account now.</p>" +
-    "<ul><li>Discover the current catalog of original projects in concept development</li>" +
-    "<li>Follow projects and receive updates about the projects you follow, where you have opted in to those updates</li>" +
-    "<li>Record pledge interest in a project — see below for exactly what that means today</li>" +
-    "<li>Watch films in the Watch Free collection</li>" +
-    "<li>Take part as an audience member in the GreenlitX model: your follows and your recorded interest help show which projects audiences want to see made</li></ul>" +
-    "<p>Free membership costs nothing. No payment method is required for free membership.</p>" +
-    '<p><a class="btn btn-primary" href="#/account">Create a free account</a></p>' +
-    "<h3>The founding membership campaign — planned, not yet open</h3>" +
-    "<p>GreenlitX is planning a founding membership campaign, discussed for January 2027.</p>" +
-    "<p><strong>That campaign is not open. No founding membership is on sale today, and no payment is being taken for it.</strong></p>" +
-    "<p>If a founding campaign opens, full terms will be published before it opens — including what a founding membership is, its price, its duration, the campaign goal and deadline, and what happens if a goal is or is not reached. Nothing about the campaign should be taken as promised until those final terms are published by GreenlitX.</p>" +
-    "<h3>Proposed paid tiers — under consideration, not yet finalized</h3>" +
-    "<p><strong>Proposed — under consideration, not yet finalized.</strong> The table below is a proposal that has been discussed. It is <strong>not</strong> a price list, <strong>not</strong> an offer, and <strong>not</strong> a promise that any of these tiers will be offered on these terms — or at all.</p>" +
-    '<table class="legal-table"><thead><tr><th>Proposed tier</th><th>Proposed amount discussed</th><th>Proposed term discussed</th></tr></thead><tbody>' +
-    "<tr><td>Supporter</td><td>$25</td><td>1 year</td></tr>" +
-    "<tr><td>Founding</td><td>$50</td><td>2 years</td></tr>" +
-    "<tr><td>Founding Plus</td><td>$99</td><td>4 years</td></tr>" +
-    "<tr><td>Lifetime Founder</td><td>$199</td><td>Lifetime, with a proposed cap of 500</td></tr>" +
-    "<tr><td>Producer</td><td>$499+</td><td>No final terms discussed</td></tr></tbody></table>" +
-    "<p>The working approach is free membership first, with any paid membership considered only after the catalog's value is proven. Final tiers, prices, and terms — if paid membership is offered — will be announced only when they are finalized.</p>" +
-    "<p>There is no way to buy, reserve, or pre-pay for any tier in this table today.</p>" +
-    "<h3>Memberships and pledges are different</h3>" +
-    "<p><strong>A membership is about belonging to GreenlitX.</strong> Free membership is your account and your participation on the platform. A founding or paid membership, if offered in the future, would be a payment for membership itself, under that membership campaign's own published terms. A membership payment is <strong>not</strong> a pledge to a film, does <strong>not</strong> fund a specific project, and does <strong>not</strong> count toward any individual project's funding goal.</p>" +
-    "<p><strong>A pledge is about one specific film project.</strong> Today, what you can record on GreenlitX is <strong>pledge interest</strong>. Pledge interest is <strong>nonbinding</strong>: it records that you are interested in supporting a project. <strong>No charge is made, no payment method is charged, and no money is collected</strong> for pledge interest. Payments are not yet active on GreenlitX.</p>" +
-    "<p>In short: membership = your place on the platform. Pledge interest = your interest in one project. One is never substituted for the other.</p>" +
-    "<h3>Questions</h3>" +
-    "<p>If final founding campaign terms are published, they will appear on this page. Until then, the accurate statement is the one at the top of this page: free membership is live; the founding campaign is planned — not yet open; proposed paid tiers are under consideration, not yet finalized.</p>" +
-    (lang !== "en" ? '<p class="fineprint">' + escapeHtml((I18N.draftNotice && I18N.draftNotice[lang]) || t("legal.draftNotice")) + " — this page is shown in English.</p>" : "");
+    '<p class="draft-banner" role="note">' + tt("membership2.banner") + "</p>" +
+    "<h2 tabindex='-1'>" + tt("membership2.heading") + "</h2>" +
+    '<p class="footer-slogan">' + tt("membership2.slogan") + "</p>" +
+    "<p>" + tt("membership2.intro") + "</p>" +
+    "<h3>" + tt("membership2.tiersHeading") + "</h3>" +
+    "<p>" + tt("membership2.tiersIntro") + "</p>" +
+    '<div class="membership-cards">' +
+    '<div class="tier-card tier-free"><p class="tier-badge tier-live">' + tt("membership2.liveNow") + "</p>" +
+    "<h3>" + tt("membership2.freeHeading") + "</h3>" +
+    "<p>" + tt("membership2.freeIntro") + "</p>" +
+    "<ul>" + [1, 2, 3, 4, 5].map((i) => "<li>" + tt("membership2.freeItem" + i) + "</li>").join("") + "</ul>" +
+    "<p>" + tt("membership2.freeCost") + "</p>" +
+    '<p><a class="btn btn-primary" href="#/account">' + tt("membership2.createCta") + "</a></p></div>" +
+    proposedCard(2) + proposedCard(3) + proposedCard(4) +
+    '<div class="tier-card tier-producer"><h3>' + tt("membership2.tier5Name") + "</h3>" +
+    "<p>" + tt("membership2.producerText") + "</p></div>" +
+    "</div>" +
+    "<p>" + tt("membership2.tiersApproach") + "</p>" +
+    "<p>" + tt("membership2.tiersNoBuy") + "</p>" +
+    "<h3>" + tt("membership2.foundingHeading") + "</h3>" +
+    "<p>" + tt("membership2.foundingIntro") + "</p>" +
+    "<p><strong>" + tt("membership2.foundingNotOpen") + "</strong></p>" +
+    "<p>" + tt("membership2.foundingTerms") + "</p>" +
+    "<h3>" + tt("membership2.diffHeading") + "</h3>" +
+    "<p>" + tt("membership2.diffMembership") + "</p>" +
+    "<p>" + tt("membership2.diffPledge") + "</p>" +
+    "<p>" + tt("membership2.diffShort") + "</p>" +
+    "<h3>" + tt("membership2.questionsHeading") + "</h3>" +
+    "<p>" + tt("membership2.questionsText") + "</p>";
 }
 function renderAbout() {
   const el = $("#about-body"); if (!el) return;
+  const tt = (k) => escapeHtml(t(k));
   el.innerHTML =
-    "<h2 tabindex='-1'>About GreenlitX</h2>" +
-    '<blockquote class="about-slogan">Hollywood decides what gets made today. On GreenlitX, the audience does.</blockquote>' +
-    "<h3>Our mission</h3><p>GreenlitX exists to give audiences a real say in which original film projects move forward — and to give those projects a public place to be discovered, followed, and supported before a traditional gatekeeper has decided their fate for them.</p>" +
-    "<p>Our mission is simple: build a platform where interest is visible, participation is open, and the decision about what deserves to be made is informed by the people who would actually watch it.</p>" +
-    "<h3>Why GreenlitX exists</h3><p>Most films never reach an audience for one reason: they never get past a closed decision. A small number of executives, committees, and buyers decide — in private, on criteria audiences never see — which stories are financed and which are set aside, often before a single future viewer has had the chance to respond to them.</p>" +
-    "<p>That system leaves two gaps. Audiences have no meaningful way to signal, early enough to matter, what they want to see. And original projects without an existing connection into that system have no public way to demonstrate that an audience exists for them.</p>" +
-    "<p>GreenlitX was created to close those gaps in the open: a catalog anyone can browse, projects anyone can follow, and interest that is recorded and visible rather than guessed at in a closed room.</p>" +
-    "<h3>How audiences participate</h3>" +
-    "<p><strong>1. Discover.</strong> Browse the catalog of original projects in development — live action, hybrid, AI film, and animation. Each project page presents the project's concept and treatment so you can judge the idea itself, not a marketing summary of it.</p>" +
-    "<p><strong>2. Follow.</strong> Follow the projects you care about. Following is how you say \u201ckeep me updated on this one\u201d and how the platform can show, in aggregate, where audience attention actually is.</p>" +
-    "<p><strong>3. Record pledge interest.</strong> On a project page you can record pledge interest — an indication that you would be interested in supporting that project. Pledge interest today is <strong>nonbinding</strong>. Payments are not yet active on GreenlitX, so recording interest <strong>does not charge you, does not collect any money, and does not commit you to pay anything</strong>.</p>" +
-    "<p><strong>4. Watch Free.</strong> GreenlitX also carries a Watch Free collection — complete films and genuine documentaries, principally from the 1970s through the 2010s, that are lawfully available to watch.</p>" +
-    "<p>Free membership is live, and accounts exist today. Free membership is how you follow projects, record interest, and manage your participation.</p>" +
-    "<h3>How original projects are developed</h3><p>The original projects on GreenlitX are developed as concepts first: a premise is worked into a treatment — the story, its world, and its intended form — together with poster artwork, so audiences can respond to something concrete. Projects are presented at the stage they are actually at. A project in the catalog is a project <strong>in concept development</strong>; its presence in the catalog is not a claim that it is financed, in production, cast, or scheduled for release.</p>" +
-    "<p>Audience response is part of development. Follows and recorded pledge interest show which concepts are finding their audience, and that evidence informs which projects GreenlitX prioritizes for further development.</p>" +
-    "<h3>How filmmakers submit</h3><p>Filmmakers can submit an original project for consideration through the submission route on the platform. A submission is a request for consideration, not a guarantee of listing, development, funding, or production. Submissions are reviewed before anything is published. Do not submit material you do not have the right to submit.</p>" +
-    "<h3>How professionals participate</h3><p>Film professionals can register professional interest through the platform. Registering professional interest records your interest in being considered for future work connected with projects as they develop. It is not a job offer, not a booking, and not a promise of work.</p>" +
-    "<h3>How the audience-decides model differs from studio gatekeeping</h3>" +
-    "<p><strong>Open catalog, not a closed slate.</strong> Projects are shown publicly, so anyone can discover them.</p>" +
-    "<p><strong>Visible interest, not private assumption.</strong> Follows and recorded interest are audience signals that can be counted and shown.</p>" +
-    "<p><strong>Participation before production.</strong> Audiences respond while a project is still a concept — early enough for that response to inform whether and how it is developed further.</p>" +
-    "<p><strong>No promise disguised as a decision.</strong> Audience support informs GreenlitX's decisions; it does not by itself finance a film, guarantee production, or guarantee release.</p>" +
-    "<p>That is the meaning of the line this platform stands on: <strong>Hollywood decides what gets made today. On GreenlitX, the audience does.</strong></p>" +
-    "<h3>Where GreenlitX is now — stated honestly</h3><p>GreenlitX is an <strong>early-stage platform</strong>. The catalog of original projects is in <strong>concept development</strong>. Free accounts, following, recorded pledge interest, project submissions, and professional-interest registration are the live participation features. The Watch Free collection is live, within the lawful pool available for it. <strong>Payments are not yet active.</strong> No pledges are charged, no paid memberships are sold, and no money is collected through the platform today. A founding membership campaign is planned — not yet open — and proposed paid tiers are under consideration, not yet finalized (see the Membership page).</p>" +
-    (lang !== "en" ? '<p class="fineprint">' + escapeHtml((I18N.draftNotice && I18N.draftNotice[lang]) || t("legal.draftNotice")) + " — this page is shown in English.</p>" : "");
+    "<h2 tabindex='-1'>" + tt("about2.heading") + "</h2>" +
+    '<blockquote class="about-slogan">' + tt("about2.slogan") + "</blockquote>" +
+    "<h3>" + tt("about2.missionHeading") + "</h3><p>" + tt("about2.missionP1") + "</p><p>" + tt("about2.missionP2") + "</p>" +
+    "<h3>" + tt("about2.whyHeading") + "</h3><p>" + tt("about2.whyP1") + "</p><p>" + tt("about2.whyP2") + "</p><p>" + tt("about2.whyP3") + "</p>" +
+    "<h3>" + tt("about2.participateHeading") + "</h3>" +
+    [1, 2, 3, 4].map((i) => "<p><strong>" + tt("about2.step" + i + "Name") + "</strong> " + tt("about2.step" + i + "Text") + "</p>").join("") +
+    "<p>" + tt("about2.freeNote") + "</p>" +
+    "<h3>" + tt("about2.developedHeading") + "</h3><p>" + tt("about2.developedP1") + "</p><p>" + tt("about2.developedP2") + "</p>" +
+    "<h3>" + tt("about2.submitHeading") + "</h3><p>" + tt("about2.submitText") + "</p>" +
+    "<h3>" + tt("about2.proHeading") + "</h3><p>" + tt("about2.proText") + "</p>" +
+    "<h3>" + tt("about2.diffHeading") + "</h3>" +
+    [1, 2, 3, 4].map((i) => "<p>" + tt("about2.diff" + i) + "</p>").join("") +
+    "<p>" + tt("about2.diffSlogan") + "</p>" +
+    "<h3>" + tt("about2.nowHeading") + "</h3><p>" + tt("about2.nowText") + "</p>";
 }
 /* Admin review surface (Stage 2c): rendered ONLY when is_admin() is true for
    the signed-in user. The allowlist (public.admin_users) is empty until the
@@ -832,12 +1159,19 @@ function renderFunding() {
 }
 /* ---------- professionals & submissions ---------- */
 const PRO_CATEGORIES = ["Actors", "Directors", "Producers", "Screenwriters", "Cinematographers", "Editors", "Composers", "Animators", "AI Filmmakers", "Production Designers"];
+const PRO_CAT_KEYS = ["pro.cat.actors", "pro.cat.directors", "pro.cat.producers", "pro.cat.screenwriters", "pro.cat.cinematographers", "pro.cat.editors", "pro.cat.composers", "pro.cat.animators", "pro.cat.aiFilmmakers", "pro.cat.productionDesigners"];
+function rolesHtml() {
+  return '<div class="roles-box"><h3>' + escapeHtml(t("roles.heading")) + "</h3><ul>" +
+    ["roles.audience", "roles.filmmakers", "roles.professionals", "roles.supporters"].map((k) => "<li>" + escapeHtml(t(k)) + "</li>").join("") + "</ul></div>";
+}
+function fillRoles(id) { const el = document.getElementById(id); if (el) el.innerHTML = rolesHtml(); }
 function renderPros() {
-  $("#pro-grid").innerHTML = PRO_CATEGORIES.map((c) =>
-    '<div class="pro-card">' + escapeHtml(c) + '<br><button type="button" class="btn btn-small" data-action="pro" data-cat="' + escapeHtml(c) + '">Register interest</button></div>').join("");
+  fillRoles("roles-pro");
+  $("#pro-grid").innerHTML = PRO_CATEGORIES.map((c, i) =>
+    '<div class="pro-card">' + escapeHtml(t(PRO_CAT_KEYS[i])) + '<br><button type="button" class="btn btn-small" data-action="pro" data-cat="' + escapeHtml(c) + '">' + escapeHtml(t("pro.registerButton")) + '</button></div>').join("");
   const sel = $("#p-role");
   if (sel && !sel.options.length) {
-    sel.innerHTML = '<option value="">Choose…</option>' + PRO_CATEGORIES.map((c) => "<option>" + escapeHtml(c) + "</option>").join("");
+    sel.innerHTML = '<option value="">' + escapeHtml(t("pro.choose")) + '</option>' + PRO_CATEGORIES.map((c, i) => '<option value="' + escapeHtml(c) + '">' + escapeHtml(t(PRO_CAT_KEYS[i])) + "</option>").join("");
   }
 }
 /* Submission form draft: kept on this device ONLY while typing, so a closed
@@ -866,16 +1200,16 @@ function updateMeta(r) {
   let title = t("site.title"), desc = t("site.description"), img = "logo.webp";
   if (r.view === "discover") { title = t("discover.heading") + " — GreenlitX"; }
   if (r.view === "watch") { title = t("watch.heading") + " — GreenlitX"; }
-  if (r.view === "membership") { title = "Membership — GreenlitX"; }
-  if (r.view === "about") { title = "About — GreenlitX"; }
+  if (r.view === "membership") { title = t("meta.membershipTitle"); }
+  if (r.view === "about") { title = t("meta.aboutTitle"); }
   if (r.view === "account") { title = t("account.heading") + " — GreenlitX"; }
   if (r.view === "film") {
     const f = filmById(r.id);
-    if (f) { title = f.title + " — GreenlitX"; desc = filmText(f, "logline"); img = "posters/" + f.id + ".webp"; }
+    if (f) { title = t("meta.filmTitle", { title: f.title }); desc = filmText(f, "logline"); img = "posters/" + f.id + ".webp"; }
   }
   if (r.view === "watchdetail") {
     const w = watchById(r.id);
-    if (w) { title = w.title + " — Watch Free — GreenlitX"; desc = w.synopsis || desc; }
+    if (w) { title = t("meta.watchDetailTitle", { title: w.title }); desc = w.synopsis || desc; }
   }
   document.title = title;
   setMeta("description", desc); setMeta("og:title", title, true); setMeta("og:description", desc, true); setMeta("og:image", img, true); setMeta("og:type", "website", true);
@@ -883,7 +1217,7 @@ function updateMeta(r) {
 function applyStaticI18n() {
   $$("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
   $$("[data-i18n-aria]").forEach((el) => { el.setAttribute("aria-label", t(el.dataset.i18nAria)); });
-  $$(".lang-select").forEach((sel) => { sel.value = lang; });
+  $$(".lang-flag").forEach((b) => { const on = b.dataset.lang === lang; b.setAttribute("aria-pressed", String(on)); b.classList.toggle("active", on); });
   const acc = document.querySelector('[data-nav="account"]');
   if (acc && !server.user) acc.textContent = t("nav.account");
   const srch = $("#search"); if (srch) { srch.placeholder = t("discover.searchPlaceholder"); srch.setAttribute("aria-label", t("discover.searchLabel")); }
@@ -893,7 +1227,15 @@ function applyStaticI18n() {
 /* ---------- routing ---------- */
 const VIEWS = ["home", "discover", "film", "watch", "watchdetail", "professionals", "submit", "account", "legal", "legaldoc", "funding", "membership", "about"];
 function parseRoute() {
-  const h = (location.hash || "#/home").replace(/^#\//, "");
+  const rawHash = location.hash || "";
+  /* Final2 P1: Supabase email links return with auth fragments
+     (#access_token=...&type=signup, #error=...&error_code=otp_expired) instead
+     of an app route. Route those to the account view - never let them fall
+     through to the home fallback or be parsed as a film/watch slug. */
+  if (/[#&](access_token|refresh_token|error|error_code)=/.test(rawHash) || /[#&]type=(signup|recovery|magiclink|invite|email)=/.test(rawHash)) {
+    return { view: "account" };
+  }
+  const h = rawHash.replace(/^#\//, "");
   const parts = h.split("/");
   if (parts[0] === "film" && parts[1]) return { view: "film", id: parts[1] };
   if (parts[0] === "watch" && parts[1]) return { view: "watchdetail", id: parts[1] };
@@ -906,21 +1248,23 @@ function render() {
   const r = parseRoute();
   if (r.view !== "home" && showcaseTimer) { clearInterval(showcaseTimer); showcaseTimer = null; }
   VIEWS.forEach((v) => { $("#view-" + v).hidden = v !== r.view; });
-  const navView = r.view === "watchdetail" ? "watch" : r.view;
+  const navView = r.view === "watchdetail" ? "watch" : r.view === "film" ? "discover" : (r.view === "legaldoc" || r.view === "funding") ? "legal" : r.view;
   $$(".main-nav a").forEach((a) => {
-    if (a.dataset.nav === navView) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    const on = a.dataset.nav === navView;
+    a.classList.toggle("active", on);
+    if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
   });
   $("#main-nav").classList.remove("open");
   const navTgl = $("#nav-toggle");
   navTgl.setAttribute("aria-expanded", "false");
-  navTgl.setAttribute("aria-label", "Open menu");
+  navTgl.setAttribute("aria-label", t("nav.openMenu"));
   if (r.view === "home") renderHome();
   if (r.view === "discover") renderDiscover();
   if (r.view === "film") renderFilmDetail(r.id);
   if (r.view === "watch") renderWatch();
   if (r.view === "watchdetail") renderWatchDetail(r.id);
   if (r.view === "professionals") renderPros();
-  if (r.view === "submit") restoreSubmitDraft();
+  if (r.view === "submit") { restoreSubmitDraft(); fillRoles("roles-submit"); }
   if (r.view === "account") renderAccount();
   if (r.view === "legal") renderLegalIndex();
   if (r.view === "legaldoc") renderLegalDoc(r.id);
@@ -939,10 +1283,12 @@ document.addEventListener("click", (e) => {
   if (navBtn) {
     const nav = $("#main-nav"); const open = nav.classList.toggle("open");
     navBtn.setAttribute("aria-expanded", String(open));
-    navBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    navBtn.setAttribute("aria-label", open ? t("nav.closeMenu") : t("nav.openMenu"));
     if (open) { const first = nav.querySelector("a"); if (first) first.focus(); }
     return;
   }
+  const flagBtn = e.target.closest("[data-lang]");
+  if (flagBtn) { setLang(flagBtn.dataset.lang); return; }
   const scrollBtn = e.target.closest("[data-scroll]");
   if (scrollBtn) {
     const target = document.getElementById(scrollBtn.dataset.scroll);
@@ -961,12 +1307,15 @@ document.addEventListener("click", (e) => {
   const chip = e.target.closest(".chip");
   if (chip) {
     if (chip.dataset.wcat != null) { state.watchCategory = chip.dataset.wcat; renderWatch(); return; }
-    if (chip.dataset.genre != null) state.genreFilter = chip.dataset.genre;
     if (chip.dataset.type != null) state.typeFilter = chip.dataset.type;
     renderDiscover(); return;
   }
-  const langSel = e.target.closest(".lang-select");
-  if (langSel) return; // handled on change
+  const lbBtn = e.target.closest("[data-lightbox-film]");
+  if (lbBtn) {
+    const f = filmById(lbBtn.dataset.lightboxFilm);
+    if (f) openLightbox(f, artworkFor(f.id), Number(lbBtn.dataset.lightboxIdx || 0), lbBtn);
+    return;
+  }
   const btn = e.target.closest("[data-action]");
   if (!btn) return;
   const id = btn.dataset.id;
@@ -976,6 +1325,8 @@ document.addEventListener("click", (e) => {
     if (server.user) { sbToggleFollow(id, turnOn).then(refreshDynamic); }
     else save("glx2_follows", Array.from(state.follows));
     refreshDynamic();
+  } else if (btn.dataset.action === "pledge-gate") {
+    authSetReturnTo("#/film/" + id);
   } else if (btn.dataset.action === "pledge-pick") {
     pledgePick.cents = Number(btn.dataset.cents);
     const custom = $("#pledge-custom"); if (custom) custom.value = "";
@@ -986,9 +1337,19 @@ document.addEventListener("click", (e) => {
     let cents = pledgePick.cents;
     if (custom && custom.value) cents = Math.round(Number(custom.value) * 100);
     if (!cents || cents < 100) return;
-    btn.disabled = true; btn.textContent = "Recording your pledge interest…";
-    sb.from("pledges").insert({ user_id: server.user.id, film_id: id, amount_cents: cents, status: "pledged" })
-      .then(async () => { await sbFetchMine(); await sbFetchCounts(); refreshDynamic(); });
+    btn.disabled = true; btn.textContent = t("pledge2.recordingInterest");
+    /* Final2 P1: one ACTIVE pledge per user+film. If one already exists
+       (e.g. the panel rendered from stale data), update its amount instead
+       of inserting a duplicate row. Errors are surfaced and the button is
+       restored; displayed counts only ever come from the server refetch. */
+    const existingPledge = myPledgeFor(id);
+    const pledgeOp = existingPledge
+      ? sb.from("pledges").update({ amount_cents: cents, status: "pledged" }).eq("id", existingPledge.id)
+      : sb.from("pledges").insert({ user_id: server.user.id, film_id: id, amount_cents: cents, status: "pledged" });
+    pledgeOp.then(async (res) => {
+      if (res && res.error) { btn.disabled = false; btn.textContent = "That didn't record — please try again."; return; }
+      await sbFetchMine(); await sbFetchCounts(); refreshDynamic();
+    });
   } else if (btn.dataset.action === "pledge-cancel") {
     const mine = myPledgeFor(id);
     if (!mine || !sb) return;
@@ -1000,6 +1361,10 @@ document.addEventListener("click", (e) => {
     btn.disabled = true;
     sb.from("pledges").update({ status: "cancelled" }).eq("id", btn.dataset.pledge)
       .then(async () => { await sbFetchMine(); await sbFetchCounts(); refreshDynamic(); });
+  } else if (btn.dataset.action === "clear-filters") {
+    state.query = ""; state.genreExact = "All"; state.stageFilter = "All"; state.typeFilter = "All";
+    const searchEl = $("#search"); if (searchEl) searchEl.value = "";
+    renderDiscover();
   } else if (btn.dataset.action === "save") {
     savedFilms.has(id) ? savedFilms.delete(id) : savedFilms.add(id);
     save("glx_saved", Array.from(savedFilms));
@@ -1011,10 +1376,6 @@ document.addEventListener("click", (e) => {
   } else if (btn.dataset.action === "clear-recent") {
     recentFilms = []; save("glx_recent", []);
     refreshDynamic();
-  } else if (btn.dataset.action === "genre-fav") {
-    favGenres.has(btn.dataset.genreName) ? favGenres.delete(btn.dataset.genreName) : favGenres.add(btn.dataset.genreName);
-    save("glx_fav_genres", Array.from(favGenres));
-    renderDiscover();
   } else if (btn.dataset.action === "admin-approve" || btn.dataset.action === "admin-needs") {
     if (!sb) return;
     btn.disabled = true;
@@ -1038,16 +1399,16 @@ $("#submit-form").addEventListener("submit", async (e) => {
   const msg = $("#submit-msg");
   const get = (id) => { const el = $(id); return el ? el.value.trim() : ""; };
   const entry = { title: get("#f-title"), genre: get("#f-genre"), logline: get("#f-logline"), synopsis: get("#f-synopsis"), type: $("#f-type").value, status: get("#f-status"), name: get("#f-name"), rights: $("#f-rights").value, target: get("#f-target"), video: get("#f-video"), email: get("#f-email") };
-  if (!entry.title || !entry.genre || !entry.logline || !entry.synopsis || !entry.type || !entry.status || !entry.name || !entry.rights || !entry.email || !$("#f-terms").checked) {
-    msg.textContent = "Please complete every required field, declare the rights position, and agree to the submission terms."; return;
+  if (!entry.title || !entry.genre || !entry.logline || !entry.synopsis || !entry.type || !entry.status || !entry.name || !entry.rights || !authValidEmail(entry.email) || !$("#f-terms").checked) {
+    msg.textContent = t("submit.validation"); return;
   }
   if (!sb) {
-    msg.textContent = "Submissions can't be sent right now — the service is unavailable on this device. Your entries are kept in the form; please try again later.";
+    msg.textContent = t("submit.unavailable");
     return;
   }
   const btn = e.target.querySelector("button[type='submit']");
   btn.disabled = true;
-  msg.textContent = "Sending your submission…";
+  msg.textContent = t("submit.sending");
   const row = {
     id: crypto.randomUUID(),
     user_id: server.user ? server.user.id : null,
@@ -1069,27 +1430,27 @@ $("#submit-form").addEventListener("submit", async (e) => {
   const { error } = await sb.from("submissions").insert(row);
   btn.disabled = false;
   if (error) {
-    msg.textContent = "That didn't send: " + error.message + " Your entries are still in the form — please try again.";
+    msg.textContent = t("submit.errorRetry", { error: error.message });
     return;
   }
   e.target.reset();
   save("glx2_submit_draft", {});
-  msg.textContent = "Received — thank you. Your submission is with the GreenlitX review team; nothing is published automatically. Reference: " + row.id.slice(0, 6) + "…" +
-    (server.user ? " Track its status under Account → My submissions." : " Create a free account before submitting next time to track its status.");
+  msg.textContent = t("submit.received", { ref: row.id.slice(0, 6) }) + " " +
+    (server.user ? t("submit.receivedTrack") : t("submit.receivedGuest"));
 });
 $("#pro-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const msg = $("#pro-msg");
   const name = $("#p-name").value.trim(), email = $("#p-email").value.trim(), role = $("#p-role").value;
   const portfolio = $("#p-portfolio").value.trim(), note = $("#p-note").value.trim();
-  if (!name || !email || !role) { msg.textContent = "Please add your name, email, and what you do."; return; }
+  if (!name || !authValidEmail(email) || !role) { msg.textContent = t("pro.validation"); return; }
   if (!sb) {
-    msg.textContent = "Interest can't be registered right now — the service is unavailable on this device. Your entries are kept in the form; please try again later.";
+    msg.textContent = t("pro.unavailable");
     return;
   }
   const btn = e.target.querySelector("button[type='submit']");
   btn.disabled = true;
-  msg.textContent = "Registering your interest…";
+  msg.textContent = t("pro.registering");
   const credits = ($("#p-credits") ? $("#p-credits").value.trim() : "");
   const skills = ($("#p-skills") ? $("#p-skills").value.trim() : "");
   const contactPref = ($("#p-contactpref") ? $("#p-contactpref").value : "");
@@ -1112,25 +1473,32 @@ $("#pro-form").addEventListener("submit", async (e) => {
   const { error } = profileStored ? { error: null } : await sb.from("pro_interest").insert(proRow);
   btn.disabled = false;
   if (error) {
-    msg.textContent = "That didn't send: " + error.message + " Your entries are still in the form — please try again.";
+    msg.textContent = t("pro.errorRetry", { error: error.message });
     return;
   }
   e.target.reset();
-  msg.textContent = "Interest registered — welcome aboard. Reference: " + proRow.id.slice(0, 6) + "… This is an expression of interest only, not a job offer; the team will reach out when productions are staffed.";
+  msg.textContent = t("pro.success", { ref: proRow.id.slice(0, 6) });
 });
 document.addEventListener("change", (e) => {
-  const sel = e.target.closest && e.target.closest(".lang-select");
-  if (sel) setLang(sel.value);
+  const el = e.target;
+  if (!el || !el.id) return;
+  if (el.id === "genre-select") { state.genreExact = el.value; renderDiscover(); }
+  else if (el.id === "stage-select") { state.stageFilter = el.value; renderDiscover(); }
 });
 const draftBtn = $("#submit-savedraft");
-if (draftBtn) draftBtn.addEventListener("click", () => { saveSubmitDraft(); const m = $("#submit-draft-msg"); if (m) m.textContent = "Draft saved on this device. A draft is not a submission — submit when you are ready."; });
+if (draftBtn) draftBtn.addEventListener("click", () => { saveSubmitDraft(); const m = $("#submit-draft-msg"); if (m) m.textContent = t("submit2.draftSaved"); });
 document.addEventListener("keydown", (e) => {
+  if (lightboxState) {
+    if (e.key === "Escape") { closeLightbox(); return; }
+    if (e.key === "ArrowRight") { stepLightbox(1); return; }
+    if (e.key === "ArrowLeft") { stepLightbox(-1); return; }
+  }
   if (e.key === "Escape") {
     const nav = $("#main-nav");
     if (nav && nav.classList.contains("open")) {
       nav.classList.remove("open");
-      const t = $("#nav-toggle");
-      if (t) { t.setAttribute("aria-expanded", "false"); t.setAttribute("aria-label", "Open menu"); t.focus(); }
+      const tgl = $("#nav-toggle");
+      if (tgl) { tgl.setAttribute("aria-expanded", "false"); tgl.setAttribute("aria-label", t("nav.openMenu")); tgl.focus(); }
     }
   }
 });
