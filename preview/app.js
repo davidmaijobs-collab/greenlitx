@@ -142,7 +142,7 @@ window.GLX_DB = sb;
    /greenlitx/), which is exactly the landing the owner hit on 2026-10-25.
    The dashboard Site URL / allowlist are verified correct — this pin makes
    the code independent of them. */
-const AUTH_REDIRECT = "https://greenlitx.com/preview/";
+const AUTH_REDIRECT = "https://greenlitx.com/";
 const AUTH_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 function authValidEmail(v) { return AUTH_EMAIL_RE.test(String(v || "").trim()); }
 /* Map Supabase auth errors (and thrown fetch failures) to plain language. */
