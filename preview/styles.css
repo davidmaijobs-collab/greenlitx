@@ -361,3 +361,15 @@ li.done .milestone-mark { color: var(--accent); }
 .roles-box h3 { margin-top: 0; font-size: 1.02rem; }
 .roles-box ul { margin: 0; padding-left: 1.2rem; color: var(--muted); }
 .roles-box li { margin: 0.3rem 0; }
+
+/* === Oct 26 owner fix #2: concept gallery + character pictures SMALL (esp. phones) === */
+.char-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+.concept-gallery { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+@media (max-width: 640px) {
+  .char-grid { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+  .char-card { padding: 0.6rem 0.65rem; }
+  .char-card p { font-size: 0.82rem; }
+  .char-portrait { margin-bottom: 0.45rem; }
+  .concept-gallery { grid-template-columns: repeat(3, 1fr); gap: 0.55rem; }
+  .concept-gallery figcaption { font-size: 0.7rem; margin-top: 0.25rem; }
+}
