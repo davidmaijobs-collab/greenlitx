@@ -1318,8 +1318,11 @@ document.addEventListener("click", (e) => {
   const chip = e.target.closest(".chip");
   if (chip) {
     if (chip.dataset.wcat != null) { state.watchCategory = chip.dataset.wcat; renderWatch(); return; }
-    if (chip.dataset.type != null) state.typeFilter = chip.dataset.type;
-    renderDiscover(); return;
+    if (chip.dataset.type != null) { state.typeFilter = chip.dataset.type; renderDiscover(); return; }
+    /* Chips carrying data-action (e.g. pledge amounts) fall through to the
+       action dispatch below — previously this branch returned for EVERY
+       .chip, which silently swallowed pledge-pick clicks (owner-found,
+       Oct 26 E2E: amount buttons appeared dead). */
   }
   const lbBtn = e.target.closest("[data-lightbox-film]");
   if (lbBtn) {
