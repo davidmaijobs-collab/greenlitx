@@ -1025,7 +1025,7 @@ async function renderAccount() {
     "<p style='margin-top:2rem'><button type='button' class='btn' id='signout-btn'>Sign out</button> " +
     "<button type='button' class='btn btn-ghost' id='deletedata-btn'>Delete my follows, pledges and profile</button></p>" +
     "<p class='form-msg' id='account-msg' role='status'></p>" +
-    "<p class='fineprint'>Deleting removes your follows, recorded pledge interest and display name from GreenlitX immediately. To remove the login itself, contact us and we will delete the account completely.</p>";
+    "<p class='fineprint'>Deleting removes your follows, recorded pledge interest and display name from GreenlitX immediately. To remove the login itself, email us at <a href='mailto:team@greenlitx.com'>team@greenlitx.com</a> and we will delete the account completely.</p>";
   if (justConfirmed || linkError) setTimeout(() => { try { sessionStorage.removeItem("glx_just_confirmed"); sessionStorage.removeItem("glx_auth_link_error"); } catch (e) {} }, 1500);
   $("#profile-form").addEventListener("submit", async (e) => {
     e.preventDefault();
