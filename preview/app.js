@@ -679,20 +679,31 @@ function galleryHtml(film) {
       "<figcaption>" + escapeHtml(galleryCaption(film, a)) + "</figcaption></figure>").join("") +
     "</div></div>";
 }
+/* Portrait matching (QC Oct 26): a portrait may be shown ONLY for the
+   character it actually depicts — matched on the artwork subject name,
+   never by filename guesswork and never by "first unused" fallback
+   (the old fallback put wrong faces on 9 films). No match = text-only card. */
+const CHAR_NAME_TITLES = new Set(["dr", "mr", "mrs", "ms", "miss", "master", "captain", "queen", "king", "sister", "brother", "father", "inspector", "detective", "professor", "agent", "supervisory", "the", "voice", "sergeant", "seargent", "lt", "col", "gen"]);
+function charNameTokens(name) {
+  const s = String(name || "").replace(/\([^)]*\)/g, " ").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/['\u2019\u2018]/g, "");
+  return Array.from(new Set(s.split(/[^a-z0-9]+/).filter(Boolean).filter((x) => !CHAR_NAME_TITLES.has(x))));
+}
 function charactersHtml(film) {
   const chars = translatedCharacters(film);
   const portraits = artworkFor(film.id).filter((a) => a.kind === "portrait");
   const used = new Set();
   const matchFor = (c) => {
-    const slug = slugifyName(c.name);
-    let hit = portraits.find((pt) => {
-      const stem = pt.file.split("/").pop().replace(/^portrait-/, "").replace(/\.webp$/, "");
-      return slug === stem || slug.includes(stem) || stem.includes(slug);
+    const ct = charNameTokens(c.name);
+    if (!ct.length) return null;
+    const hit = portraits.find((pt) => {
+      if (used.has(pt.file)) return false;
+      const st = charNameTokens(pt.subject);
+      if (!st.length) return false;
+      const subset = (a, b) => a.every((x) => b.includes(x));
+      return subset(ct, st) || subset(st, ct);
     });
-    if (hit && used.has(hit.file)) hit = null;
-    if (!hit) hit = portraits.find((pt) => !used.has(pt.file)) || null;
     if (hit) used.add(hit.file);
-    return hit;
+    return hit || null;
   };
   return chars.map((c) => {
     const pt = matchFor(c);
