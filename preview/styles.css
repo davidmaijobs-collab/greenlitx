@@ -373,3 +373,13 @@ li.done .milestone-mark { color: var(--accent); }
   .concept-gallery { grid-template-columns: repeat(3, 1fr); gap: 0.55rem; }
   .concept-gallery figcaption { font-size: 0.7rem; margin-top: 0.25rem; }
 }
+
+/* === Oct 26 owner fix #3: character cards = professional cast-list rows (small picture NEXT TO text) === */
+.char-card:has(> .char-portrait) { display: grid; grid-template-columns: 92px 1fr; column-gap: 0.85rem; align-items: start; }
+.char-card:has(> .char-portrait) .char-portrait { grid-column: 1; grid-row: 1 / -1; width: 92px; height: 100%; max-height: 190px; aspect-ratio: auto; object-fit: cover; margin: 0; }
+.char-grid { grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); }
+@media (max-width: 640px) {
+  .char-grid { grid-template-columns: 1fr; }
+  .char-card:has(> .char-portrait) { grid-template-columns: 84px 1fr; column-gap: 0.7rem; }
+  .char-card:has(> .char-portrait) .char-portrait { width: 84px; max-height: 160px; }
+}
