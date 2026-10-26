@@ -310,6 +310,19 @@ video:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
 
+/* ---------- Owner fix 2026-10-26: artwork must never zoom-crop on phones ----------
+   A 16:9 backdrop forced to COVER a tall phone screen blows up into a giant
+   cropped slice (owner screenshot, Oct 26). On narrow screens the whole
+   artwork is shown instead, letterboxed on black — banner-sized, complete. */
+@media (max-width: 860px) {
+  .showcase-slide img.backdrop,
+  .detail-hero img.backdrop { object-fit: contain; background: #000; animation: none; }
+  .detail-hero { height: auto; min-height: 340px; }
+}
+@media (max-width: 640px) {
+  .showcase { height: 88svh; max-height: 680px; }
+}
+
 /* ---------- FINAL2 Wave 2 Part 2: film page, gallery, progress, membership ---------- */
 .char-portrait { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; border-radius: 8px; margin-bottom: 0.6rem; border: 1px solid var(--border); }
 .char-bio summary { cursor: pointer; font-weight: 700; color: var(--accent); margin-top: 0.45rem; }
