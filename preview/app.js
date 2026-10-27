@@ -55,7 +55,14 @@ function setLang(next) {
   if (!LANGS.includes(next)) return;
   lang = next; save("glx_lang", lang);
   document.documentElement.lang = lang;
-  applyStaticI18n(); render();
+  applyStaticI18n(); render(); syncTrailerSubtitles();
+}
+function syncTrailerSubtitles() {
+  $$("video").forEach((video) => {
+    Array.from(video.textTracks || []).forEach((track) => {
+      track.mode = track.language === lang ? "showing" : "disabled";
+    });
+  });
 }
 document.documentElement.lang = lang;
 
@@ -86,11 +93,11 @@ function translatedCharacters(film) {
   return film.characters;
 }
 const PREF_CATS = [
-  { key: "pref_followed_updates", label: "Updates about projects I follow" },
-  { key: "pref_new_projects", label: "New projects added to GreenlitX" },
-  { key: "pref_watch_free", label: "New Watch Free additions" },
-  { key: "pref_membership_info", label: "Membership information" },
-  { key: "pref_account_notices", label: "Account and security notices" }
+  { key: "pref_followed_updates", labelKey: "pref.followedUpdates", label: "Updates about projects I follow" },
+  { key: "pref_new_projects", labelKey: "pref.newProjects", label: "New projects added to GreenlitX" },
+  { key: "pref_watch_free", labelKey: "pref.watchFree", label: "New Watch Free additions" },
+  { key: "pref_membership_info", labelKey: "pref.membershipInfo", label: "Membership information" },
+  { key: "pref_account_notices", labelKey: "pref.accountNotices", label: "Account and security notices" }
 ];
 const PREF_DEFAULTS = { pref_followed_updates: true, pref_new_projects: false, pref_watch_free: false, pref_membership_info: false, pref_account_notices: true };
 let commPrefs = Object.assign({}, PREF_DEFAULTS, load("glx_prefs", {}));
@@ -825,13 +832,13 @@ function renderFilmDetail(id) {
 
 /* ---------- account ---------- */
 function filmLinks(ids) {
-  if (!ids.length) return "<p class='fineprint'>None yet.</p>";
+  if (!ids.length) return "<p class='fineprint'>" + escapeHtml(t("account2.noneYet")) + "</p>";
   return "<ul>" + ids.map((id) => { const f = filmById(id); return f ? '<li><a href="#/film/' + f.id + '">' + escapeHtml(f.title) + "</a></li>" : ""; }).join("") + "</ul>";
 }
 async function renderAccount() {
   const el = $("#account-body");
   if (!el) return;
-  if (!sb) { el.innerHTML = "<p>Accounts are temporarily unavailable (the sign-in service could not be loaded). You can still browse films and Watch Free.</p>"; return; }
+  if (!sb) { el.innerHTML = "<p>" + escapeHtml(t("account2.unavailable")) + "</p>"; return; }
   /* Final2 P1: one-time notices set by sbInit when an email link lands here. */
   /* One-time landing notices, replay-safe: renderAccount runs several times
      in quick succession around an email-link landing (initial render, session
@@ -850,50 +857,50 @@ async function renderAccount() {
     (linkError ? "<div role='alert' style='border:2px solid #b3261e;background:#fdeceb;color:#5f1710;padding:1rem 1.2rem;margin:0 0 1.2rem;border-radius:6px'><strong>" + escapeHtml(t("auth2.linkErrorTitle")) + "</strong><p style='margin:0.3rem 0 0'>" + escapeHtml(t("auth2.linkErrorBody")) + "</p></div>" : "");
   if (recoveryMode) {
     el.innerHTML =
-      "<p class='section-intro' style='padding-left:0'>You followed a password reset link. Choose a new password for your GreenlitX account.</p>" +
+      "<p class='section-intro' style='padding-left:0'>" + escapeHtml(t("account.recoveryIntro")) + "</p>" +
       "<form id='recovery-form' novalidate>" +
-      "<div class='field'><label for='r-pass'>New password</label><input id='r-pass' type='password' autocomplete='new-password' required></div>" +
-      "<div class='field'><label for='r-pass2'>Confirm new password</label><input id='r-pass2' type='password' autocomplete='new-password' required></div>" +
-      "<button class='btn btn-primary' type='submit'>Set new password</button>" +
+      "<div class='field'><label for='r-pass'>" + escapeHtml(t("account.newPassword")) + "</label><input id='r-pass' type='password' autocomplete='new-password' required></div>" +
+      "<div class='field'><label for='r-pass2'>" + escapeHtml(t("account.confirmPassword")) + "</label><input id='r-pass2' type='password' autocomplete='new-password' required></div>" +
+      "<button class='btn btn-primary' type='submit'>" + escapeHtml(t("account.setPasswordButton")) + "</button>" +
       "<p class='form-msg' id='recovery-msg' role='status'></p></form>";
     $("#recovery-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       const msg = $("#recovery-msg");
       const p1 = $("#r-pass").value, p2 = $("#r-pass2").value;
-      if (p1.length < 6) { msg.textContent = "Passwords need at least 6 characters."; return; }
-      if (p1 !== p2) { msg.textContent = "The two passwords don't match."; return; }
-      msg.textContent = "Updating your password…";
+      if (p1.length < 6) { msg.textContent = t("account.passTooShort"); return; }
+      if (p1 !== p2) { msg.textContent = t("account.passMismatch"); return; }
+      msg.textContent = t("account.updatingPassword");
       const btn = e.target.querySelector("button[type='submit']"); btn.disabled = true;
       const { error } = await sb.auth.updateUser({ password: p1 });
-      if (error) { msg.textContent = "That didn't work: " + error.message; btn.disabled = false; return; }
+      if (error) { msg.textContent = t("account.genericError", { error: error.message }); btn.disabled = false; return; }
       recoveryMode = false;
       try { history.replaceState(null, "", location.pathname + "#/account"); } catch (err) {}
       await renderAccount();
       const note = $("#account-msg");
-      if (note) note.textContent = "Password updated — you're signed in with your new password.";
+      if (note) note.textContent = t("account.passUpdated");
     });
     return;
   }
   if (!server.user) {
     el.innerHTML =
-      "<p class='section-intro' style='padding-left:0'>Create a free account to follow projects and record nonbinding pledge interest you can manage from here. Payments are not active — no card is ever charged.</p>" +
+      "<p class='section-intro' style='padding-left:0'>" + escapeHtml(t("account2.guestIntro")) + "</p>" +
       authBanners +
       "<div id='auth-success-panel'></div>" +
       "<form id='auth-form' novalidate>" +
-      "<div class='field'><label for='a-email'>Email</label><input id='a-email' type='email' autocomplete='email' required aria-describedby='a-email-err'>" +
+      "<div class='field'><label for='a-email'>" + escapeHtml(t("account.email")) + "</label><input id='a-email' type='email' autocomplete='email' required aria-describedby='a-email-err'>" +
       "<p class='form-msg' id='a-email-err' role='alert' style='color:#b3261e'></p></div>" +
-      "<div class='field'><label for='a-pass'>Password</label><input id='a-pass' type='password' autocomplete='current-password' required aria-describedby='a-pass-hint a-pass-err'>" +
+      "<div class='field'><label for='a-pass'>" + escapeHtml(t("account.password")) + "</label><input id='a-pass' type='password' autocomplete='current-password' required aria-describedby='a-pass-hint a-pass-err'>" +
       "<p class='fineprint' id='a-pass-hint' style='margin:0.25rem 0 0'>" + escapeHtml(t("auth2.passwordRule")) + "</p>" +
       "<p class='form-msg' id='a-pass-err' role='alert' style='color:#b3261e'></p></div>" +
-      "<button class='btn btn-primary' type='submit' name='mode' value='signin' id='auth-signin-btn'>Sign in</button> " +
-      "<button class='btn' type='submit' name='mode' value='signup' id='auth-signup-btn'>Create account</button>" +
+      "<button class='btn btn-primary' type='submit' name='mode' value='signin' id='auth-signin-btn'>" + escapeHtml(t("auth2.signIn")) + "</button> " +
+      "<button class='btn' type='submit' name='mode' value='signup' id='auth-signup-btn'>" + escapeHtml(t("auth2.createAccount")) + "</button>" +
       "<p class='form-msg' id='auth-msg' role='status'></p>" +
-      "<p style='margin-top:0.6rem'><button type='button' class='btn btn-ghost' id='forgot-btn'>Forgot password?</button></p>" +
+      "<p style='margin-top:0.6rem'><button type='button' class='btn btn-ghost' id='forgot-btn'>" + escapeHtml(t("account.forgotPassword")) + "</button></p>" +
       "<div id='forgot-panel' hidden style='margin-top:0.6rem'>" +
-      "<div class='field'><label for='forgot-email'>Email for the reset link</label><input id='forgot-email' type='email' autocomplete='email'></div>" +
-      "<button type='button' class='btn' id='forgot-send'>Send reset email</button>" +
+      "<div class='field'><label for='forgot-email'>" + escapeHtml(t("account.forgotEmailLabel")) + "</label><input id='forgot-email' type='email' autocomplete='email'></div>" +
+      "<button type='button' class='btn' id='forgot-send'>" + escapeHtml(t("account.sendResetButton")) + "</button>" +
       "<p class='form-msg' id='forgot-msg' role='status'></p></div>" +
-      "<p class='fineprint'>New accounts confirm by email first. We store your email, an optional display name, your follows and your recorded pledge interest — nothing else. No ads, no selling data.</p></form>";
+      "<p class='fineprint'>" + escapeHtml(t("account2.privacyNote")) + "</p></form>";
     if (justConfirmed || linkError) setTimeout(() => { try { sessionStorage.removeItem("glx_just_confirmed"); sessionStorage.removeItem("glx_auth_link_error"); } catch (e) {} }, 1500);
     $("#forgot-btn").addEventListener("click", () => {
       const panel = $("#forgot-panel");
@@ -996,45 +1003,45 @@ async function renderAccount() {
   try { const { data } = await sb.from("profiles").select("display_name").eq("id", u.id).single(); if (data) profileName = data.display_name || ""; } catch (e) {}
   const pledgeRows = server.myPledges.filter((p) => p.status === "pledged");
   const pledgeHtml = pledgeRows.length
-    ? "<ul>" + pledgeRows.map((p) => { const f = filmById(p.film_id); return "<li><strong>" + fmtCents(p.amount_cents) + "</strong> nonbinding pledge interest in " + (f ? '<a href="#/film/' + f.id + '">' + escapeHtml(f.title) + "</a>" : escapeHtml(p.film_id)) + ' — no card charged, no payment authorized. <button type="button" class="btn btn-small btn-ghost" data-action="mypledge-cancel" data-pledge="' + p.id + '">Cancel</button></li>'; }).join("") + "</ul>"
-    : "<p class='fineprint'>No pledge interest recorded yet.</p>";
-  const subStatusLabel = { submitted: "Submitted", pending: "In review", in_review: "In review", approved: "Approved", needs_changes: "Needs changes", rejected: "Not selected" };
-  let mySubsHtml = "<p class='fineprint'>Submission history isn't available right now.</p>";
+    ? "<ul>" + pledgeRows.map((p) => { const f = filmById(p.film_id); const titleHtml = f ? '<a href="#/film/' + f.id + '">' + escapeHtml(f.title) + "</a>" : escapeHtml(p.film_id); return "<li>" + escapeHtml(t("account.pledgeLine", { amount: fmtCents(p.amount_cents), title: "\u0001" })).replace("\u0001", titleHtml) + ' <button type="button" class="btn btn-small btn-ghost" data-action="mypledge-cancel" data-pledge="' + p.id + '">' + escapeHtml(t("account.cancel")) + "</button></li>"; }).join("") + "</ul>"
+    : "<p class='fineprint'>" + escapeHtml(t("dashboard.noPledges")) + "</p>";
+  const subStatusKey = { submitted: "subStatus.submitted", pending: "subStatus.inReview", in_review: "subStatus.inReview", approved: "subStatus.approved", needs_changes: "subStatus.needsChanges", rejected: "subStatus.rejected" };
+  let mySubsHtml = "<p class='fineprint'>" + escapeHtml(t("account.submissionsUnavailable")) + "</p>";
   try {
     const { data: subs, error: subsErr } = await sb.from("submissions").select("id, title, status").eq("user_id", u.id).order("created_at", { ascending: false });
     if (!subsErr && subs) {
       mySubsHtml = subs.length
-        ? "<ul>" + subs.map((s) => "<li><strong>" + escapeHtml(s.title) + "</strong> — " + escapeHtml(subStatusLabel[s.status] || s.status) + "</li>").join("") + "</ul>"
+        ? "<ul>" + subs.map((s) => "<li><strong>" + escapeHtml(s.title) + "</strong> — " + escapeHtml(subStatusKey[s.status] ? t(subStatusKey[s.status]) : s.status) + "</li>").join("") + "</ul>"
         : "<p class='fineprint'>No submissions yet — <a href='#/submit'>submit a film</a> and it will be tracked here.</p>";
     }
   } catch (e) {}
   await loadCommPrefs();
-  const savedHtml = savedFilms.size ? filmLinks(Array.from(savedFilms)) : "<p class='fineprint'>No saved films yet — use Save on any project to keep it here.</p>";
+  const savedHtml = savedFilms.size ? filmLinks(Array.from(savedFilms)) : "<p class='fineprint'>" + escapeHtml(t("dashboard.noSavedFilms")) + "</p>";
   const recentHtml = recentFilms.length ?
-    filmLinks(recentFilms) + "<p><button type='button' class='btn btn-small btn-ghost' data-action='clear-recent'>Clear recently viewed</button></p>" :
-    "<p class='fineprint'>Nothing viewed yet on this device.</p>";
+    filmLinks(recentFilms) + "<p><button type='button' class='btn btn-small btn-ghost' data-action='clear-recent'>" + escapeHtml(t("dashboard.clearRecent")) + "</button></p>" :
+    "<p class='fineprint'>" + escapeHtml(t("dashboard.nothingViewed")) + "</p>";
   const watchSavedHtml = watchSaved.size ?
     "<ul>" + Array.from(watchSaved).map((wid) => { const w = watchById(wid); return w ? '<li><a href="#/watch/' + w.id + '">' + escapeHtml(w.title) + "</a></li>" : ""; }).join("") + "</ul>" :
-    "<p class='fineprint'>No Watch Free titles saved yet.</p>";
+    "<p class='fineprint'>" + escapeHtml(t("dashboard.noWatchlist")) + "</p>";
   const prefsHtml = PREF_CATS.map((c) =>
-    '<label class="pref-row"><input type="checkbox" data-pref="' + c.key + '"' + (commPrefs[c.key] ? " checked" : "") + "> " + escapeHtml(c.label) + "</label>").join("") +
-    '<p class="fineprint">' + (prefsRemote ? "Preferences are saved to your account." : "Preferences are saved on this device for now (interim store) and will sync to your account when the preferences table is enabled.") + "</p>";
+    '<label class="pref-row"><input type="checkbox" data-pref="' + c.key + '"' + (commPrefs[c.key] ? " checked" : "") + "> " + escapeHtml(t(c.labelKey)) + "</label>").join("") +
+    '<p class="fineprint">' + escapeHtml(prefsRemote ? t("dashboard.prefsSavedAccount") : t("dashboard.prefsSavedDevice")) + "</p>";
   el.innerHTML = authBanners +
-    "<p>Signed in as <strong>" + escapeHtml(u.email || "") + "</strong></p>" +
-    "<h3 style='margin-top:1.6rem'>Membership</h3>" +
+    "<p>" + escapeHtml(t("account.signedInAs", { email: u.email || "" })).replace(escapeHtml(u.email || ""), "<strong>" + escapeHtml(u.email || "") + "</strong>") + "</p>" +
+    "<h3 style='margin-top:1.6rem'>" + escapeHtml(t("dashboard.membershipHeading")) + "</h3>" +
     "<p><strong>Free member</strong> — free membership is live. The founding membership campaign is planned — not yet open; no paid membership can be bought today. See <a href='#/membership'>Membership</a>.</p>" +
-    "<form id='profile-form' novalidate><div class='field'><label for='a-name'>Display name (optional, shown with your support)</label><input id='a-name' value='" + escapeHtml(profileName) + "'></div>" +
-    "<button class='btn' type='submit'>Save name</button> <span class='form-msg' id='profile-msg' role='status'></span></form>" +
-    "<h3 style='margin-top:2rem'>My pledge interest (" + pledgeRows.length + ")</h3>" + pledgeHtml +
-    "<h3 style='margin-top:1.6rem'>My submissions</h3>" + mySubsHtml +
-    "<h3 style='margin-top:1.6rem'>Projects I follow (" + state.follows.size + ")</h3>" + filmLinks(Array.from(state.follows)) +
-    "<h3 style='margin-top:1.6rem'>Saved films (" + savedFilms.size + ")</h3>" + savedHtml +
-    "<h3 style='margin-top:1.6rem'>My Watch Free watchlist (" + watchSaved.size + ")</h3>" + watchSavedHtml +
-    "<h3 style='margin-top:1.6rem'>Recently viewed on this device</h3>" + recentHtml +
-    "<h3 style='margin-top:1.6rem'>Communication preferences</h3>" + prefsHtml +
+    "<form id='profile-form' novalidate><div class='field'><label for='a-name'>" + escapeHtml(t("account.displayNameLabel")) + "</label><input id='a-name' value='" + escapeHtml(profileName) + "'></div>" +
+    "<button class='btn' type='submit'>" + escapeHtml(t("account.saveNameButton")) + "</button> <span class='form-msg' id='profile-msg' role='status'></span></form>" +
+    "<h3 style='margin-top:2rem'>" + escapeHtml(t("dashboard.myPledgeInterest", { count: pledgeRows.length })) + "</h3>" + pledgeHtml +
+    "<h3 style='margin-top:1.6rem'>" + escapeHtml(t("account.mySubmissions")) + "</h3>" + mySubsHtml +
+    "<h3 style='margin-top:1.6rem'>" + escapeHtml(t("account.projectsFollow", { count: state.follows.size })) + "</h3>" + filmLinks(Array.from(state.follows)) +
+    "<h3 style='margin-top:1.6rem'>" + escapeHtml(t("dashboard.savedFilms", { count: savedFilms.size })) + "</h3>" + savedHtml +
+    "<h3 style='margin-top:1.6rem'>" + escapeHtml(t("dashboard.watchlist", { count: watchSaved.size })) + "</h3>" + watchSavedHtml +
+    "<h3 style='margin-top:1.6rem'>" + escapeHtml(t("dashboard.recentlyViewed")) + "</h3>" + recentHtml +
+    "<h3 style='margin-top:1.6rem'>" + escapeHtml(t("dashboard.prefsHeading")) + "</h3>" + prefsHtml +
     "<div id='admin-section'></div>" +
-    "<p style='margin-top:2rem'><button type='button' class='btn' id='signout-btn'>Sign out</button> " +
-    "<button type='button' class='btn btn-ghost' id='deletedata-btn'>Delete my follows, pledges and profile</button></p>" +
+    "<p style='margin-top:2rem'><button type='button' class='btn' id='signout-btn'>" + escapeHtml(t("account.signOutButton")) + "</button> " +
+    "<button type='button' class='btn btn-ghost' id='deletedata-btn'>" + escapeHtml(t("dashboard.deleteDataButton")) + "</button></p>" +
     "<p class='form-msg' id='account-msg' role='status'></p>" +
     "<p class='fineprint'>Deleting removes your follows, recorded pledge interest and display name from GreenlitX immediately. To remove the login itself, email us at <a href='mailto:team@greenlitx.com'>team@greenlitx.com</a> and we will delete the account completely.</p>";
   if (justConfirmed || linkError) setTimeout(() => { try { sessionStorage.removeItem("glx_just_confirmed"); sessionStorage.removeItem("glx_auth_link_error"); } catch (e) {} }, 1500);
@@ -1042,7 +1049,7 @@ async function renderAccount() {
     e.preventDefault();
     const name = $("#a-name").value.trim();
     const { error } = await sb.from("profiles").upsert({ id: u.id, display_name: name || null });
-    $("#profile-msg").textContent = error ? "Could not save: " + error.message : "Saved.";
+    $("#profile-msg").textContent = error ? t("account.couldNotSave", { error: error.message }) : t("account.saved");
   });
   $("#signout-btn").addEventListener("click", async () => { await sb.auth.signOut(); });
   $$("[data-pref]").forEach((cb) => cb.addEventListener("change", () => { saveCommPref(cb.dataset.pref, cb.checked); }));
@@ -1053,7 +1060,7 @@ async function renderAccount() {
     await sb.from("pledges").delete().eq("user_id", u.id);
     await sb.from("profiles").delete().eq("id", u.id);
     await sb.auth.signOut();
-    $("#account-msg").textContent = "Your data has been deleted and you are signed out.";
+    $("#account-msg").textContent = t("account.deletedMessage");
   });
 }
 
@@ -1127,13 +1134,13 @@ async function loadAdminSection() {
   let subs = [], pros = [];
   try { const r = await sb.from("submissions").select("id, title, status, contact_name, contact_email, created_at").in("status", ["pending", "submitted", "in_review"]).order("created_at", { ascending: true }); if (r.data) subs = r.data; } catch (e) {}
   try { const r = await sb.from("pro_interest").select("id, name, email, role_category, created_at").order("created_at", { ascending: true }); if (r.data) pros = r.data; } catch (e) {}
-  host.innerHTML = "<h3 style='margin-top:1.6rem'>Admin review</h3>" +
-    "<h4>Pending submissions (" + subs.length + ")</h4>" +
+  host.innerHTML = "<h3 style='margin-top:1.6rem'>" + escapeHtml(t("admin.heading")) + "</h3>" +
+    "<h4>" + escapeHtml(t("admin.pendingSubmissions", { count: subs.length })) + "</h4>" +
     (subs.length ? "<ul>" + subs.map((s) => "<li><strong>" + escapeHtml(s.title) + "</strong> — " + escapeHtml(s.contact_name || "") + " · " + escapeHtml(s.contact_email || "") +
-      ' <button type="button" class="btn btn-small" data-action="admin-approve" data-id="' + s.id + '">Approve</button> <button type="button" class="btn btn-small btn-ghost" data-action="admin-needs" data-id="' + s.id + '">Needs changes</button></li>').join("") + "</ul>" : "<p class='fineprint'>No pending submissions.</p>") +
-    "<h4>Professional interest (" + pros.length + ")</h4>" +
-    (pros.length ? "<ul>" + pros.map((pr) => "<li><strong>" + escapeHtml(pr.name || "") + "</strong> — " + escapeHtml(pr.role_category || "") + " · " + escapeHtml(pr.email || "") + "</li>").join("") + "</ul>" : "<p class='fineprint'>No professional interest records.</p>") +
-    "<p class='fineprint'>Nothing here publishes anything automatically — approving a submission only updates its review status.</p>";
+      ' <button type="button" class="btn btn-small" data-action="admin-approve" data-id="' + s.id + '">' + escapeHtml(t("admin.approve")) + '</button> <button type="button" class="btn btn-small btn-ghost" data-action="admin-needs" data-id="' + s.id + '">' + escapeHtml(t("admin.needsChanges")) + "</button></li>").join("") + "</ul>" : "<p class='fineprint'>" + escapeHtml(t("admin.noPending")) + "</p>") +
+    "<h4>" + escapeHtml(t("admin.proInterest", { count: pros.length })) + "</h4>" +
+    (pros.length ? "<ul>" + pros.map((pr) => "<li><strong>" + escapeHtml(pr.name || "") + "</strong> — " + escapeHtml(pr.role_category || "") + " · " + escapeHtml(pr.email || "") + "</li>").join("") + "</ul>" : "<p class='fineprint'>" + escapeHtml(t("admin.noProRecords")) + "</p>") +
+    "<p class='fineprint'>" + escapeHtml(t("admin.note")) + "</p>";
 }
 
 /* ---------- legal & trust center ---------- */
@@ -1519,4 +1526,5 @@ document.addEventListener("keydown", (e) => {
 window.addEventListener("hashchange", render);
 window.addEventListener("pageshow", (e) => { if (e.persisted) render(); });
 render();
+syncTrailerSubtitles();
 sbInit();
