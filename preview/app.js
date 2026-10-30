@@ -92,6 +92,42 @@ function translatedCharacters(film) {
   if (rec && rec[lang] && Array.isArray(rec[lang].characters) && rec[lang].characters.length) return rec[lang].characters;
   return film.characters;
 }
+/* ---------- story upgrade (first batch): hook / profiles / signature sequences ----------
+   Generic rendering only — no film content lives here. filmText() already
+   returns the active-language value for any field (arrays included) and
+   falls back to the English data.js field, so the same helpers serve hook,
+   signatureSequences and treatmentHtml. All new text is escaped. */
+const PROFILE_KEYS = ["background", "personality", "motivation", "goal", "need", "flaws", "relationships", "fears", "dilemma", "transformation", "contribution"];
+const PROFILE_LABEL_KEYS = {
+  background: "film4.background", personality: "film4.personality", motivation: "film4.motivation",
+  goal: "film4.goal", need: "film4.need", flaws: "film4.flaws", relationships: "film4.relationships",
+  fears: "film4.fears", dilemma: "film4.dilemma", transformation: "film4.transformation", contribution: "film4.contribution"
+};
+function localizedArrayField(film, field) {
+  const v = filmText(film, field);
+  return Array.isArray(v) ? v : null;
+}
+function characterProfileHtml(film, c, index) {
+  const source = film && Array.isArray(film.characters) ? film.characters[index] : null;
+  const profile = (c && c.profile && typeof c.profile === "object") ? c.profile
+    : (source && source.profile && typeof source.profile === "object" ? source.profile : null);
+  if (!profile) return "";
+  if (!PROFILE_KEYS.some((k) => String(profile[k] || "").trim())) return "";
+  return '<details class="char-profile"><summary>' + escapeHtml(t("film4.profileHeading")) + '</summary>' +
+    '<dl class="char-profile-list">' + PROFILE_KEYS.map((k) =>
+      "<div><dt>" + escapeHtml(t(PROFILE_LABEL_KEYS[k])) + "</dt><dd>" + escapeHtml(profile[k] || "") + "</dd></div>").join("") +
+    "</dl></details>";
+}
+function signatureSequencesHtml(film) {
+  const seqs = localizedArrayField(film, "signatureSequences");
+  if (!seqs) return "";
+  const items = seqs.filter((s) => s && (String(s.title || "").trim() || String(s.description || "").trim()));
+  if (!items.length) return "";
+  return '<div class="detail-section signature-section"><h2>' + escapeHtml(t("film4.signatureHeading")) + '</h2>' +
+    '<div class="signature-grid">' + items.map((s) =>
+      '<article class="signature-card"><h3>' + escapeHtml(s.title || "") + "</h3><p>" + escapeHtml(s.description || "") + "</p></article>").join("") +
+    "</div></div>";
+}
 const PREF_CATS = [
   { key: "pref_followed_updates", labelKey: "pref.followedUpdates", label: "Updates about projects I follow" },
   { key: "pref_new_projects", labelKey: "pref.newProjects", label: "New projects added to GreenlitX" },
@@ -492,7 +528,7 @@ function filteredFilms() {
     if (state.stageFilter !== "All" && f.status !== state.stageFilter) return false;
     if (state.typeFilter !== "All" && f.productionType !== state.typeFilter) return false;
     if (q) {
-      const hay = (f.title + " " + f.genre + " " + filmText(f, "logline") + " " + filmText(f, "tagline") + " " + f.synopsis + " " + f.characters.map((c) => c.name + " " + c.role).join(" ")).toLowerCase();
+      const hay = (f.title + " " + f.genre + " " + filmText(f, "logline") + " " + filmText(f, "tagline") + " " + (filmText(f, "synopsis") || "") + " " + translatedCharacters(f).map((c) => [c.name, c.role, c.note].filter(Boolean).join(" ")).join(" ")).toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
@@ -712,13 +748,14 @@ function charactersHtml(film) {
     if (hit) used.add(hit.file);
     return hit || null;
   };
-  return chars.map((c) => {
+  return chars.map((c, idx) => {
     const pt = matchFor(c);
     const note = String(c.note || "");
     const first = (note.split(/(?<=\.)\s+/)[0] || note);
     const img = pt ? '<img class="char-portrait" src="' + escapeHtml(pt.file) + '" width="1200" height="1800" loading="lazy" alt="' + escapeHtml(t("artworkKind.portrait") + " — " + c.name) + '">' : "";
     return '<div class="char-card">' + img + "<h3>" + escapeHtml(c.name) + '</h3><p class="char-role">' + escapeHtml(c.role) + "</p><p>" + escapeHtml(first) + "</p>" +
-      (note && note !== first ? '<details class="char-bio"><summary>' + escapeHtml(t("film3.readBio")) + "</summary><p>" + escapeHtml(note) + "</p></details>" : "") + "</div>";
+      (note && note !== first ? '<details class="char-bio"><summary>' + escapeHtml(t("film3.readBio")) + "</summary><p>" + escapeHtml(note) + "</p></details>" : "") +
+      characterProfileHtml(film, c, idx) + "</div>";
   }).join("");
 }
 function progressHtml(film) {
@@ -787,6 +824,11 @@ function renderFilmDetail(id) {
     ? '<img class="backdrop" src="backdrops/' + film.id + '.webp" width="1600" height="900" alt="" aria-hidden="true">'
     : '<div class="backdrop-gradient" style="--hue:' + genreHue(film) + '"></div>';
   const related = relatedFilms(film);
+  const hookText = filmText(film, "hook");
+  const hookHtml = (typeof hookText === "string" && hookText.trim()) ? '<p class="film-hook">' + escapeHtml(hookText) + "</p>" : "";
+  const synopsisHtml = String(filmText(film, "synopsis") || "").split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)
+    .map((p) => '<p class="story-paragraph">' + escapeHtml(p) + "</p>").join("");
+  const treatmentHtmlValue = filmText(film, "treatmentHtml");
   el.innerHTML =
     '<div class="detail-hero">' + heroArt + '<div class="detail-hero-shade"></div>' +
     '<div class="detail-hero-inner"><div>' +
@@ -798,8 +840,9 @@ function renderFilmDetail(id) {
     '<div class="detail-main">' +
     '<div class="detail-section"><h2>' + escapeHtml(t("film3.exploreStory")) + '</h2>' +
     '<p class="logline">' + escapeHtml(filmText(film, "logline")) + "</p>" +
-    "<p>" + escapeHtml(filmText(film, "synopsis")) + "</p></div>" +
+    hookHtml + synopsisHtml + "</div>" +
     '<div class="detail-section"><h2>' + escapeHtml(sectionLabel("mainCharacters", t("film.characters"))) + '</h2><div class="char-grid">' + charactersHtml(film) + "</div></div>" +
+    signatureSequencesHtml(film) +
     galleryHtml(film) +
     teaserHtml +
     '<div class="detail-section"><h2>' + escapeHtml(t("film3.productionFinancing")) + '</h2>' +
@@ -812,7 +855,7 @@ function renderFilmDetail(id) {
     '<details class="detail-details"><summary>' + escapeHtml(sectionLabel("developmentRoadmap", t("film.roadmap"))) + "</summary>" + roadmapInner + "</details>" +
     (journalInner ? '<details class="detail-details"><summary>' + escapeHtml(t("film2.journalHeading")) + "</summary>" + journalInner + "</details>" : "") +
     (visionInner ? '<details class="detail-details"><summary>' + escapeHtml(t("film2.visionHeading")) + "</summary>" + visionInner + "</details>" : "") +
-    (film.treatmentHtml ? '<details class="detail-details treatment-wrap"><summary>' + escapeHtml(t("film.treatmentToggle")) + '</summary><p class="fineprint">' + escapeHtml(t("film.treatmentNote")) + '</p><div class="treatment">' + film.treatmentHtml + "</div></details>" : "") +
+    (treatmentHtmlValue ? '<details class="detail-details treatment-wrap"><summary>' + escapeHtml(t("film.treatmentToggle")) + '</summary><p class="fineprint">' + escapeHtml(t("film.treatmentNote")) + '</p><div class="treatment">' + treatmentHtmlValue + "</div></details>" : "") +
     "</div>" +
     "</div>" +
     '<div class="detail-rail">' +

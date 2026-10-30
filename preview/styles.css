@@ -210,6 +210,19 @@ body.no-fixed-pad { padding-top: 0; }
 .char-card h3 { margin: 0 0 0.15rem; font-size: 1rem; }
 .char-card .char-role { color: var(--accent); font-size: 0.82rem; font-weight: 700; margin: 0 0 0.4rem; }
 .char-card p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+/* ---------- story upgrade (first batch): hook / signatures / character profiles ---------- */
+.detail-section p.film-hook { color: var(--text); font-size: 1.16rem; line-height: 1.6; font-weight: 600; border-left: 3px solid var(--accent); padding-left: 0.9rem; }
+.signature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.8rem; }
+.signature-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.9rem 1rem; }
+.signature-card h3 { font-size: 1rem; margin: 0 0 0.35rem; }
+.signature-card p { color: var(--muted); font-size: 0.92rem; margin: 0; }
+@media (max-width: 640px) { .signature-grid { grid-template-columns: 1fr; } }
+.char-profile { margin-top: 0.55rem; }
+.char-profile summary { cursor: pointer; font-weight: 700; color: var(--accent); }
+.char-profile-list { display: grid; gap: 0.45rem; margin: 0.55rem 0 0; }
+.char-profile-list div { border-top: 1px solid var(--border); padding-top: 0.4rem; min-width: 0; }
+.char-profile-list dt { color: var(--muted); font-size: 0.74rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+.char-profile-list dd { margin: 0.15rem 0 0; color: #c9d2d9; font-size: 0.88rem; overflow-wrap: break-word; }
 .action-panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem 1.2rem; margin-bottom: 1.1rem; }
 .action-panel h3 { margin-top: 0; }
 .panel-note { color: var(--muted); font-size: 0.92rem; }
@@ -383,3 +396,9 @@ li.done .milestone-mark { color: var(--accent); }
   .char-card:has(> .char-portrait) { grid-template-columns: 84px 1fr; column-gap: 0.7rem; }
   .char-card:has(> .char-portrait) .char-portrait { width: 84px; max-height: 160px; }
 }
+
+/* Story upgrade: the expandable profile must stay in the text column of the
+   portrait cast-list grid (never under the portrait) and must not force the
+   card wider than its column on any viewport. */
+.char-card:has(> .char-portrait) .char-profile { grid-column: 2; min-width: 0; }
+.char-profile { min-width: 0; }
