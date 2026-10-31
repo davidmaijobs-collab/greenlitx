@@ -66,6 +66,39 @@ function syncTrailerSubtitles() {
 }
 document.documentElement.lang = lang;
 
+/* ---------- language selector (Oct 30 r2: mockup-style dropdown) ----------
+   Flags are inline SVG drawn locally — emoji flags do not render on many
+   devices (owner report, Oct 30), which is why the old emoji row "lost" its
+   flags. The identical flag markup sits in index.html for the pre-JS paint;
+   this map keeps the current-language flag + code in sync after boot. */
+const LANG_FLAGS = {
+  "en": '<svg viewBox="0 0 20 14" width="22" height="15" aria-hidden="true" focusable="false"><rect width="20" height="14" fill="#fff"/><rect width="20" height="2" fill="#b31942"/><rect y="4" width="20" height="2" fill="#b31942"/><rect y="8" width="20" height="2" fill="#b31942"/><rect y="12" width="20" height="2" fill="#b31942"/><rect width="9" height="8" fill="#0a3161"/><g fill="#fff"><circle cx="1.8" cy="1.9" r="0.6"/><circle cx="4.5" cy="1.9" r="0.6"/><circle cx="7.2" cy="1.9" r="0.6"/><circle cx="1.8" cy="4" r="0.6"/><circle cx="4.5" cy="4" r="0.6"/><circle cx="7.2" cy="4" r="0.6"/><circle cx="1.8" cy="6.1" r="0.6"/><circle cx="4.5" cy="6.1" r="0.6"/><circle cx="7.2" cy="6.1" r="0.6"/></g></svg>',
+  "es": '<svg viewBox="0 0 20 14" width="22" height="15" aria-hidden="true" focusable="false"><rect width="20" height="14" fill="#f1bf00"/><rect width="20" height="3.5" fill="#aa151b"/><rect y="10.5" width="20" height="3.5" fill="#aa151b"/></svg>',
+  "pt-BR": '<svg viewBox="0 0 20 14" width="22" height="15" aria-hidden="true" focusable="false"><rect width="20" height="14" fill="#009b3a"/><polygon points="10,1.6 18.4,7 10,12.4 1.6,7" fill="#fedf00"/><circle cx="10" cy="7" r="3.1" fill="#002776"/><path d="M7.3 8.7 A3.1 3.1 0 0 1 12.7 5.3" stroke="#fff" stroke-width="0.9" fill="none"/></svg>',
+  "de": '<svg viewBox="0 0 20 14" width="22" height="15" aria-hidden="true" focusable="false"><rect width="20" height="4.7" fill="#000"/><rect y="4.7" width="20" height="4.7" fill="#dd0000"/><rect y="9.4" width="20" height="4.6" fill="#ffcc00"/></svg>'
+};
+const LANG_CODES = { "en": "EN", "es": "ES", "pt-BR": "PT", "de": "DE" };
+function langMenuOpen() { const l = $("#lang-list"); return !!(l && !l.hidden); }
+function closeLangMenu() {
+  const l = $("#lang-list"), b = $("#lang-current");
+  if (l && !l.hidden) l.hidden = true;
+  if (b) b.setAttribute("aria-expanded", "false");
+}
+function toggleLangMenu() {
+  const l = $("#lang-list"), b = $("#lang-current");
+  if (!l || !b) return;
+  const open = l.hidden;
+  l.hidden = !open;
+  b.setAttribute("aria-expanded", String(open));
+}
+function syncLangControl() {
+  const flagEl = $("#lang-current-flag");
+  if (flagEl) flagEl.innerHTML = LANG_FLAGS[lang] || "";
+  const codeEl = $("#lang-current-code");
+  if (codeEl) codeEl.textContent = LANG_CODES[lang] || "EN";
+  $$(".lang-option").forEach((b) => { const on = b.dataset.lang === lang; b.setAttribute("aria-selected", String(on)); b.classList.toggle("active", on); });
+}
+
 /* ---------- discovery state (Wave B, Stage 2d — local only, no tracking) --- */
 const savedFilms = new Set(load("glx_saved", []));
 const watchSaved = new Set(load("glx_watch_saved", []));
@@ -395,21 +428,21 @@ let showcaseTimer = null;
 let showcaseIdx = 0;
 function showcaseSlides() {
   const brand = { brand: true };
-  return [brand].concat(FEATURED.map(filmById).filter(Boolean));
+  return [brand];
 }
 function showcaseHtml() {
   const slides = showcaseSlides();
   const slideHtml = slides.map((s, i) => {
     if (s.brand) {
       return '<div class="showcase-slide' + (i === 0 ? " active" : "") + '">' +
-        '<div class="backdrop-gradient" style="--hue:150"></div><div class="showcase-shade"></div>' +
+        '<img class="backdrop" src="backdrops/letters-from-the-sun.webp" width="1600" height="900" alt="" aria-hidden="true">' +
+        '<div class="showcase-shade"></div>' +
         '<div class="showcase-content"><div class="showcase-inner">' +
-        '<p class="showcase-kicker">' + escapeHtml(t("hero.kicker")) + '</p>' +
         '<h1 class="showcase-title" tabindex="-1">' + escapeHtml(t("hero.titleStart")) + ' <span class="accent">' + escapeHtml(t("hero.titleAccent")) + '</span></h1>' +
-        '<p class="showcase-log">' + escapeHtml(t("hero.logline")) + '</p>' +
-        '<div class="showcase-actions"><a class="btn btn-primary" href="#/discover">' + escapeHtml(t("nav.discover")) + '</a>' +
-        '<a class="btn btn-ghost" href="#/watch">' + escapeHtml(t("nav.watchFree")) + '</a></div>' +
-        '<div class="hero-steps" aria-label="' + escapeHtml(t("hero.stepsLabel")) + '"><span><b>1</b>&nbsp; ' + escapeHtml(t("hero2.step1")) + '</span><span><b>2</b>&nbsp; ' + escapeHtml(t("hero2.step2")) + '</span><span><b>3</b>&nbsp; ' + escapeHtml(t("hero2.step3")) + '</span></div>' +
+        '<p class="showcase-tagline">' + escapeHtml(t("hero.tagline")) + '</p>' +
+        '<p class="showcase-subline">' + escapeHtml(t("hero.subline")) + '</p>' +
+        '<div class="showcase-actions"><button type="button" class="btn btn-primary btn-trailer" id="hero-trailer-btn"><span aria-hidden="true">\u25B6</span> ' + escapeHtml(t("home3.watchTrailer")) + ' <span class="btn-duration">0:35</span></button>' +
+        '<a class="btn btn-ghost" href="#/discover">' + escapeHtml(t("nav.discover")) + ' <span aria-hidden="true">\u203A</span></a></div>' +
         "</div></div></div>";
     }
     const f = s;
@@ -425,7 +458,7 @@ function showcaseHtml() {
       '<span class="showcase-meta">' + escapeHtml(f.genre) + " · " + escapeHtml(f.runtime) + "</span></div>" +
       "</div></div></div>";
   }).join("");
-  const dots = slides.map((s, i) => '<button type="button" data-slide="' + i + '" aria-current="' + (i === 0) + '" aria-label="' + escapeHtml(t("hero.slideLabel", { n: i + 1 })) + '"' + (i + 1) + '"></button>').join("");
+  const dots = slides.length < 2 ? "" : slides.map((s, i) => '<button type="button" data-slide="' + i + '" aria-current="' + (i === 0) + '" aria-label="' + escapeHtml(t("hero.slideLabel", { n: i + 1 })) + '"' + (i + 1) + '"></button>').join("");
   return slideHtml + '<div class="showcase-dots">' + dots + "</div>";
 }
 function startShowcaseRotationOnly() {
@@ -443,6 +476,13 @@ function startShowcase() {
   const root = $("#showcase");
   if (!root) return;
   root.innerHTML = showcaseHtml();
+  const tb = $("#hero-trailer-btn");
+  if (tb) tb.addEventListener("click", () => {
+    const frame = document.querySelector("#trailer .trailer-frame");
+    const vid = document.querySelector("#trailer video");
+    if (frame) frame.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (vid) { syncTrailerSubtitles(); const pr = vid.play(); if (pr && pr.catch) pr.catch(() => {}); }
+  });
   showcaseIdx = 0;
   if (showcaseTimer) clearInterval(showcaseTimer);
   startShowcaseRotationOnly();
@@ -465,17 +505,68 @@ function latestArtworkHtml() {
       '<div class="poster artwork-thumb"><img src="' + escapeHtml(a.file) + '" loading="lazy" alt="' + escapeHtml(t("gallery.view", { caption: t("artworkKind." + a.kind) + " — " + a.subject })) + '"></div></a></div>' +
       '<figcaption><p class="card-title">' + escapeHtml(film.title) + '</p><p class="fineprint">' + escapeHtml(t("artworkKind." + a.kind)) + "</p></figcaption></figure>").join("") + "</div></section>";
 }
+
+/* ---------- homepage redesign (Oct 30): process bar, featured cards, wide watch cards, filmmakers panel ---------- */
+const FEATURED5 = ["the-last-train-below", "the-woman-in-apartment-9", "dead-freight", "the-second-moon", "the-keeper-of-forgotten-things"];
+function processBarHtml() {
+  /* One continuous pipeline (Oct 30 r2, mockup): a single track whose glowing
+     fill ends at the Development point (stage 2 of 5). The films' real status
+     is In Development (film.statusInDevelopment) — no percentage is shown. */
+  const labels = [1, 2, 3, 4, 5].map((n) => "<span>" + escapeHtml(t("process.s" + n)) + "</span>").join("");
+  return '<div class="process-block"><p class="process-heading">' + escapeHtml(t("process.heading")) + '</p>' +
+    '<div class="process-track" role="img" aria-label="' + escapeHtml(t("process.heading") + ": " + t("process.now") + " — " + t("film.statusInDevelopment")) + '"><span class="process-fill"></span></div>' +
+    '<div class="process-labels">' + labels + '</div>' +
+    '<p class="process-now">' + escapeHtml(t("process.now")) + ": " + escapeHtml(t("film.statusInDevelopment")) + "</p></div>";
+}
+function featuredCardHtml(f) {
+  return '<article class="feature-card">' +
+    '<a class="feature-media" href="#/film/' + f.id + '" aria-label="' + escapeHtml(t("card.viewProject", { title: f.title })) + '">' +
+    '<img src="backdrops/' + f.id + '.webp" width="1600" height="900" loading="lazy" alt="">' +
+    '<span class="feature-genre">' + escapeHtml(f.genre) + "</span></a>" +
+    '<div class="feature-body"><h3 class="feature-title"><a href="#/film/' + f.id + '">' + escapeHtml(f.title) + "</a></h3>" +
+    '<p class="feature-tag">' + escapeHtml(filmText(f, "tagline")) + "</p>" +
+    processBarHtml() + "</div></article>";
+}
+function fmtRuntime(mins) {
+  if (!mins && mins !== 0) return "";
+  const h = Math.floor(mins / 60), m = mins % 60;
+  return h ? h + "h " + String(m).padStart(2, "0") + "m" : m + "m";
+}
+function watchWideCardHtml(w) {
+  const dur = fmtRuntime(w.runtimeMinutes);
+  return '<figure class="card watch-wide">' +
+    '<div class="watch-wide-wrap"><a class="poster-link" href="#/watch/' + w.id + '" aria-label="' + escapeHtml(t("card.watchFree", { title: w.title })) + '">' +
+    '<img src="' + escapeHtml(w.posterUrl) + '" width="880" height="1320" loading="lazy" alt="' + escapeHtml(t("card.watchPosterAlt", { title: w.title })) + '">' +
+    '<span class="watch-play" aria-hidden="true">\u25B6</span></a></div>' +
+    '<figcaption><p class="card-title">' + escapeHtml(w.title) + "</p>" +
+    (dur ? '<p class="watch-duration">' + escapeHtml(dur) + "</p>" : "") + "</figcaption></figure>";
+}
+function fmPanelHtml() {
+  return '<section class="fm-panel" aria-label="' + escapeHtml(t("home3.fmTitle")) + '">' +
+    '<img class="fm-bg" src="backdrops/the-last-picture-house.webp" width="1600" height="900" loading="lazy" alt="" aria-hidden="true">' +
+    '<div class="fm-shade"></div><div class="fm-content">' +
+    '<h2>' + escapeHtml(t("home3.fmTitle")) + "</h2>" +
+    "<p>" + escapeHtml(t("home3.fmText")) + "</p>" +
+    '<div class="fm-actions"><a class="btn btn-primary" href="#/submit">' + escapeHtml(t("home3.fmButton")) + ' <span aria-hidden="true">\u203A</span></a>' +
+    '<a class="btn btn-ghost" href="#/professionals">' + escapeHtml(t("nav.professionals")) + "</a></div>" +
+    "</div></section>";
+}
 function renderHome() {
   startShowcase();
+  const featured = FEATURED5.map(filmById).filter(Boolean);
+  const featuredHtml = featured.length ?
+    '<section class="row-section featured-section" aria-label="' + escapeHtml(t("home3.featuredTitle")) + '">' +
+    '<div class="section-head"><h2>' + escapeHtml(t("home3.featuredTitle")) + '</h2><a class="section-link" href="#/discover">' + escapeHtml(t("home.viewAll")) + '</a></div>' +
+    '<div class="featured-row">' + featured.map(featuredCardHtml).join("") + "</div></section>" : "";
   const tonight = WATCH.filter((w) => w.category === "modern");
   const watchRow = tonight.length ?
-    '<section class="row-section" aria-label="' + escapeHtml(t("home.watchTonight")) + '">' +
-    '<div class="section-head"><h2>' + escapeHtml(t("home.watchTonight")) + '</h2><a class="section-link" href="#/watch">' + escapeHtml(t("home.allFreeFilms")) + '</a></div>' +
-    '<div class="poster-row">' + tonight.map(watchCardHtml).join("") + "</div></section>" : "";
+    '<section class="row-section" aria-label="' + escapeHtml(t("home3.watchTitle")) + '">' +
+    '<div class="section-head"><h2>' + escapeHtml(t("home3.watchTitle")) + '</h2><a class="section-link" href="#/watch">' + escapeHtml(t("home.allFreeFilms")) + '</a></div>' +
+    '<div class="watch-wide-row">' + tonight.slice(0, 4).map(watchWideCardHtml).join("") + "</div></section>" : "";
   const recentRow = recentFilms.length ?
     '<section class="row-section" aria-label="' + escapeHtml(t("home2.recentlyViewed")) + '"><div class="section-head"><h2>' + escapeHtml(t("home2.recentlyViewed")) + '</h2></div>' +
     '<div class="poster-row">' + recentFilms.map(filmById).filter(Boolean).map(cardHtml).join("") + "</div></section>" : "";
-  $("#home-rows").innerHTML = watchRow + recentRow + latestArtworkHtml() + SECTIONS.map((s) => {
+  $("#home-rows").innerHTML = featuredHtml + watchRow + fmPanelHtml() + recentRow + latestArtworkHtml() + SECTIONS.filter((s) => s.key !== "section.featured").map((s) => {
     const films = s.films();
     if (!films.length) return "";
     const title = s.key ? t(s.key) : s.title;
@@ -1278,7 +1369,7 @@ function updateMeta(r) {
 function applyStaticI18n() {
   $$("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
   $$("[data-i18n-aria]").forEach((el) => { el.setAttribute("aria-label", t(el.dataset.i18nAria)); });
-  $$(".lang-flag").forEach((b) => { const on = b.dataset.lang === lang; b.setAttribute("aria-pressed", String(on)); b.classList.toggle("active", on); });
+  syncLangControl(); closeLangMenu();
   const acc = document.querySelector('[data-nav="account"]');
   if (acc && !server.user) acc.textContent = t("nav.account");
   const srch = $("#search"); if (srch) { srch.placeholder = t("discover.searchPlaceholder"); srch.setAttribute("aria-label", t("discover.searchLabel")); }
@@ -1340,6 +1431,7 @@ function render() {
 function refreshDynamic() { const r = parseRoute(); if (r.view === "film") renderFilmDetail(r.id); else render(); }
 
 document.addEventListener("click", (e) => {
+  if (!e.target.closest("#lang-menu")) closeLangMenu();
   const navBtn = e.target.closest("#nav-toggle");
   if (navBtn) {
     const nav = $("#main-nav"); const open = nav.classList.toggle("open");
@@ -1348,8 +1440,10 @@ document.addEventListener("click", (e) => {
     if (open) { const first = nav.querySelector("a"); if (first) first.focus(); }
     return;
   }
+  const langToggle = e.target.closest("#lang-current");
+  if (langToggle) { toggleLangMenu(); return; }
   const flagBtn = e.target.closest("[data-lang]");
-  if (flagBtn) { setLang(flagBtn.dataset.lang); return; }
+  if (flagBtn) { setLang(flagBtn.dataset.lang); closeLangMenu(); const cur = $("#lang-current"); if (cur) cur.focus(); return; }
   const scrollBtn = e.target.closest("[data-scroll]");
   if (scrollBtn) {
     const target = document.getElementById(scrollBtn.dataset.scroll);
@@ -1557,7 +1651,17 @@ document.addEventListener("keydown", (e) => {
     if (e.key === "ArrowRight") { stepLightbox(1); return; }
     if (e.key === "ArrowLeft") { stepLightbox(-1); return; }
   }
+  const langOpt = e.target && e.target.closest ? e.target.closest(".lang-option") : null;
+  if (langOpt && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+    e.preventDefault();
+    const opts = $$(".lang-option");
+    const i = opts.indexOf(langOpt);
+    const nxt = opts[(i + (e.key === "ArrowDown" ? 1 : opts.length - 1)) % opts.length];
+    if (nxt) nxt.focus();
+    return;
+  }
   if (e.key === "Escape") {
+    if (langMenuOpen()) { closeLangMenu(); const c = $("#lang-current"); if (c) c.focus(); return; }
     const nav = $("#main-nav");
     if (nav && nav.classList.contains("open")) {
       nav.classList.remove("open");

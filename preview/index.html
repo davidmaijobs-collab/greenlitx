@@ -44,17 +44,24 @@
 <link rel="icon" href="logo.webp">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#05070a">
-<link rel="stylesheet" href="styles.css?v=15">
+<link rel="stylesheet" href="styles.css?v=17">
 </head>
 <body>
 
 <header class="site-header">
   <a class="brand" href="#/home" aria-label="GreenlitX home"><img src="logo-nav.webp" alt="GreenlitX" width="1482" height="668"></a>
-  <div class="lang-flags" role="group" data-i18n-aria="nav.language" aria-label="Language">
-    <button type="button" class="lang-flag" data-lang="en" aria-label="English" title="English" aria-pressed="true">🇺🇸</button>
-    <button type="button" class="lang-flag" data-lang="es" aria-label="Español" title="Español" aria-pressed="false">🇪🇸</button>
-    <button type="button" class="lang-flag" data-lang="pt-BR" aria-label="Português (Brasil)" title="Português (Brasil)" aria-pressed="false">🇧🇷</button>
-    <button type="button" class="lang-flag" data-lang="de" aria-label="Deutsch" title="Deutsch" aria-pressed="false">🇩🇪</button>
+  <div class="lang-menu" id="lang-menu">
+    <button type="button" class="lang-current" id="lang-current" aria-haspopup="listbox" aria-expanded="false" data-i18n-aria="nav.language" aria-label="Language">
+      <span class="lang-flag-icon" id="lang-current-flag" aria-hidden="true"><svg viewBox="0 0 20 14" width="22" height="15" aria-hidden="true" focusable="false"><rect width="20" height="14" fill="#fff"/><rect width="20" height="2" fill="#b31942"/><rect y="4" width="20" height="2" fill="#b31942"/><rect y="8" width="20" height="2" fill="#b31942"/><rect y="12" width="20" height="2" fill="#b31942"/><rect width="9" height="8" fill="#0a3161"/><g fill="#fff"><circle cx="1.8" cy="1.9" r="0.6"/><circle cx="4.5" cy="1.9" r="0.6"/><circle cx="7.2" cy="1.9" r="0.6"/><circle cx="1.8" cy="4" r="0.6"/><circle cx="4.5" cy="4" r="0.6"/><circle cx="7.2" cy="4" r="0.6"/><circle cx="1.8" cy="6.1" r="0.6"/><circle cx="4.5" cy="6.1" r="0.6"/><circle cx="7.2" cy="6.1" r="0.6"/></g></svg></span>
+      <span class="lang-code" id="lang-current-code">EN</span>
+      <span class="lang-chevron" aria-hidden="true"><svg viewBox="0 0 10 6" width="10" height="6" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </button>
+    <div class="lang-list" id="lang-list" role="listbox" data-i18n-aria="nav.language" aria-label="Language" hidden>
+      <button type="button" class="lang-option active" role="option" data-lang="en" aria-selected="true"><span class="lang-flag-icon" aria-hidden="true"><svg viewBox="0 0 20 14" width="22" height="15" aria-hidden="true" focusable="false"><rect width="20" height="14" fill="#fff"/><rect width="20" height="2" fill="#b31942"/><rect y="4" width="20" height="2" fill="#b31942"/><rect y="8" width="20" height="2" fill="#b31942"/><rect y="12" width="20" height="2" fill="#b31942"/><rect width="9" height="8" fill="#0a3161"/><g fill="#fff"><circle cx="1.8" cy="1.9" r="0.6"/><circle cx="4.5" cy="1.9" r="0.6"/><circle cx="7.2" cy="1.9" r="0.6"/><circle cx="1.8" cy="4" r="0.6"/><circle cx="4.5" cy="4" r="0.6"/><circle cx="7.2" cy="4" r="0.6"/><circle cx="1.8" cy="6.1" r="0.6"/><circle cx="4.5" cy="6.1" r="0.6"/><circle cx="7.2" cy="6.1" r="0.6"/></g></svg></span><span>English</span></button>
+      <button type="button" class="lang-option" role="option" data-lang="es" aria-selected="false"><span class="lang-flag-icon" aria-hidden="true"><svg viewBox="0 0 20 14" width="22" height="15" aria-hidden="true" focusable="false"><rect width="20" height="14" fill="#f1bf00"/><rect width="20" height="3.5" fill="#aa151b"/><rect y="10.5" width="20" height="3.5" fill="#aa151b"/></svg></span><span>Español</span></button>
+      <button type="button" class="lang-option" role="option" data-lang="pt-BR" aria-selected="false"><span class="lang-flag-icon" aria-hidden="true"><svg viewBox="0 0 20 14" width="22" height="15" aria-hidden="true" focusable="false"><rect width="20" height="14" fill="#009b3a"/><polygon points="10,1.6 18.4,7 10,12.4 1.6,7" fill="#fedf00"/><circle cx="10" cy="7" r="3.1" fill="#002776"/><path d="M7.3 8.7 A3.1 3.1 0 0 1 12.7 5.3" stroke="#fff" stroke-width="0.9" fill="none"/></svg></span><span>Português (Brasil)</span></button>
+      <button type="button" class="lang-option" role="option" data-lang="de" aria-selected="false"><span class="lang-flag-icon" aria-hidden="true"><svg viewBox="0 0 20 14" width="22" height="15" aria-hidden="true" focusable="false"><rect width="20" height="4.7" fill="#000"/><rect y="4.7" width="20" height="4.7" fill="#dd0000"/><rect y="9.4" width="20" height="4.6" fill="#ffcc00"/></svg></span><span>Deutsch</span></button>
+    </div>
   </div>
   <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="main-nav" aria-label="Open menu">☰</button>
   <nav class="main-nav" id="main-nav" data-i18n-aria="nav.mainLabel" aria-label="Main">
@@ -80,18 +87,20 @@
         <div class="backdrop-gradient"></div>
         <div class="showcase-shade"></div>
         <div class="showcase-content"><div class="showcase-inner">
-          <p class="showcase-kicker">GreenlitX — a film platform powered by its audience</p>
           <h1 class="showcase-title" tabindex="-1">Hollywood decides what gets made today. <span class="accent">On GreenlitX, the audience does.</span></h1>
-          <p class="showcase-log">Forty original films are in development — live action, AI, hybrid and animation. Discover them, follow them, and record nonbinding pledge interest to help bring them to life.</p>
-          <div class="hero-steps" aria-label="How it works">
-            <span><b>1</b>&nbsp; DISCOVER FILMS</span>
-            <span><b>2</b>&nbsp; SUPPORT FILMS</span>
-            <span><b>3</b>&nbsp; WATCH FREE</span>
-          </div>
+          <p class="showcase-tagline">Discover. Support. Follow. Watch.</p>
+          <p class="showcase-subline">Real stories. Real people. A new way to bring films to life.</p>
         </div></div>
       </div>
     </div>
 
+    <section class="feature-strip" aria-label="GreenlitX">
+      <div class="feat-item"><svg class="feat-icon" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M7 5l2 4M12 5l2 4M17 5l2 4"/></svg><div><h3 data-i18n="home3.feat1Title"></h3><p data-i18n="home3.feat1Text"></p></div></div>
+      <div class="feat-item"><svg class="feat-icon" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3 2.8-4.5 5.5-4.5S13.9 16 14.5 19"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.6c2.3.2 3.9 1.6 4.4 4"/></svg><div><h3 data-i18n="home3.feat2Title"></h3><p data-i18n="home3.feat2Text"></p></div></div>
+      <div class="feat-item"><svg class="feat-icon" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M9.5 20V4M15 20v-8M20 20V7"/><path d="M3 20h18"/></svg><div><h3 data-i18n="home3.feat3Title"></h3><p data-i18n="home3.feat3Text"></p></div></div>
+      <div class="feat-item"><svg class="feat-icon" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="11" rx="2"/><path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg><div><h3 data-i18n="home3.feat4Title"></h3><p data-i18n="home3.feat4Text"></p></div></div>
+      <div class="feat-item"><svg class="feat-icon" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10.5 9.5l5 2.5-5 2.5z" fill="currentColor" stroke="none"/></svg><div><h3 data-i18n="home3.feat5Title"></h3><p data-i18n="home3.feat5Text"></p></div></div>
+    </section>
     <div class="teaser-section" id="trailer">
       <div class="section-head">
         <h2 id="trailer-heading">The GreenlitX Trailer</h2>
@@ -289,11 +298,11 @@
 <noscript><p class="noscript-note">GreenlitX needs JavaScript enabled to display film projects.</p></noscript>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="data.js?v=18"></script>
+<script src="data.js?v=19"></script>
 <script src="watch.js?v=5"></script>
 <script src="legal.js?v=4"></script>
-<script src="i18n.js?v=85"></script>
+<script src="i18n.js?v=87"></script>
 <script src="artwork-data.js?v=1"></script>
-<script src="app.js?v=18"></script>
+<script src="app.js?v=20"></script>
 </body>
 </html>
