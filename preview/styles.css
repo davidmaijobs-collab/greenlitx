@@ -1134,3 +1134,57 @@ body.modal-open { overflow: hidden; }
    section now meets the footer directly; the footer keeps its internal
    padding for separation. */
 .site-footer { margin-top: 0; }
+
+/* ================================================================
+   GreenlitX Mobile App promo — ADD-ONLY (2026-10-31).
+   Every selector below is glxapp- prefixed and styles ONLY the two
+   new components (homepage app section + footer app box).
+   No existing rule is modified by this block.
+   ================================================================ */
+.glxapp-section { position: relative; overflow: hidden; padding: 4.2rem 1.1rem 4.6rem; background: radial-gradient(1100px 480px at 78% 30%, rgba(124,252,0,0.13), rgba(124,252,0,0) 60%), radial-gradient(800px 500px at 8% 90%, rgba(20,80,30,0.35), rgba(0,0,0,0) 65%), linear-gradient(160deg, #060a06 0%, #030503 55%, #071007 100%); border-top: 1px solid rgba(124,252,0,0.16); border-bottom: 1px solid rgba(124,252,0,0.16); }
+.glxapp-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 3rem; }
+.glxapp-copy { flex: 1 1 430px; min-width: 280px; }
+.glxapp-title { color: #7cfc00; font-size: clamp(2.1rem, 4.5vw, 3.4rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.01em; margin: 0 0 0.4rem; }
+.glxapp-soon { color: #f2f7f2; font-size: clamp(1.3rem, 2.4vw, 1.8rem); font-weight: 700; margin: 0 0 1rem; }
+.glxapp-body { color: #b9c8bb; font-size: 1.06rem; line-height: 1.65; max-width: 46ch; margin: 0 0 1.7rem; }
+.glxapp-badges { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+.glxapp-badge { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.95rem; border: 1.5px solid rgba(235,245,236,0.75); border-radius: 10px; color: #eef6ee; background: rgba(0,0,0,0.55); cursor: default; user-select: none; }
+.glxapp-badge-ic { flex: 0 0 auto; }
+.glxapp-badge-txt { display: flex; flex-direction: column; line-height: 1.15; text-align: left; }
+.glxapp-badge-txt small { font-size: 0.62rem; letter-spacing: 0.02em; color: #cfe0cf; }
+.glxapp-badge-txt strong { font-size: 1.02rem; font-weight: 700; }
+.glxapp-phones { flex: 0 1 520px; display: flex; justify-content: center; align-items: flex-start; }
+.glxapp-phone { width: 228px; flex: 0 0 auto; background: #000; border: 2px solid #2e3d2e; border-radius: 34px; padding: 12px 12px 14px; box-shadow: 0 24px 50px rgba(0,0,0,0.65), 0 0 0 6px rgba(10,16,10,0.9); }
+.glxapp-phone-a { transform: rotate(-3deg); z-index: 1; }
+.glxapp-phone-b { transform: rotate(2.5deg); margin-left: 12px; margin-top: 34px; }
+.glxapp-phone-notch { width: 74px; height: 15px; border-radius: 8px; background: #151a15; margin: 0 auto 8px; }
+.glxapp-phone-logo { text-align: center; font-weight: 800; letter-spacing: 0.14em; font-size: 0.78rem; color: #eef6ee; margin: 0 0 9px; }
+.glxapp-x { color: #7cfc00; }
+.glxapp-phone-hero { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 12px; display: block; }
+.glxapp-phone-wide { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 10px; display: block; }
+.glxapp-phone-film { color: #eef6ee; font-size: 0.72rem; font-weight: 700; margin: 6px 2px 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.glxapp-phone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.glxapp-phone-grid figure { margin: 0; }
+.glxapp-phone-grid img { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 9px; display: block; }
+.glxapp-phone-grid figcaption { color: #a9bda9; font-size: 0.56rem; margin-top: 4px; line-height: 1.25; }
+.glxapp-phone-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; }
+.glxapp-phone-grid3 img { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 8px; display: block; }
+.glxapp-phone-disc { color: #eef6ee; font-weight: 800; font-size: 0.92rem; margin: 0 2px 7px; }
+.glxapp-phone-search { height: 20px; border-radius: 10px; background: #162116; margin: 0 0 10px; }
+.glxapp-phone-tabs { display: flex; justify-content: space-between; border-top: 1px solid #1d2a1d; padding: 8px 2px 0; margin-top: 10px; color: #7e937e; font-size: 0.58rem; }
+.glxapp-phone-tabs .glxapp-tab-on { color: #7cfc00; font-weight: 700; }
+.glxapp-foot { max-width: 1200px; margin: 0 auto; padding: 0 1.1rem 2rem; display: flex; justify-content: flex-end; }
+.glxapp-foot-box { border: 1.5px solid rgba(124,252,0,0.55); border-radius: 14px; padding: 1rem 1.25rem 1.1rem; background: rgba(0,0,0,0.35); max-width: 430px; }
+.glxapp-foot-title { color: #7cfc00; font-weight: 800; font-size: 1.12rem; margin: 0 0 0.15rem; }
+.glxapp-foot-sub { color: #b9c8bb; font-size: 0.92rem; margin: 0 0 0.8rem; }
+@media (max-width: 860px) {
+  .glxapp-inner { flex-direction: column; gap: 2.4rem; }
+  .glxapp-copy { flex: none; text-align: center; }
+  .glxapp-body { margin-left: auto; margin-right: auto; }
+  .glxapp-badges { justify-content: center; }
+  .glxapp-phones { flex: none; }
+  .glxapp-phone { width: 168px; }
+  .glxapp-foot { justify-content: stretch; }
+  .glxapp-foot-box { max-width: none; width: 100%; text-align: center; }
+  .glxapp-foot-box .glxapp-badges { justify-content: center; }
+}
