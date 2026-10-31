@@ -44,7 +44,7 @@
 <link rel="icon" href="logo.webp">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#05070a">
-<link rel="stylesheet" href="styles.css?v=17">
+<link rel="stylesheet" href="styles.css?v=20">
 </head>
 <body>
 
@@ -138,8 +138,8 @@
       <div class="filter-row">
         <label class="filter-field"><span data-i18n="discover.filterGenre">Genre</span>
           <select id="genre-select" data-i18n-aria="discover.filterGenreLabel" aria-label="Filter by genre"></select></label>
-        <label class="filter-field"><span data-i18n="discover.filterStage">Development stage</span>
-          <select id="stage-select" data-i18n-aria="discover.filterStageLabel" aria-label="Filter by development stage"></select></label>
+        <label class="filter-field"><span data-i18n="discover2.sortLabel">Sort by</span>
+          <select id="sort-select" data-i18n-aria="discover2.sortLabel" aria-label="Sort films"></select></label>
       </div>
       <div class="chip-row" id="type-chips" role="group" aria-label="Filter by production type"></div>
     </div>
@@ -162,6 +162,10 @@
     <div class="filters">
       <input type="search" id="watch-search" placeholder="Search free films, directors, genres…" aria-label="Search free films">
       <div class="chip-row" id="watch-chips" role="group" aria-label="Filter by category"></div>
+      <div class="filter-row">
+        <label class="filter-field"><span data-i18n="discover.filterGenre">Genre</span>
+          <select id="watch-genre" data-i18n-aria="discover.filterGenreLabel" aria-label="Filter by genre"></select></label>
+      </div>
     </div>
     <p class="results-count" id="watch-count" role="status"></p>
     <div id="watch-rows"></div>
@@ -175,11 +179,20 @@
   <!-- ============ VIEW: PROFESSIONALS ============ -->
   <section id="view-professionals" class="view" hidden aria-label="For professionals">
     <div class="section">
-      <h2 tabindex="-1" data-i18n="pro.heading">For film professionals</h2>
-      <p class="section-intro" style="padding-left:0" data-i18n="pro.intro">GreenlitX films will need the people who make cinema. Tell the team who you are and what you do — when productions are staffed, registered professionals are the first to hear.</p>
+      <div class="page-hero">
+        <img class="page-hero-bg" src="trailer-poster.jpg" alt="" aria-hidden="true">
+        <div class="page-hero-shade"></div>
+        <div class="page-hero-content">
+          <h2 tabindex="-1" data-i18n="pro.heading">For film professionals</h2>
+          <p data-i18n="pro.intro">GreenlitX films will need the people who make cinema. Tell the team who you are and what you do — when productions are staffed, registered professionals are the first to hear.</p>
+        </div>
+      </div>
       <div id="roles-pro"></div>
+      <h3 class="tick-title" data-i18n="pro2.catsHeading">Who we work with</h3>
       <div class="pro-grid" id="pro-grid"></div>
-      <form id="pro-form" novalidate style="margin-top:1.6rem">
+      <div class="form-panel">
+        <h3 class="tick-title" data-i18n="pro2.formHeading">Register your interest</h3>
+      <form id="pro-form" novalidate>
         <div class="field"><label for="p-name">Your name *</label><input id="p-name" autocomplete="name" required></div>
         <div class="field"><label for="p-email">Email *</label><input id="p-email" type="email" autocomplete="email" required></div>
         <div class="field"><label for="p-role">I am a… *</label><select id="p-role" required></select></div>
@@ -193,16 +206,34 @@
         <p class="form-msg" id="pro-msg" role="status"></p>
       </form>
       <p class="fineprint">Registering interest is an expression of interest only — it is not a job offer, a casting call, or a promise of work, and nobody has been hired for any project yet. Your details are sent to the GreenlitX team only when you submit this form.</p>
+      </div>
     </div>
   </section>
 
   <!-- ============ VIEW: SUBMIT ============ -->
   <section id="view-submit" class="view" hidden aria-label="Submit your film">
     <div class="section">
-      <h2 tabindex="-1" data-i18n="submit.heading">Submit your film</h2>
-      <p class="section-intro" style="padding-left:0" data-i18n="submit.intro">Independent filmmakers: bring us your project. Every submission is reviewed by a person before anything is published — nothing goes live automatically, and submitting a project never transfers ownership of it to GreenlitX.</p>
+      <div class="page-hero">
+        <img class="page-hero-bg" src="backdrops/the-last-picture-house.webp" alt="" aria-hidden="true">
+        <div class="page-hero-shade"></div>
+        <div class="page-hero-content">
+          <h2 tabindex="-1" data-i18n="makers.heroTitle">Bring Your Story to an Audience That Matters</h2>
+          <p data-i18n="submit.intro">Independent filmmakers: bring us your project. Every submission is reviewed by a person before anything is published — nothing goes live automatically, and submitting a project never transfers ownership of it to GreenlitX.</p>
+          <p class="page-hero-actions"><button type="button" class="btn btn-primary" data-scroll="submit-form" data-i18n="submit.heading">Submit your film</button></p>
+        </div>
+      </div>
+      <h3 class="tick-title" data-i18n="makers.howHeading">How submissions work</h3>
+      <div class="steps-grid">
+        <div class="step-card"><span class="step-num" aria-hidden="true">1</span><h4 data-i18n="makers.step1T">Submit your project</h4><p data-i18n="makers.step1X">Complete the form below with your project's details.</p></div>
+        <div class="step-card"><span class="step-num" aria-hidden="true">2</span><h4 data-i18n="makers.step2T">Reviewed by a person</h4><p data-i18n="makers.step2X">Every submission is reviewed by the GreenlitX team before anything is published — nothing goes live automatically.</p></div>
+        <div class="step-card"><span class="step-num" aria-hidden="true">3</span><h4 data-i18n="makers.step3T">Get your reference code</h4><p data-i18n="makers.step3X">Your reference code is your receipt. Signed-in members can also track the submission's status in their account.</p></div>
+        <div class="step-card"><span class="step-num" aria-hidden="true">4</span><h4 data-i18n="makers.step4T">A decision, honestly</h4><p data-i18n="makers.step4X">Submitting never guarantees acceptance, financing or production — and submitting never transfers ownership of your project to GreenlitX.</p></div>
+      </div>
       <div id="roles-submit"></div>
+      <div class="form-panel">
+        <h3 class="tick-title" data-i18n="submit.heading">Submit your film</h3>
       <form id="submit-form" novalidate>
+        <fieldset class="form-group"><legend data-i18n="makers.groupProject">Your project</legend>
         <div class="field"><label for="f-title">Film title *</label><input id="f-title" required></div>
         <div class="field"><label for="f-genre">Genre *</label><input id="f-genre" required placeholder="Drama, Thriller, Animation…"></div>
         <div class="field"><label for="f-logline">Logline *</label><input id="f-logline" required><p class="hint">One or two sentences that sell the film.</p></div>
@@ -213,7 +244,9 @@
             <option>LIVE ACTION</option><option>AI FILM</option><option>HYBRID</option><option>ANIMATION</option>
           </select></div>
         <div class="field"><label for="f-status">Development status *</label><input id="f-status" required placeholder="Concept, script, packaging…"></div>
-        <div class="field"><label for="f-name">Your name / production company *</label><input id="f-name" required></div>
+        <div class="field"><label for="f-video">Pitch video URL</label><input id="f-video" type="url" placeholder="https://…"><p class="hint">Optional — a link to a teaser, pitch, or previous work.</p></div>
+        </fieldset>
+        <fieldset class="form-group"><legend data-i18n="makers.groupRights">Rights &amp; funding</legend>
         <div class="field"><label for="f-rights">Rights ownership *</label>
           <select id="f-rights" required>
             <option value="">Choose…</option>
@@ -222,14 +255,18 @@
             <option>Rights are shared / in negotiation</option>
           </select></div>
         <div class="field"><label for="f-target">Proposed funding target (USD)</label><input id="f-target" type="number" min="0" step="1000"></div>
-        <div class="field"><label for="f-video">Pitch video URL</label><input id="f-video" type="url" placeholder="https://…"><p class="hint">Optional — a link to a teaser, pitch, or previous work.</p></div>
+        </fieldset>
+        <fieldset class="form-group"><legend data-i18n="makers.groupYou">About you</legend>
+        <div class="field"><label for="f-name">Your name / production company *</label><input id="f-name" required></div>
         <div class="field"><label for="f-email">Contact email *</label><input id="f-email" type="email" required></div>
+        </fieldset>
         <div class="field"><label><input type="checkbox" id="f-terms" required style="width:auto"> Ownership acknowledgment (required): I confirm I own the rights to this project or represent the rights holder, I agree to the submission terms, my project is original or properly licensed, and GreenlitX may review it for publication. *</label></div>
         <button class="btn" type="button" id="submit-savedraft">Save draft on this device</button>
         <button class="btn btn-primary" type="submit">Submit for review</button>
         <p class="form-msg" id="submit-draft-msg" role="status"></p>
         <p class="form-msg" id="submit-msg" role="status"></p>
       </form>
+      </div>
       <p class="fineprint" id="submission-note" style="margin-top:2rem">When you submit, your project goes directly to the GreenlitX review team and you'll get a reference code as your receipt. Nothing is published automatically. If you're signed in, you can track your submission's status under Account → My submissions.</p>
     </div>
   </section>
@@ -300,9 +337,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="data.js?v=19"></script>
 <script src="watch.js?v=5"></script>
-<script src="legal.js?v=4"></script>
-<script src="i18n.js?v=87"></script>
+<script src="legal.js?v=5"></script>
+<script src="i18n.js?v=89"></script>
 <script src="artwork-data.js?v=1"></script>
-<script src="app.js?v=20"></script>
+<script src="app.js?v=23"></script>
 </body>
 </html>

@@ -8,6 +8,21 @@
  * nonbinding: no card is charged and payments are not active.
  * Follows are unchanged and still use the `follows` table / localStorage.
  */
+/* ---------- Round 3 (Oct 30): /preview/ guard ----------
+   The app physically lives in /preview/ but must only ever be SEEN at the
+   root. Anyone landing on a /preview/ URL (stale bookmark, old tab, search
+   result) is bounced to the same page at greenlitx.com with search + hash
+   preserved. Never fires at "/" or "/films.html" (the root shells load this
+   same app.js through <base href> with a root pathname). */
+(function () {
+  try {
+    var p = window.location.pathname || "";
+    if (p === "/preview" || p.indexOf("/preview/") === 0) {
+      window.location.replace("https://greenlitx.com/" + window.location.search + window.location.hash);
+    }
+  } catch (e) {}
+})();
+
 "use strict";
 
 const $ = (s, r) => (r || document).querySelector(s);
@@ -35,9 +50,9 @@ function t(key, vars) {
 }
 const isLegalKey = (key) => (I18N.legalKeys || []).includes(key);
 function draftNoteHtml(key) {
-  if (lang === "en" || !isLegalKey(key)) return "";
-  const note = (I18N.draftNotice && I18N.draftNotice[lang]) || t("legal.draftNotice");
-  return ' <span class="draft-note">(' + escapeHtml(note) + ")</span>";
+  /* Round 3 (Oct 30): owner ordered every draft note removed from the
+     rendered site — this helper now always returns nothing. */
+  return "";
 }
 /* Film text: titles are NEVER translated. Logline/synopsis/tagline come from
    films.json for the active language, falling back to the English record. */
@@ -156,10 +171,22 @@ function signatureSequencesHtml(film) {
   if (!seqs) return "";
   const items = seqs.filter((s) => s && (String(s.title || "").trim() || String(s.description || "").trim()));
   if (!items.length) return "";
-  return '<div class="detail-section signature-section"><h2>' + escapeHtml(t("film4.signatureHeading")) + '</h2>' +
-    '<div class="signature-grid">' + items.map((s) =>
-      '<article class="signature-card"><h3>' + escapeHtml(s.title || "") + "</h3><p>" + escapeHtml(s.description || "") + "</p></article>").join("") +
-    "</div></div>";
+  /* Round 4 (Oct 30): mockup scene cards carry the film's real artwork
+     stills — the non-portrait, non-poster gallery pieces (locations,
+     moments, details, backdrop) in gallery order. They are concept
+     artwork for the film, presented in sequence order; no still is
+     captioned as depicting a specific sequence. The play overlay is
+     honest: it appears ONLY on the five flagship films that have a real
+     teaser video, and it scrolls to and plays that teaser. */
+  const stills = artworkFor(film.id).filter((a) => ["location", "moment", "detail", "backdrop"].includes(a.kind));
+  const hasTeaser = FLAGSHIPS.includes(film.id) && !!TEASERS[film.id];
+  return '<div class="detail-section signature-section" data-fp-section="scenes"><h2>' + escapeHtml(t("filmPage.scenesHeading")) + '</h2>' +
+    '<div class="signature-grid">' + items.map((s, i) => {
+      const st = stills.length ? stills[i % stills.length] : null;
+      const media = st ? '<div class="scene-media"><img src="' + escapeHtml(st.file) + '" loading="lazy" alt="' + escapeHtml(galleryCaption(film, st)) + '">' +
+        (hasTeaser ? '<button type="button" class="scene-play" data-action="play-teaser" aria-label="' + escapeHtml(t("filmPage.watchTrailer")) + '"><span aria-hidden="true">▶</span></button>' : "") + "</div>" : "";
+      return '<article class="signature-card">' + media + '<div class="scene-body"><h3>' + escapeHtml(s.title || "") + "</h3><p>" + escapeHtml(s.description || "") + "</p></div></article>";
+    }).join("") + "</div></div>";
 }
 const PREF_CATS = [
   { key: "pref_followed_updates", labelKey: "pref.followedUpdates", label: "Updates about projects I follow" },
@@ -200,7 +227,9 @@ const state = {
   typeFilter: "All",
   query: "",
   watchQuery: "",
-  watchCategory: "All"
+  watchCategory: "All",
+  watchGenre: "All",
+  sortBy: "featured"
 };
 const filmById = (id) => FILMS.find((f) => f.id === id);
 /* Retired guest voting: clear any legacy on-device vote list so it can never resurface. */
@@ -262,7 +291,11 @@ let recoveryMode = false; // true while a password-recovery link flow is in prog
 const server = { user: null, pledgeTotals: {}, myPledges: [], ready: false };
 const PLEDGE_AMOUNTS = [500, 1000, 2500, 5000, 10000];
 const pledgeMicro = () => t("pledge.nonbinding") + (lang !== "en" && isLegalKey("pledge.nonbinding") ? "" : "");
-let pledgePick = { filmId: null, cents: 2500 };
+let pledgePick = { filmId: null, cents: 2500, custom: false };
+/* Round 4 (Oct 30): film-page tab state — kept in module scope so a
+   refreshDynamic() re-render (pledge pick, follow, save) restores the
+   tab the visitor was reading instead of bouncing back to Overview. */
+let filmTabState = { id: null, tab: "overview" };
 const fmtCents = (c) => "$" + (Number(c || 0) / 100).toLocaleString("en-US", { maximumFractionDigits: 0 });
 /* Supporter interest = real recorded pledge-interest rows (Supabase pledge_totals). */
 const supporterCount = (film) => Number((server.pledgeTotals[film.id] || {}).backers || 0);
@@ -393,7 +426,7 @@ function cardHtml(film) {
     '<div class="poster-wrap"><a class="poster-link" href="#/film/' + film.id + '" aria-label="' + escapeHtml(t("card.viewProject", { title: film.title })) + '">' +
     '<div class="poster">' + posterHtml(film) + "</div></a>" +
     bookmarkBtnHtml("save", film.id, saved, saved ? "follow.savedFilm" : "follow.saveFilm", film.title) + "</div>" +
-    '<figcaption><p class="card-title">' + escapeHtml(film.title) + "</p></figcaption></figure>";
+    '<figcaption>' + processBarHtml("compact") + "</figcaption></figure>";
 }
 
 /* ---------- sections (home rows) ---------- */
@@ -503,17 +536,20 @@ function latestArtworkHtml() {
     '<div class="poster-row artwork-row">' + picked.map(({ film, a }) =>
       '<figure class="card artwork-tile"><div class="poster-wrap"><a class="poster-link" href="#/film/' + film.id + '">' +
       '<div class="poster artwork-thumb"><img src="' + escapeHtml(a.file) + '" loading="lazy" alt="' + escapeHtml(t("gallery.view", { caption: t("artworkKind." + a.kind) + " — " + a.subject })) + '"></div></a></div>' +
-      '<figcaption><p class="card-title">' + escapeHtml(film.title) + '</p><p class="fineprint">' + escapeHtml(t("artworkKind." + a.kind)) + "</p></figcaption></figure>").join("") + "</div></section>";
+      '<figcaption><p class="fineprint">' + escapeHtml(t("artworkKind." + a.kind)) + "</p></figcaption></figure>").join("") + "</div></section>";
 }
 
 /* ---------- homepage redesign (Oct 30): process bar, featured cards, wide watch cards, filmmakers panel ---------- */
 const FEATURED5 = ["the-last-train-below", "the-woman-in-apartment-9", "dead-freight", "the-second-moon", "the-keeper-of-forgotten-things"];
-function processBarHtml() {
+function processBarHtml(variant) {
   /* One continuous pipeline (Oct 30 r2, mockup): a single track whose glowing
      fill ends at the Development point (stage 2 of 5). The films' real status
-     is In Development (film.statusInDevelopment) — no percentage is shown. */
+     is In Development (film.statusInDevelopment) — no percentage is shown.
+     Round 3: one shared renderer for featured cards, discover/rail cards
+     (variant "compact"), and film pages, so the element is identical
+     everywhere the audience meets it. */
   const labels = [1, 2, 3, 4, 5].map((n) => "<span>" + escapeHtml(t("process.s" + n)) + "</span>").join("");
-  return '<div class="process-block"><p class="process-heading">' + escapeHtml(t("process.heading")) + '</p>' +
+  return '<div class="process-block' + (variant === "compact" ? " compact" : "") + '"><p class="process-heading">' + escapeHtml(t("process.heading")) + '</p>' +
     '<div class="process-track" role="img" aria-label="' + escapeHtml(t("process.heading") + ": " + t("process.now") + " — " + t("film.statusInDevelopment")) + '"><span class="process-fill"></span></div>' +
     '<div class="process-labels">' + labels + '</div>' +
     '<p class="process-now">' + escapeHtml(t("process.now")) + ": " + escapeHtml(t("film.statusInDevelopment")) + "</p></div>";
@@ -538,9 +574,27 @@ function watchWideCardHtml(w) {
     '<div class="watch-wide-wrap"><a class="poster-link" href="#/watch/' + w.id + '" aria-label="' + escapeHtml(t("card.watchFree", { title: w.title })) + '">' +
     '<img src="' + escapeHtml(w.posterUrl) + '" width="880" height="1320" loading="lazy" alt="' + escapeHtml(t("card.watchPosterAlt", { title: w.title })) + '">' +
     '<span class="watch-play" aria-hidden="true">\u25B6</span></a></div>' +
-    '<figcaption><p class="card-title">' + escapeHtml(w.title) + "</p>" +
+    '<figcaption>' +
     (dur ? '<p class="watch-duration">' + escapeHtml(dur) + "</p>" : "") + "</figcaption></figure>";
 }
+/* Stage 5 (Round 5): Watch Free catalog card — large 16:9 playable
+   thumbnail, visible title, real runtime meta and a clamped synopsis.
+   (The homepage keeps its duration-only wide card; the catalog page is a
+   browsing surface, so titles are printed here under the artwork.) */
+function watchGridCardHtml(w) {
+  const saved = watchSaved.has(w.id);
+  return '<figure class="card watch-card2">' +
+    '<div class="watch-wide-wrap"><a class="poster-link" href="#/watch/' + w.id + '" aria-label="' + escapeHtml(t("card.watchFree", { title: w.title })) + '">' +
+    '<img src="' + escapeHtml(w.posterUrl) + '" width="880" height="1320" loading="lazy" alt="' + escapeHtml(t("card.watchPosterAlt", { title: w.title })) + '">' +
+    '<span class="watch-play" aria-hidden="true">\u25B6</span></a>' +
+    '<button type="button" class="bookmark-btn" data-action="watch-save" data-id="' + w.id + '" aria-pressed="' + saved + '" aria-label="' + escapeHtml(t(saved ? "watch2.savedToWatchlist" : "watch2.saveToWatchlist") + ": " + w.title) + '" title="' + escapeHtml(t(saved ? "watch2.savedToWatchlist" : "watch2.saveToWatchlist")) + '">' + BOOKMARK_SVG + "</button></div>" +
+    '<figcaption class="watch-card2-body">' +
+    '<h3 class="watch-card2-title"><a href="#/watch/' + w.id + '">' + escapeHtml(w.title) + "</a></h3>" +
+    '<p class="watch-card2-meta">' + escapeHtml(t("watch.cardMeta", { year: w.year, minutes: w.runtimeMinutes, category: watchCatLabel(w.category) })) + "</p>" +
+    '<p class="watch-card2-syn">' + escapeHtml(w.synopsis || "") + "</p>" +
+    "</figcaption></figure>";
+}
+
 function fmPanelHtml() {
   return '<section class="fm-panel" aria-label="' + escapeHtml(t("home3.fmTitle")) + '">' +
     '<img class="fm-bg" src="backdrops/the-last-picture-house.webp" width="1600" height="900" loading="lazy" alt="" aria-hidden="true">' +
@@ -605,11 +659,13 @@ function renderFilterSelects() {
       distinctFilmValues("genre").map((g) => '<option value="' + escapeHtml(g) + '">' + escapeHtml(g) + "</option>").join("");
     genreSel.value = state.genreExact;
   }
-  const stageSel = $("#stage-select");
-  if (stageSel) {
-    stageSel.innerHTML = '<option value="All">' + escapeHtml(t("discover.allStages")) + "</option>" +
-      distinctFilmValues("status").map((s) => '<option value="' + escapeHtml(s) + '">' + escapeHtml(stageLabel(s)) + "</option>").join("");
-    stageSel.value = state.stageFilter;
+  const sortSel = $("#sort-select");
+  if (sortSel) {
+    sortSel.innerHTML =
+      '<option value="featured">' + escapeHtml(t("discover2.sortFeatured")) + "</option>" +
+      '<option value="title">' + escapeHtml(t("discover2.sortTitle")) + "</option>" +
+      '<option value="newest">' + escapeHtml(t("discover2.sortNewest")) + "</option>";
+    sortSel.value = state.sortBy;
   }
 }
 function filteredFilms() {
@@ -629,6 +685,8 @@ function renderDiscover() {
   renderFilterSelects();
   renderChips();
   const list = filteredFilms();
+  if (state.sortBy === "title") list.sort((a, b) => a.title.localeCompare(b.title));
+  else if (state.sortBy === "newest") list.sort((a, b) => b.n - a.n);
   $("#results-count").textContent = t("discover.resultsCount", { shown: list.length, total: FILMS.length });
   $("#discover-grid").innerHTML = list.map(cardHtml).join("");
   const empty = $("#discover-empty");
@@ -654,12 +712,13 @@ function watchCardHtml(w) {
     '<div class="poster-wrap"><a class="poster-link" href="#/watch/' + w.id + '" aria-label="' + escapeHtml(t("card.watchFree", { title: w.title })) + '">' +
     '<div class="poster"><img src="' + escapeHtml(w.posterUrl) + '" width="880" height="1320" loading="lazy" alt="' + escapeHtml(t("card.watchPosterAlt", { title: w.title })) + '"></div></a>' +
     '<button type="button" class="bookmark-btn" data-action="watch-save" data-id="' + w.id + '" aria-pressed="' + saved + '" aria-label="' + escapeHtml(t(saved ? "watch2.savedToWatchlist" : "watch2.saveToWatchlist") + ": " + w.title) + '" title="' + escapeHtml(t(saved ? "watch2.savedToWatchlist" : "watch2.saveToWatchlist")) + '">' + BOOKMARK_SVG + "</button></div>" +
-    '<figcaption><p class="card-title">' + escapeHtml(w.title) + "</p></figcaption></figure>";
+    "</figure>";
 }
 function watchFiltered() {
   const q = state.watchQuery.trim().toLowerCase();
   return WATCH.filter((w) => {
     if (state.watchCategory !== "All" && w.category !== state.watchCategory) return false;
+    if (state.watchGenre !== "All" && !(w.genres || []).includes(state.watchGenre)) return false;
     if (q) {
       const hay = (w.title + " " + w.director + " " + w.year + " " + (w.genres || []).join(" ")).toLowerCase();
       if (!hay.includes(q)) return false;
@@ -671,6 +730,15 @@ function renderWatch() {
   const chipsEl = $("#watch-chips");
   if (chipsEl) chipsEl.innerHTML = WATCH_CATS.map((c) =>
     '<button type="button" class="chip" data-wcat="' + c.key + '" aria-pressed="' + (state.watchCategory === c.key) + '">' + escapeHtml(t(c.labelKey)) + "</button>").join("");
+  const genreSel = $("#watch-genre");
+  if (genreSel) {
+    const genres = [];
+    WATCH.forEach((w) => (w.genres || []).forEach((g) => { if (!genres.includes(g)) genres.push(g); }));
+    genres.sort();
+    genreSel.innerHTML = '<option value="All">' + escapeHtml(t("discover.allGenres")) + "</option>" +
+      genres.map((g) => '<option value="' + escapeHtml(g) + '">' + escapeHtml(g) + "</option>").join("");
+    genreSel.value = state.watchGenre;
+  }
   const list = watchFiltered();
   const countEl = $("#watch-count");
   if (countEl) countEl.textContent = t("watch.resultsCount", { shown: list.length, total: WATCH.length });
@@ -678,14 +746,8 @@ function renderWatch() {
   const savedRow = savedList.length ?
     '<section class="row-section" aria-label="' + escapeHtml(t("home2.myWatchlist")) + '"><div class="section-head"><h2>' + escapeHtml(t("home2.myWatchlist")) + '</h2></div>' +
     '<div class="poster-row">' + savedList.map(watchCardHtml).join("") + "</div></section>" : "";
-  const groups = WATCH_CATS.slice(1)
-    .map((c) => ({ cat: c, films: list.filter((w) => w.category === c.key) }))
-    .filter((g) => g.films.length);
-  const draftNote = lang !== "en" ? '<p class="fineprint draft-notice" style="padding:0 1.1rem">' + escapeHtml(t("watch.draftNotice")) + "</p>" : "";
-  $("#watch-rows").innerHTML = draftNote + savedRow + (groups.length ? groups.map((g) =>
-    '<section class="row-section" aria-label="' + escapeHtml(t(g.cat.labelKey)) + '">' +
-    '<div class="section-head"><h2>' + escapeHtml(t(g.cat.labelKey)) + "</h2></div>" +
-    '<div class="poster-row">' + g.films.map(watchCardHtml).join("") + "</div></section>").join("")
+  $("#watch-rows").innerHTML = savedRow + (list.length ?
+    '<div class="watch-grid">' + list.map(watchGridCardHtml).join("") + "</div>"
     : '<p class="section-intro">' + escapeHtml(t("watch.noResults")) + '</p>');
 }
 function renderWatchDetail(id) {
@@ -702,9 +764,9 @@ function renderWatchDetail(id) {
     '<p class="watch-back"><a href="#/watch">' + escapeHtml(t("watch.backAll")) + "</a></p>" +
     '<h1 tabindex="-1">' + escapeHtml(w.title) + "</h1>" +
     '<p class="watch-meta">' + escapeHtml(t("watch.metaLine", { year: w.year, minutes: w.runtimeMinutes, director: w.director, category: watchCatLabel(w.category) })) + "</p>" +
+    (w.genres && w.genres.length ? '<p class="watch-genres"><span class="watch-genres-label">' + escapeHtml(t("watch3.genres")) + ': </span>' + w.genres.map((g) => '<span class="genre-chip genre-chip-static">' + escapeHtml(g) + "</span>").join(" ") + "</p>" : "") +
     '<div class="player-wrap"><iframe src="' + escapeHtml(w.embedUrl) + '" title="' + escapeHtml(t("watch.playerTitle", { title: w.title })) + '" loading="lazy" allowfullscreen frameborder="0" referrerpolicy="no-referrer-when-downgrade"></iframe></div>' +
     '<p class="watch-synopsis">' + escapeHtml(w.synopsis) + "</p>" +
-    (lang !== "en" ? '<p class="fineprint draft-notice">' + escapeHtml(t("watch.draftNotice")) + "</p>" : "") +
     '<p><button type="button" class="btn btn-ghost" data-action="watch-save" data-id="' + w.id + '" aria-pressed="' + watchSaved.has(w.id) + '">' + escapeHtml(t(watchSaved.has(w.id) ? "watch2.savedToWatchlist" : "watch2.saveToWatchlist")) + "</button></p>" +
     '<p class="watch-attribution">' + escapeHtml(t("watch.streamingVia", { source: sourceName })) + " " + escapeHtml(w.rightsNote) + "</p>" +
     '<p><a class="btn btn-ghost" href="' + escapeHtml(w.sourcePageUrl) + '" target="_blank" rel="noopener">' + escapeHtml(t("watch.watchOnSource")) + "</a></p>" +
@@ -717,29 +779,37 @@ function renderWatchDetail(id) {
 /* ---------- film detail ---------- */
 function myPledgeFor(filmId) { return server.myPledges.find((p) => p.film_id === filmId && p.status === "pledged"); }
 function pledgePanelHtml(film) {
+  /* Round 4 (Oct 30): restyled to the owner's film-page mockup — amount
+     chips in a 3×2 grid ($5/$10/$25 / $50/$100/Custom) and ONE full-width
+     green action button. Behaviour is unchanged: pledge-pick still sets
+     pledgePick.cents and clears the custom field; the Custom chip reveals
+     the same #pledge-custom input the submit handler has always read
+     first; record/cancel/account-gate flows are untouched. The grey
+     nonbinding microcopy (pledge.termsNote) stays under the button; the
+     duplicate pledgeMicro line that headed the old panel is consolidated
+     into it (same disclosure, one place). */
   const mine = server.user ? myPledgeFor(film.id) : null;
-  if (pledgePick.filmId !== film.id) pledgePick = { filmId: film.id, cents: 2500 };
+  if (pledgePick.filmId !== film.id) pledgePick = { filmId: film.id, cents: 2500, custom: false };
   let action = "";
   if (!server.user) {
-    action = '<div class="pledge-amounts" aria-hidden="true">' + PLEDGE_AMOUNTS.map((c) => '<span class="chip chip-static">' + fmtCents(c) + "</span>").join("") + "</div>" +
-      '<a class="btn btn-primary" href="#/account" data-action="pledge-gate" data-id="' + film.id + '">' + escapeHtml(t("pledge2.createAccountFull")) + '</a>' +
+    action = '<div class="pledge-grid" aria-hidden="true">' + PLEDGE_AMOUNTS.map((c) => '<span class="chip chip-static">' + fmtCents(c) + "</span>").join("") +
+      '<span class="chip chip-static">' + escapeHtml(t("filmPage.custom")) + "</span></div>" +
+      '<a class="btn btn-primary btn-block" href="#/account" data-action="pledge-gate" data-id="' + film.id + '">' + escapeHtml(t("pledge2.createAccountFull")) + '</a>' +
       '<p class="panel-note">' + escapeHtml(t("pledge.accountNote")) + '</p>';
   } else if (mine) {
     action = '<p class="panel-note"><strong>' + escapeHtml(t("pledge.youPledged", { amount: fmtCents(mine.amount_cents) })) + '</strong></p>' +
-      '<button type="button" class="btn btn-ghost" data-action="pledge-cancel" data-id="' + film.id + '">' + escapeHtml(t("pledge2.cancelInterest")) + '</button>';
+      '<button type="button" class="btn btn-ghost btn-block" data-action="pledge-cancel" data-id="' + film.id + '">' + escapeHtml(t("pledge2.cancelInterest")) + '</button>';
   } else {
-    action = '<div class="pledge-amounts" role="group" aria-label="' + escapeHtml(t("pledge.amountGroupLabel")) + '">' +
-      PLEDGE_AMOUNTS.map((c) => '<button type="button" class="chip" data-action="pledge-pick" data-cents="' + c + '" aria-pressed="' + (pledgePick.cents === c) + '">' + fmtCents(c) + "</button>").join("") + "</div>" +
-      '<div class="field" style="margin:0.6rem 0"><label for="pledge-custom" style="font-size:0.9rem">' + escapeHtml(t("pledge.customLabel")) + '</label>' +
+    action = '<div class="pledge-grid" role="group" aria-label="' + escapeHtml(t("pledge.amountGroupLabel")) + '">' +
+      PLEDGE_AMOUNTS.map((c) => '<button type="button" class="chip" data-action="pledge-pick" data-cents="' + c + '" aria-pressed="' + (pledgePick.cents === c && !pledgePick.custom) + '">' + fmtCents(c) + "</button>").join("") +
+      '<button type="button" class="chip" data-action="pledge-custom" aria-pressed="' + pledgePick.custom + '">' + escapeHtml(t("filmPage.custom")) + "</button></div>" +
+      '<div class="field pledge-custom-field"' + (pledgePick.custom ? "" : " hidden") + '><label for="pledge-custom">' + escapeHtml(t("pledge.customLabel")) + '</label>' +
       '<input id="pledge-custom" type="number" min="1" step="1" placeholder="' + escapeHtml(t("pledge.customPlaceholder")) + '"></div>' +
-      '<button type="button" class="btn btn-primary" data-action="pledge-submit" data-id="' + film.id + '">' + escapeHtml(t("pledge.submitButton", { amount: fmtCents(pledgePick.cents) })) + "</button>" +
+      '<button type="button" class="btn btn-primary btn-block" data-action="pledge-submit" data-id="' + film.id + '">' + escapeHtml(t("pledge.submitButton", { amount: fmtCents(pledgePick.cents) })) + "</button>" +
       '<p class="panel-note">' + escapeHtml(t("pledge.termsNote")) + '</p>';
   }
-  return '<div class="action-panel" id="support-panel"><h3>' + escapeHtml(t("pledge.supportThisFilm")) + '</h3>' +
-    '<p class="support-sub">' + escapeHtml(t("pledge.chooseAmount")) + '</p>' +
-    '<p class="panel-note"><strong>' + escapeHtml(pledgeMicro()) + '</strong>' + draftNoteHtml("pledge.nonbinding") + '</p>' +
-    action +
-    '<p class="testmode-note">' + escapeHtml(t("pledge.nonbinding")) + '</p></div>';
+  return '<div class="action-panel pledge-panel" id="support-panel"><h3>' + escapeHtml(t("filmPage.pledgeHeading")) + '</h3>' +
+    action + "</div>";
 }
 
 const ROADMAP_KEYS = ["roadmap.1", "roadmap.2", "roadmap.3", "roadmap.4", "roadmap.5", "roadmap.6"];
@@ -804,7 +874,7 @@ function galleryCaption(film, a) {
 }
 function galleryHtml(film) {
   const assets = artworkFor(film.id);
-  return '<div class="detail-section"><h2>' + escapeHtml(t("film3.galleryHeading")) + '</h2>' +
+  return '<div class="detail-section" data-fp-section="gallery"><h2>' + escapeHtml(t("film3.galleryHeading")) + '</h2>' +
     '<p class="fineprint gallery-label">' + escapeHtml(t("film2.artworkHeading")) + "</p>" +
     '<div class="concept-gallery">' +
     assets.map((a, i) =>
@@ -821,6 +891,11 @@ const CHAR_NAME_TITLES = new Set(["dr", "mr", "mrs", "ms", "miss", "master", "ca
 function charNameTokens(name) {
   const s = String(name || "").replace(/\([^)]*\)/g, " ").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/['\u2019\u2018]/g, "");
   return Array.from(new Set(s.split(/[^a-z0-9]+/).filter(Boolean).filter((x) => !CHAR_NAME_TITLES.has(x))));
+}
+function charInitials(name) {
+  const toks = charNameTokens(name);
+  if (!toks.length) return "?";
+  return (toks[0][0] + (toks.length > 1 ? toks[toks.length - 1][0] : "")).toUpperCase();
 }
 function charactersHtml(film) {
   const chars = translatedCharacters(film);
@@ -839,14 +914,21 @@ function charactersHtml(film) {
     if (hit) used.add(hit.file);
     return hit || null;
   };
+  /* Round 4 (Oct 30): mockup media-top cards. The portrait rule above is
+     unchanged (QC Oct 26): an image appears ONLY when the artwork subject
+     names this character. Unmatched characters get a styled monogram card
+     (initials on the film's genre hue) — never a borrowed face. */
+  const hue = genreHue(film);
   return chars.map((c, idx) => {
     const pt = matchFor(c);
     const note = String(c.note || "");
     const first = (note.split(/(?<=\.)\s+/)[0] || note);
-    const img = pt ? '<img class="char-portrait" src="' + escapeHtml(pt.file) + '" width="1200" height="1800" loading="lazy" alt="' + escapeHtml(t("artworkKind.portrait") + " — " + c.name) + '">' : "";
-    return '<div class="char-card">' + img + "<h3>" + escapeHtml(c.name) + '</h3><p class="char-role">' + escapeHtml(c.role) + "</p><p>" + escapeHtml(first) + "</p>" +
+    const media = pt
+      ? '<div class="char-media"><img class="char-portrait" src="' + escapeHtml(pt.file) + '" width="1200" height="1800" loading="lazy" alt="' + escapeHtml(t("artworkKind.portrait") + " — " + c.name) + '"></div>'
+      : '<div class="char-media"><div class="char-monogram" style="--hue:' + hue + '" aria-hidden="true"><span>' + escapeHtml(charInitials(c.name)) + "</span></div></div>";
+    return '<div class="char-card">' + media + '<div class="char-body"><h3>' + escapeHtml(c.name) + '</h3><p class="char-role">' + escapeHtml(c.role) + "</p><p>" + escapeHtml(first) + "</p>" +
       (note && note !== first ? '<details class="char-bio"><summary>' + escapeHtml(t("film3.readBio")) + "</summary><p>" + escapeHtml(note) + "</p></details>" : "") +
-      characterProfileHtml(film, c, idx) + "</div>";
+      characterProfileHtml(film, c, idx) + "</div></div>";
   }).join("");
 }
 function progressHtml(film) {
@@ -882,6 +964,55 @@ function journalText(entry) {
   }
   return entry;
 }
+/* ---------- Round 4 (Oct 30): film-page building blocks ---------- */
+const FP_TAB_SECTIONS = { overview: null, story: ["story", "devinfo"], characters: ["characters"], gallery: ["gallery", "teaser"], scenes: ["scenes"] };
+function applyFilmTab() {
+  const root = $("#film-detail");
+  if (!root) return;
+  const show = FP_TAB_SECTIONS[filmTabState.tab];
+  $$("[data-fp-section]", root).forEach((sec) => { sec.hidden = !!(show && !show.includes(sec.dataset.fpSection)); });
+  $$(".film-tab", root).forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === filmTabState.tab)));
+}
+function filmTabsHtml(film) {
+  /* Mockup tab order: Overview | Story | Characters | Gallery | Scenes.
+     A tab is included only where the film has the real content (all 40
+     founding films currently have all five). The mockup's "Updates" and
+     "Discussion" tabs are omitted — those features do not exist here. */
+  const tabs = [["overview", t("filmPage.tabOverview")], ["story", t("filmPage.tabStory")]];
+  if ((film.characters || []).length) tabs.push(["characters", t("filmPage.tabCharacters")]);
+  tabs.push(["gallery", t("filmPage.tabGallery")]);
+  const seqs = localizedArrayField(film, "signatureSequences");
+  if (seqs && seqs.some((s) => s && (String(s.title || "").trim() || String(s.description || "").trim()))) tabs.push(["scenes", t("filmPage.tabScenes")]);
+  return '<div class="film-tabs" role="tablist">' + tabs.map(([key, label]) =>
+    '<button type="button" role="tab" class="film-tab" data-action="film-tab" data-tab="' + key + '" aria-selected="' + (filmTabState.tab === key) + '">' + escapeHtml(label) + "</button>").join("") + "</div>";
+}
+const FORMAT_LABELS = { "LIVE ACTION": "Live Action", "AI FILM": "AI Film", "HYBRID": "Hybrid", "ANIMATION": "Animation" };
+function filmMetaHtml(film) {
+  /* Real fields only (owner rule): genre and production type from the
+     catalog record, the platform's actual status string, and the four
+     languages this film's content is published in. No invented
+     "target audience" or similar. */
+  const fmt = FORMAT_LABELS[film.productionType] || film.productionType || "";
+  const row = (label, value) => "<div><dt>" + escapeHtml(label) + "</dt><dd>" + escapeHtml(value) + "</dd></div>";
+  return '<div class="meta-box"><dl>' +
+    row(t("filmPage.metaGenre"), film.genre) +
+    row(t("filmPage.metaFormat"), fmt) +
+    row(t("filmPage.metaStatus"), t("film.statusInDevelopment")) +
+    row(t("filmPage.metaLanguage"), "English · Español · Português (Brasil) · Deutsch") +
+    "</dl></div>";
+}
+function filmVisionHtml(film) {
+  /* The mockup's "Director's Vision" box, filled with the film's real
+     Creative Vision material (tone / themes / visual identity ship in
+     every catalog record) instead of an invented director quote. */
+  const vision = film.creativeVision || {};
+  if (!(vision.tone || vision.themes || vision.visualIdentity)) return "";
+  return '<div class="meta-box vision-box"><h3>' + escapeHtml(t("film2.visionHeading")) + "</h3>" +
+    (vision.tone ? "<p><strong>" + escapeHtml(t("film2.visionTone")) + "</strong> " + escapeHtml(vision.tone) + "</p>" : "") +
+    (vision.themes ? "<p><strong>" + escapeHtml(t("film2.visionThemes")) + "</strong> " + escapeHtml(vision.themes) + "</p>" : "") +
+    (vision.visualIdentity ? "<p><strong>" + escapeHtml(t("film2.visionVisual")) + "</strong> " + escapeHtml(vision.visualIdentity) + "</p>" : "") + "</div>";
+}
+
 function renderFilmDetail(id) {
   const el = $("#film-detail");
   const film = filmById(id);
@@ -902,67 +1033,86 @@ function renderFilmDetail(id) {
     (rd.nextSteps && rd.nextSteps.length ? "<h3>" + escapeHtml(t("film2.nextStepsHeading")) + "</h3><ul>" + rd.nextSteps.map((m) => "<li>" + escapeHtml(m) + "</li>").join("") + "</ul>" : "");
   const journalInner = (film.journalEntries && film.journalEntries.length) ?
     film.journalEntries.map((j) => '<article class="journal-entry"><p class="journal-date">' + escapeHtml(j.date) + "</p><p>" + escapeHtml(journalText(j.entry)) + "</p></article>").join("") : "";
-  const vision = film.creativeVision || {};
-  const visionInner = (vision.tone || vision.themes || vision.visualIdentity) ?
-    (vision.tone ? "<p><strong>" + escapeHtml(t("film2.visionTone")) + "</strong> " + escapeHtml(vision.tone) + "</p>" : "") +
-    (vision.themes ? "<p><strong>" + escapeHtml(t("film2.visionThemes")) + "</strong> " + escapeHtml(vision.themes) + "</p>" : "") +
-    (vision.visualIdentity ? "<p><strong>" + escapeHtml(t("film2.visionVisual")) + "</strong> " + escapeHtml(vision.visualIdentity) + "</p>" : "") : "";
-  const teaserHtml = (isFlagship && TEASERS[film.id]) ?
-    '<div class="detail-section"><h2>' + (lang === "en" ? "Concept Teaser" : escapeHtml(t("film2.teaserHeading"))) + '</h2>' +
+  /* Round 4 (Oct 30): film page rebuilt to the owner's approved mockup —
+     hero (genre chips, heavy title, tagline, L1 hook, Watch Trailer +
+     View Gallery actions, follow/save), Process + Pledge rail, tab row
+     (Overview | Story | Characters | Gallery | Scenes), the mockup's
+     overview composite (Story Overview + Read Full Story treatment,
+     meta box, Creative Vision box, characters, signature scenes,
+     gallery, teaser, production, development info) and You Might Also
+     Like. Adaptations vs the mockup, all honesty-driven: no Updates /
+     Discussion tabs (features do not exist), no PDF download rows (no
+     such files), no invented director quote (real Creative Vision
+     material instead), no percentage on the Process bar. */
+  const hasTeaser = isFlagship && !!TEASERS[film.id];
+  const teaserHtml = hasTeaser ?
+    '<div class="detail-section" id="film-teaser" data-fp-section="teaser"><h2>' + (lang === "en" ? "Concept Teaser" : escapeHtml(t("film2.teaserHeading"))) + '</h2>' +
     '<div class="trailer-frame"><video controls preload="none" playsinline loading="lazy" poster="backdrops/' + film.id + '.webp" aria-label="' + escapeHtml(t("film2.teaserAria", { title: film.title })) + '"><source src="' + TEASERS[film.id] + '" type="video/mp4"></video></div>' +
     '<p class="fineprint">' + escapeHtml(t("film2.teaserNote")) + "</p></div>" : "";
   const heroArt = BACKDROPS[film.id]
     ? '<img class="backdrop" src="backdrops/' + film.id + '.webp" width="1600" height="900" alt="" aria-hidden="true">'
     : '<div class="backdrop-gradient" style="--hue:' + genreHue(film) + '"></div>';
-  const related = relatedFilms(film);
+  const assets = artworkFor(film.id);
+  const related = relatedFilms(film).slice(0, 4);
   const hookText = filmText(film, "hook");
   const hookHtml = (typeof hookText === "string" && hookText.trim()) ? '<p class="film-hook">' + escapeHtml(hookText) + "</p>" : "";
   const synopsisHtml = String(filmText(film, "synopsis") || "").split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)
     .map((p) => '<p class="story-paragraph">' + escapeHtml(p) + "</p>").join("");
   const treatmentHtmlValue = filmText(film, "treatmentHtml");
+  if (filmTabState.id !== film.id) filmTabState = { id: film.id, tab: "overview" };
+  const genreChips = String(film.genre || "").split(/\s+/).filter(Boolean).slice(0, 3)
+    .map((g) => '<span class="genre-chip">' + escapeHtml(g) + "</span>").join("");
+  const visionHtml = filmVisionHtml(film);
   el.innerHTML =
-    '<div class="detail-hero">' + heroArt + '<div class="detail-hero-shade"></div>' +
-    '<div class="detail-hero-inner"><div>' +
-    '<p class="showcase-kicker">' + escapeHtml(film.genre) + " · " + escapeHtml(film.runtime) + " · " + escapeHtml(film.productionType) + (isFlagship ? ' · <span class="featured-badge">' + escapeHtml(t("film2.featuredBadge")) + "</span>" : "") + "</p>" +
+    '<div class="fp-hero">' +
+    '<div class="fp-hero-media">' + heroArt + '<div class="detail-hero-shade"></div>' +
+    '<div class="fp-hero-text">' +
+    '<div class="fp-chips">' + genreChips + (isFlagship ? '<span class="genre-chip featured-chip">' + escapeHtml(t("film2.featuredBadge")) + "</span>" : "") + "</div>" +
     '<h1 tabindex="-1">' + escapeHtml(film.title) + "</h1>" +
     '<p class="tagline">' + escapeHtml(filmText(film, "tagline")) + "</p>" +
-    "</div></div></div>" +
-    '<div class="detail-layout">' +
-    '<div class="detail-main">' +
-    '<div class="detail-section"><h2>' + escapeHtml(t("film3.exploreStory")) + '</h2>' +
+    hookHtml +
+    '<div class="fp-hero-actions">' +
+    (hasTeaser ? '<button type="button" class="btn btn-primary" data-action="play-teaser"><span aria-hidden="true">▶</span> ' + escapeHtml(t("filmPage.watchTrailer")) + "</button>" : "") +
+    '<button type="button" class="btn btn-ghost" data-action="open-gallery" data-id="' + film.id + '">' + escapeHtml(t("filmPage.viewGallery", { count: assets.length })) + "</button>" +
+    "</div>" +
+    '<div class="fp-hero-actions fp-follow-actions">' +
+    '<button type="button" class="btn btn-ghost" data-action="follow" data-id="' + film.id + '" aria-pressed="' + followed + '">' + (followed ? escapeHtml(t("follow.following")) : escapeHtml(t("follow.follow"))) + "</button>" +
+    '<button type="button" class="btn btn-ghost" data-action="save" data-id="' + film.id + '" aria-pressed="' + isSaved + '">' + (isSaved ? escapeHtml(t("follow.saved")) : escapeHtml(t("follow.save"))) + "</button>" +
+    "</div>" +
+    "</div></div>" +
+    '<div class="fp-rail">' +
+    '<div class="action-panel process-panel">' + processBarHtml() + "</div>" +
+    pledgePanelHtml(film) +
+    "</div></div>" +
+    filmTabsHtml(film) +
+    '<div class="fp-main">' +
+    '<div class="detail-section" data-fp-section="story"><h2>' + escapeHtml(t("filmPage.storyOverview")) + '</h2>' +
     '<p class="logline">' + escapeHtml(filmText(film, "logline")) + "</p>" +
-    hookHtml + synopsisHtml + "</div>" +
-    '<div class="detail-section"><h2>' + escapeHtml(sectionLabel("mainCharacters", t("film.characters"))) + '</h2><div class="char-grid">' + charactersHtml(film) + "</div></div>" +
+    synopsisHtml +
+    (treatmentHtmlValue ? '<details class="detail-details treatment-wrap"><summary>' + escapeHtml(t("filmPage.readFullStory")) + ' <span aria-hidden="true">›</span></summary><p class="fineprint">' + escapeHtml(t("film.treatmentNote")) + '</p><div class="treatment">' + treatmentHtmlValue + "</div></details>" : "") +
+    "</div>" +
+    '<div class="fp-meta-row' + (visionHtml ? "" : " fp-meta-row--single") + '" data-fp-section="meta">' + filmMetaHtml(film) + visionHtml + "</div>" +
+    '<div class="detail-section" data-fp-section="characters"><h2>' + escapeHtml(sectionLabel("mainCharacters", t("film.characters"))) + '</h2><div class="char-grid">' + charactersHtml(film) + "</div></div>" +
     signatureSequencesHtml(film) +
     galleryHtml(film) +
     teaserHtml +
-    '<div class="detail-section"><h2>' + escapeHtml(t("film3.productionFinancing")) + '</h2>' +
+    '<div class="detail-section" data-fp-section="production"><h2>' + escapeHtml(t("film3.productionFinancing")) + '</h2>' +
     "<p><strong>" + escapeHtml(film.productionType) + ".</strong> " + escapeHtml(film.productionApproach || film.productionNote) + "</p>" +
     fundingFactsHtml(film) +
     "<p><strong>" + escapeHtml(t("funding.budgetLabel")) + ":</strong> " + fmtMoney(film.budget) + " — " + escapeHtml(film.budgetNote) + "</p>" +
     (film.audiencePositioning ? "<p><strong>" + escapeHtml(t("film2.audienceLabel")) + "</strong> " + escapeHtml(film.audiencePositioning) + "</p>" : "") +
     (film.financingNote ? "<p>" + escapeHtml(film.financingNote) + "</p>" : "") + "</div>" +
-    '<div class="detail-section"><h2>' + escapeHtml(t("film3.developmentInfo")) + "</h2>" +
+    '<div class="detail-section" data-fp-section="devinfo"><h2>' + escapeHtml(t("film3.developmentInfo")) + "</h2>" +
     '<details class="detail-details"><summary>' + escapeHtml(sectionLabel("developmentRoadmap", t("film.roadmap"))) + "</summary>" + roadmapInner + "</details>" +
     (journalInner ? '<details class="detail-details"><summary>' + escapeHtml(t("film2.journalHeading")) + "</summary>" + journalInner + "</details>" : "") +
-    (visionInner ? '<details class="detail-details"><summary>' + escapeHtml(t("film2.visionHeading")) + "</summary>" + visionInner + "</details>" : "") +
-    (treatmentHtmlValue ? '<details class="detail-details treatment-wrap"><summary>' + escapeHtml(t("film.treatmentToggle")) + '</summary><p class="fineprint">' + escapeHtml(t("film.treatmentNote")) + '</p><div class="treatment">' + treatmentHtmlValue + "</div></details>" : "") +
-    "</div>" +
-    "</div>" +
-    '<div class="detail-rail">' +
-    '<div class="action-panel"><h3>' + escapeHtml(t("film2.followHeading")) + "</h3>" +
-    '<p class="panel-note">' + escapeHtml(t("film2.followNote")) + "</p>" +
-    '<button type="button" class="btn btn-ghost" data-action="follow" data-id="' + film.id + '" aria-pressed="' + followed + '">' + (followed ? escapeHtml(t("follow.following")) : escapeHtml(t("follow.follow"))) + "</button> " +
-    '<button type="button" class="btn btn-ghost" data-action="save" data-id="' + film.id + '" aria-pressed="' + isSaved + '">' + (isSaved ? escapeHtml(t("follow.saved")) : escapeHtml(t("follow.save"))) + "</button></div>" +
-    '<div class="detail-section support-section"><h2>' + escapeHtml(t("pledge.helpBringToLife")) + "</h2>" +
-    "<p>" + escapeHtml(t("film2.greenLightNote")) + "</p></div>" +
-    pledgePanelHtml(film) +
     progressHtml(film) +
-    "</div></div>" +
-    '<section class="row-section" aria-label="' + escapeHtml(t("film3.continueExploring")) + '"><div class="section-head"><h2>' + escapeHtml(t("film3.continueExploring")) + '</h2></div>' +
-    '<p class="section-intro">' + escapeHtml(t("film3.relatedNote")) + '</p>' +
+    "</div>" +
+    "</div>" +
+    '<section class="row-section fp-related" aria-label="' + escapeHtml(t("filmPage.alsoLike")) + '"><div class="section-head"><h2>' + escapeHtml(t("filmPage.alsoLike")) + '</h2><a class="section-link" href="#/discover">' + escapeHtml(t("home.viewAll")) + '</a></div>' +
     '<div class="poster-row">' + related.map(cardHtml).join("") + "</div></section>";
+  applyFilmTab();
 }
+
 
 /* ---------- account ---------- */
 function filmLinks(ids) {
@@ -1140,10 +1290,12 @@ async function renderAccount() {
     ? "<ul>" + pledgeRows.map((p) => { const f = filmById(p.film_id); const titleHtml = f ? '<a href="#/film/' + f.id + '">' + escapeHtml(f.title) + "</a>" : escapeHtml(p.film_id); return "<li>" + escapeHtml(t("account.pledgeLine", { amount: fmtCents(p.amount_cents), title: "\u0001" })).replace("\u0001", titleHtml) + ' <button type="button" class="btn btn-small btn-ghost" data-action="mypledge-cancel" data-pledge="' + p.id + '">' + escapeHtml(t("account.cancel")) + "</button></li>"; }).join("") + "</ul>"
     : "<p class='fineprint'>" + escapeHtml(t("dashboard.noPledges")) + "</p>";
   const subStatusKey = { submitted: "subStatus.submitted", pending: "subStatus.inReview", in_review: "subStatus.inReview", approved: "subStatus.approved", needs_changes: "subStatus.needsChanges", rejected: "subStatus.rejected" };
+  let subsCount = null;
   let mySubsHtml = "<p class='fineprint'>" + escapeHtml(t("account.submissionsUnavailable")) + "</p>";
   try {
     const { data: subs, error: subsErr } = await sb.from("submissions").select("id, title, status").eq("user_id", u.id).order("created_at", { ascending: false });
     if (!subsErr && subs) {
+      subsCount = subs.length;
       mySubsHtml = subs.length
         ? "<ul>" + subs.map((s) => "<li><strong>" + escapeHtml(s.title) + "</strong> — " + escapeHtml(subStatusKey[s.status] ? t(subStatusKey[s.status]) : s.status) + "</li>").join("") + "</ul>"
         : "<p class='fineprint'>No submissions yet — <a href='#/submit'>submit a film</a> and it will be tracked here.</p>";
@@ -1160,24 +1312,50 @@ async function renderAccount() {
   const prefsHtml = PREF_CATS.map((c) =>
     '<label class="pref-row"><input type="checkbox" data-pref="' + c.key + '"' + (commPrefs[c.key] ? " checked" : "") + "> " + escapeHtml(t(c.labelKey)) + "</label>").join("") +
     '<p class="fineprint">' + escapeHtml(prefsRemote ? t("dashboard.prefsSavedAccount") : t("dashboard.prefsSavedDevice")) + "</p>";
+  const statCard = (label, n) => '<div class="stat-card"><span class="stat-num">' + n + '</span><span class="stat-label">' + escapeHtml(label) + "</span></div>";
+  const dashNavItems = [
+    ["dash-membership", t("dashboard.membershipHeading")],
+    ["dash-profile", t("dash2.profile")],
+    ["dash-pledges", t("dashboard.myPledgeInterest", { count: pledgeRows.length })],
+    ["dash-submissions", t("account.mySubmissions")],
+    ["dash-follows", t("account.projectsFollow", { count: state.follows.size })],
+    ["dash-saved", t("dashboard.savedFilms", { count: savedFilms.size })],
+    ["dash-watchlist", t("dashboard.watchlist", { count: watchSaved.size })],
+    ["dash-recent", t("dashboard.recentlyViewed")],
+    ["dash-prefs", t("dashboard.prefsHeading")],
+    ["dash-security", t("dash2.security")]
+  ];
   el.innerHTML = authBanners +
+    '<div class="dash"><aside class="dash-nav" aria-label="' + escapeHtml(t("dash2.overview")) + '"><p class="dash-nav-user">' + escapeHtml(u.email || "") + "</p>" +
+    dashNavItems.map(([id, label]) => '<a href="#/account" data-scroll="' + id + '">' + escapeHtml(label) + "</a>").join("") + "</aside>" +
+    '<div class="dash-main">' +
     "<p>" + escapeHtml(t("account.signedInAs", { email: u.email || "" })).replace(escapeHtml(u.email || ""), "<strong>" + escapeHtml(u.email || "") + "</strong>") + "</p>" +
-    "<h3 style='margin-top:1.6rem'>" + escapeHtml(t("dashboard.membershipHeading")) + "</h3>" +
-    "<p><strong>Free member</strong> — free membership is live. The founding membership campaign is planned — not yet open; no paid membership can be bought today. See <a href='#/membership'>Membership</a>.</p>" +
+    '<div class="dash-stats">' +
+    statCard(t("dash2.statFollows"), state.follows.size) +
+    statCard(t("dash2.statPledges"), pledgeRows.length) +
+    statCard(t("dash2.statSaved"), savedFilms.size) +
+    statCard(t("dash2.statWatchlist"), watchSaved.size) +
+    statCard(t("dash2.statSubmissions"), subsCount === null ? "\u2014" : subsCount) +
+    "</div>" +
+    '<section class="dash-panel" id="dash-membership"><h3>' + escapeHtml(t("dashboard.membershipHeading")) + "</h3>" +
+    "<p><strong>Free member</strong> \u2014 free membership is live. The founding membership campaign is planned \u2014 not yet open; no paid membership can be bought today. See <a href='#/membership'>Membership</a>.</p></section>" +
+    '<section class="dash-panel" id="dash-profile"><h3>' + escapeHtml(t("dash2.profile")) + "</h3>" +
     "<form id='profile-form' novalidate><div class='field'><label for='a-name'>" + escapeHtml(t("account.displayNameLabel")) + "</label><input id='a-name' value='" + escapeHtml(profileName) + "'></div>" +
-    "<button class='btn' type='submit'>" + escapeHtml(t("account.saveNameButton")) + "</button> <span class='form-msg' id='profile-msg' role='status'></span></form>" +
-    "<h3 style='margin-top:2rem'>" + escapeHtml(t("dashboard.myPledgeInterest", { count: pledgeRows.length })) + "</h3>" + pledgeHtml +
-    "<h3 style='margin-top:1.6rem'>" + escapeHtml(t("account.mySubmissions")) + "</h3>" + mySubsHtml +
-    "<h3 style='margin-top:1.6rem'>" + escapeHtml(t("account.projectsFollow", { count: state.follows.size })) + "</h3>" + filmLinks(Array.from(state.follows)) +
-    "<h3 style='margin-top:1.6rem'>" + escapeHtml(t("dashboard.savedFilms", { count: savedFilms.size })) + "</h3>" + savedHtml +
-    "<h3 style='margin-top:1.6rem'>" + escapeHtml(t("dashboard.watchlist", { count: watchSaved.size })) + "</h3>" + watchSavedHtml +
-    "<h3 style='margin-top:1.6rem'>" + escapeHtml(t("dashboard.recentlyViewed")) + "</h3>" + recentHtml +
-    "<h3 style='margin-top:1.6rem'>" + escapeHtml(t("dashboard.prefsHeading")) + "</h3>" + prefsHtml +
+    "<button class='btn' type='submit'>" + escapeHtml(t("account.saveNameButton")) + "</button> <span class='form-msg' id='profile-msg' role='status'></span></form></section>" +
+    '<section class="dash-panel" id="dash-pledges"><h3>' + escapeHtml(t("dashboard.myPledgeInterest", { count: pledgeRows.length })) + "</h3>" + pledgeHtml + "</section>" +
+    '<section class="dash-panel" id="dash-submissions"><h3>' + escapeHtml(t("account.mySubmissions")) + "</h3>" + mySubsHtml + "</section>" +
+    '<section class="dash-panel" id="dash-follows"><h3>' + escapeHtml(t("account.projectsFollow", { count: state.follows.size })) + "</h3>" + filmLinks(Array.from(state.follows)) + "</section>" +
+    '<section class="dash-panel" id="dash-saved"><h3>' + escapeHtml(t("dashboard.savedFilms", { count: savedFilms.size })) + "</h3>" + savedHtml + "</section>" +
+    '<section class="dash-panel" id="dash-watchlist"><h3>' + escapeHtml(t("dashboard.watchlist", { count: watchSaved.size })) + "</h3>" + watchSavedHtml + "</section>" +
+    '<section class="dash-panel" id="dash-recent"><h3>' + escapeHtml(t("dashboard.recentlyViewed")) + "</h3>" + recentHtml + "</section>" +
+    '<section class="dash-panel" id="dash-prefs"><h3>' + escapeHtml(t("dashboard.prefsHeading")) + "</h3>" + prefsHtml + "</section>" +
     "<div id='admin-section'></div>" +
-    "<p style='margin-top:2rem'><button type='button' class='btn' id='signout-btn'>" + escapeHtml(t("account.signOutButton")) + "</button> " +
+    '<section class="dash-panel" id="dash-security"><h3>' + escapeHtml(t("dash2.security")) + "</h3>" +
+    "<p><button type='button' class='btn' id='signout-btn'>" + escapeHtml(t("account.signOutButton")) + "</button> " +
     "<button type='button' class='btn btn-ghost' id='deletedata-btn'>" + escapeHtml(t("dashboard.deleteDataButton")) + "</button></p>" +
     "<p class='form-msg' id='account-msg' role='status'></p>" +
-    "<p class='fineprint'>Deleting removes your follows, recorded pledge interest and display name from GreenlitX immediately. To remove the login itself, email us at <a href='mailto:team@greenlitx.com'>team@greenlitx.com</a> and we will delete the account completely.</p>";
+    "<p class='fineprint'>Deleting removes your follows, recorded pledge interest and display name from GreenlitX immediately. To remove the login itself, email us at <a href='mailto:team@greenlitx.com'>team@greenlitx.com</a> and we will delete the account completely.</p></section>" +
+    "</div></div>";
   if (justConfirmed || linkError) setTimeout(() => { try { sessionStorage.removeItem("glx_just_confirmed"); sessionStorage.removeItem("glx_auth_link_error"); } catch (e) {} }, 1500);
   $("#profile-form").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -1202,60 +1380,88 @@ async function renderAccount() {
 function renderMembership() {
   const el = $("#membership-body"); if (!el) return;
   const tt = (k, vars) => escapeHtml(t(k, vars));
-  const proposedCard = (n) =>
+  /* Compact proposal card: the site's published proposed figures/terms,
+     labelled as a concept that cannot be bought. No purchase controls. */
+  const proposedCard = (n, showAmount) =>
     '<div class="tier-card"><p class="tier-badge">' + tt("membership2.proposedBadge") + '</p>' +
     "<h3>" + tt("membership2.tier" + n + "Name") + "</h3>" +
-    "<p>" + tt("membership2.discussedAmount", { amount: t("membership2.tier" + n + "Amount") }) + "</p>" +
-    "<p>" + tt("membership2.discussedTerm", { term: t("membership2.tier" + n + "Term") }) + "</p></div>";
+    (showAmount ? '<p class="tier-price">' + tt("membership2.tier" + n + "Amount") + "</p>" : "") +
+    "<p>" + tt("membership2.discussedTerm", { term: t("membership2.tier" + n + "Term") }) + "</p>" +
+    '<p class="tier-concept">' + tt("membership3.conceptOnly") + "</p></div>";
+  /* FAQs are expandable; every answer is an existing published disclosure
+     string, unedited — nothing material is hidden or shortened away. */
+  const faqItem = (q, parts) =>
+    '<details class="detail-details faq-item"><summary>' + tt(q) + "</summary>" +
+    parts.map((p) => "<p>" + tt(p) + "</p>").join("") + "</details>";
   el.innerHTML =
-    '<p class="draft-banner" role="note">' + tt("membership2.banner") + "</p>" +
-    "<h2 tabindex='-1'>" + tt("membership2.heading") + "</h2>" +
+    '<div class="member-hero">' +
+    "<h2 tabindex='-1'>" + tt("membership3.heroTitle") + "</h2>" +
+    '<p class="member-hero-sub">' + tt("membership3.heroSub") + "</p>" +
     '<p class="footer-slogan">' + tt("membership2.slogan") + "</p>" +
-    "<p>" + tt("membership2.intro") + "</p>" +
-    "<h3>" + tt("membership2.tiersHeading") + "</h3>" +
-    "<p>" + tt("membership2.tiersIntro") + "</p>" +
-    '<div class="membership-cards">' +
-    '<div class="tier-card tier-free"><p class="tier-badge tier-live">' + tt("membership2.liveNow") + "</p>" +
-    "<h3>" + tt("membership2.freeHeading") + "</h3>" +
+    "<p>" + tt("membership2.intro") + "</p></div>" +
+    '<div class="tier-card tier-free member-free"><div class="member-free-head"><h3>' + tt("membership3.freeName") + '</h3>' +
+    '<p class="tier-badge tier-live">' + tt("membership3.availableNow") + "</p></div>" +
+    '<p class="tier-price">$0</p>' +
     "<p>" + tt("membership2.freeIntro") + "</p>" +
-    "<ul>" + [1, 2, 3, 4, 5].map((i) => "<li>" + tt("membership2.freeItem" + i) + "</li>").join("") + "</ul>" +
+    '<ul class="check-list">' + [1, 2, 3, 4, 5].map((i) => "<li>" + tt("membership2.freeItem" + i) + "</li>").join("") + "</ul>" +
     "<p>" + tt("membership2.freeCost") + "</p>" +
-    '<p><a class="btn btn-primary" href="#/account">' + tt("membership2.createCta") + "</a></p></div>" +
-    proposedCard(2) + proposedCard(3) + proposedCard(4) +
-    '<div class="tier-card tier-producer"><h3>' + tt("membership2.tier5Name") + "</h3>" +
-    "<p>" + tt("membership2.producerText") + "</p></div>" +
-    "</div>" +
-    "<p>" + tt("membership2.tiersApproach") + "</p>" +
-    "<p>" + tt("membership2.tiersNoBuy") + "</p>" +
-    "<h3>" + tt("membership2.foundingHeading") + "</h3>" +
+    '<p><a class="btn btn-primary" href="#/account">' + tt("membership3.joinFree") + "</a></p></div>" +
+    '<h3 class="tick-title">' + tt("membership2.tiersHeading") + "</h3>" +
+    "<p>" + tt("membership2.tiersIntro") + "</p>" +
+    '<div class="membership-cards founding-grid">' + proposedCard(2, true) + proposedCard(3, true) + proposedCard(4, true) + "</div>" +
+    '<h3 class="tick-title">' + tt("membership3.moreProposals") + "</h3>" +
+    '<div class="membership-cards proposal-grid">' + proposedCard(1, true) +
+    '<div class="tier-card"><p class="tier-badge">' + tt("membership2.proposedBadge") + '</p>' +
+    "<h3>" + tt("membership2.tier5Name") + "</h3>" +
+    "<p>" + tt("membership2.producerText") + "</p>" +
+    '<p class="tier-concept">' + tt("membership3.conceptOnly") + "</p></div></div>" +
+    '<div class="campaign-panel"><h3>' + tt("membership2.foundingHeading") + "</h3>" +
     "<p>" + tt("membership2.foundingIntro") + "</p>" +
     "<p><strong>" + tt("membership2.foundingNotOpen") + "</strong></p>" +
-    "<p>" + tt("membership2.foundingTerms") + "</p>" +
-    "<h3>" + tt("membership2.diffHeading") + "</h3>" +
-    "<p>" + tt("membership2.diffMembership") + "</p>" +
-    "<p>" + tt("membership2.diffPledge") + "</p>" +
-    "<p>" + tt("membership2.diffShort") + "</p>" +
-    "<h3>" + tt("membership2.questionsHeading") + "</h3>" +
-    "<p>" + tt("membership2.questionsText") + "</p>";
+    "<p>" + tt("membership2.foundingTerms") + "</p></div>" +
+    '<h3 class="tick-title">' + tt("membership2.diffHeading") + "</h3>" +
+    '<div class="compare-grid"><div class="compare-card"><p>' + tt("membership2.diffMembership") + '</p></div>' +
+    '<div class="compare-card"><p>' + tt("membership2.diffPledge") + "</p></div></div>" +
+    '<p class="compare-short"><strong>' + tt("membership2.diffShort") + "</strong></p>" +
+    '<h3 class="tick-title">' + tt("membership2.questionsHeading") + "</h3>" +
+    '<div class="faq-list">' +
+    faqItem("membership3.faq1Q", ["membership2.foundingNotOpen", "membership2.tiersNoBuy"]) +
+    faqItem("membership3.faq2Q", ["membership2.tiersIntro"]) +
+    faqItem("membership3.faq3Q", ["membership2.foundingTerms"]) +
+    faqItem("membership3.faq4Q", ["membership2.tiersApproach"]) +
+    faqItem("membership3.faq5Q", ["membership2.questionsText"]) +
+    "</div>";
 }
 function renderAbout() {
   const el = $("#about-body"); if (!el) return;
   const tt = (k) => escapeHtml(t(k));
+  const panel = (cls, heading, paras) =>
+    '<div class="about-panel' + (cls ? " " + cls : "") + '"><h3 class="tick-title">' + tt(heading) + "</h3>" +
+    paras.map((p) => "<p>" + tt(p) + "</p>").join("") + "</div>";
   el.innerHTML =
+    '<div class="page-hero about-hero">' +
+    '<img class="page-hero-bg" src="backdrops/the-keeper-of-forgotten-things.webp" alt="" aria-hidden="true">' +
+    '<div class="page-hero-shade"></div><div class="page-hero-content">' +
     "<h2 tabindex='-1'>" + tt("about2.heading") + "</h2>" +
     '<blockquote class="about-slogan">' + tt("about2.slogan") + "</blockquote>" +
-    "<h3>" + tt("about2.missionHeading") + "</h3><p>" + tt("about2.missionP1") + "</p><p>" + tt("about2.missionP2") + "</p>" +
-    "<h3>" + tt("about2.whyHeading") + "</h3><p>" + tt("about2.whyP1") + "</p><p>" + tt("about2.whyP2") + "</p><p>" + tt("about2.whyP3") + "</p>" +
-    "<h3>" + tt("about2.participateHeading") + "</h3>" +
-    [1, 2, 3, 4].map((i) => "<p><strong>" + tt("about2.step" + i + "Name") + "</strong> " + tt("about2.step" + i + "Text") + "</p>").join("") +
-    "<p>" + tt("about2.freeNote") + "</p>" +
-    "<h3>" + tt("about2.developedHeading") + "</h3><p>" + tt("about2.developedP1") + "</p><p>" + tt("about2.developedP2") + "</p>" +
-    "<h3>" + tt("about2.submitHeading") + "</h3><p>" + tt("about2.submitText") + "</p>" +
-    "<h3>" + tt("about2.proHeading") + "</h3><p>" + tt("about2.proText") + "</p>" +
-    "<h3>" + tt("about2.diffHeading") + "</h3>" +
-    [1, 2, 3, 4].map((i) => "<p>" + tt("about2.diff" + i) + "</p>").join("") +
-    "<p>" + tt("about2.diffSlogan") + "</p>" +
-    "<h3>" + tt("about2.nowHeading") + "</h3><p>" + tt("about2.nowText") + "</p>";
+    "</div></div>" +
+    '<div class="about-grid">' +
+    panel("", "about2.missionHeading", ["about2.missionP1", "about2.missionP2"]) +
+    panel("", "about2.whyHeading", ["about2.whyP1", "about2.whyP2", "about2.whyP3"]) +
+    "</div>" +
+    '<div class="about-steps"><h3 class="tick-title">' + tt("about2.participateHeading") + "</h3>" +
+    '<div class="steps-grid">' + [1, 2, 3, 4].map((i) =>
+      '<div class="step-card"><h4>' + tt("about2.step" + i + "Name") + "</h4><p>" + tt("about2.step" + i + "Text") + "</p></div>").join("") + "</div>" +
+    '<p class="about-note">' + tt("about2.freeNote") + "</p></div>" +
+    panel("", "about2.developedHeading", ["about2.developedP1", "about2.developedP2"]) +
+    '<div class="about-grid">' +
+    panel("", "about2.submitHeading", ["about2.submitText"]) +
+    panel("", "about2.proHeading", ["about2.proText"]) +
+    "</div>" +
+    '<div class="about-panel about-vision"><h3 class="tick-title">' + tt("about2.diffHeading") + "</h3>" +
+    '<div class="about-diff-grid">' + [1, 2, 3, 4].map((i) => "<p>" + tt("about2.diff" + i) + "</p>").join("") + "</div>" +
+    '<p class="footer-slogan">' + tt("about2.diffSlogan") + "</p></div>" +
+    panel("about-status", "about2.nowHeading", ["about2.nowText"]);
 }
 /* Admin review surface (Stage 2c): rendered ONLY when is_admin() is true for
    the signed-in user. The allowlist (public.admin_users) is empty until the
@@ -1280,20 +1486,22 @@ async function loadAdminSection() {
 /* ---------- legal & trust center ---------- */
 const LEGAL_DOCS = window.GLX_LEGAL || [];
 const legalBySlug = (slug) => LEGAL_DOCS.find((d) => d.slug === slug);
-const DRAFT_BANNER = '<p class="draft-banner" role="note">DRAFT — pending qualified legal review. Not yet legal advice or a binding published policy.</p>';
 function legalDocHtml(doc, backLabel) {
   return '<div class="section legal-doc">' +
     '<p class="watch-back"><a href="#/legal">&larr; ' + (backLabel || "Legal &amp; Trust Center") + '</a></p>' +
-    DRAFT_BANNER + doc.html +
-    '<p class="fineprint">Draft — pending legal review. This document is published for transparency and is not legal advice or a binding published policy.</p></div>';
+    doc.html + "</div>";
+}
+const LEGAL_DOC_SVG = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 2.5h8L19 7.5v14H6z"/><path d="M13.5 2.5v5.5H19"/><path d="M9 12.5h6M9 16h6"/></svg>';
+function legalCardHtml(href, title) {
+  return '<a class="legal-card" href="' + href + '"><span class="legal-card-icon" aria-hidden="true">' + LEGAL_DOC_SVG + '</span>' +
+    '<span class="legal-card-title">' + escapeHtml(title) + '</span><span class="legal-card-arrow" aria-hidden="true">\u203A</span></a>';
 }
 function renderLegalIndex() {
   const el = $("#legal-index");
   if (!el) return;
-  el.innerHTML = '<p class="section-intro" style="padding-left:0">Every GreenlitX policy in one place. All documents are drafts pending qualified legal review.</p>' +
-    DRAFT_BANNER +
-    '<ul class="legal-list">' + LEGAL_DOCS.map((d) => '<li><a href="#/legal/' + d.slug + '">' + escapeHtml(d.title) + '</a></li>').join("") + "</ul>" +
-    '<p><a class="btn btn-ghost" href="#/funding">Funding Transparency</a></p>';
+  el.innerHTML = '<p class="section-intro" style="padding-left:0">Every GreenlitX policy in one place.</p>' +
+    '<div class="legal-grid">' + LEGAL_DOCS.map((d) => legalCardHtml("#/legal/" + d.slug, d.title)).join("") +
+    legalCardHtml("#/funding", t("legal.fundingTitle")) + "</div>";
 }
 function renderLegalDoc(slug) {
   const el = $("#legal-doc");
@@ -1307,11 +1515,39 @@ function renderFunding() {
   if (!el) return;
   const doc = legalBySlug("funding-transparency");
   if (!doc) { el.innerHTML = '<div class="section"><h2 tabindex="-1">Funding Transparency</h2><p>This page is unavailable right now.</p></div>'; return; }
-  el.innerHTML = legalDocHtml(doc);
+  const tt = (k) => escapeHtml(t(k));
+  /* The five distinctions of SS13, stated with the document's own facts:
+     pledge interest vs money actually raised vs project status vs
+     membership vs payment availability. No figures beyond the published
+     $0-collected statement are shown. */
+  const glance = [
+    ["funding2.g1T", "funding2.g1X"],
+    ["funding2.g2T", "funding.collectedValue"],
+    ["funding2.g3T", "funding2.g3X"],
+    ["funding2.g4T", "funding2.g4X"],
+    ["funding2.g5T", "funding2.g5X"]
+  ].map(([tk, xk]) => '<div class="glance-card"><h3>' + tt(tk) + "</h3><p>" + tt(xk) + "</p></div>").join("");
+  el.innerHTML =
+    '<div class="section funding-glance"><h2 tabindex="-1">' + tt("legal.fundingTitle") + '</h2>' +
+    '<h3 class="tick-title">' + tt("funding2.glanceHeading") + '</h3><div class="glance-grid">' + glance + "</div></div>" +
+    legalDocHtml(doc);
 }
 /* ---------- professionals & submissions ---------- */
 const PRO_CATEGORIES = ["Actors", "Directors", "Producers", "Screenwriters", "Cinematographers", "Editors", "Composers", "Animators", "AI Filmmakers", "Production Designers"];
 const PRO_CAT_KEYS = ["pro.cat.actors", "pro.cat.directors", "pro.cat.producers", "pro.cat.screenwriters", "pro.cat.cinematographers", "pro.cat.editors", "pro.cat.composers", "pro.cat.animators", "pro.cat.aiFilmmakers", "pro.cat.productionDesigners"];
+const PRO_ICON_PATHS = [
+  '<circle cx="12" cy="8" r="3.4"/><path d="M5 20c.8-3.4 3.6-5 7-5s6.2 1.6 7 5"/>',
+  '<path d="M3 10.5h18V20H3z"/><path d="M3.8 10.5L5.5 4.8l15.2 2.8-.8 3.4M8 5.5l1.5 4.3M13 6.2l1.5 4.3M18 7l1.4 4"/>',
+  '<rect x="3" y="8" width="18" height="11" rx="2"/><path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>',
+  '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7.5 18.5 3 20l1.5-4.5z"/>',
+  '<rect x="3" y="7" width="12" height="11" rx="2"/><path d="M15 10.5l6-3v10l-6-3"/>',
+  '<circle cx="6" cy="7" r="2.4"/><circle cx="6" cy="17" r="2.4"/><path d="M8 8.8L20 17M8 15.2L20 7"/>',
+  '<path d="M9 18.5V6l10-2v11.5"/><circle cx="6.5" cy="18.5" r="2.5"/><circle cx="16.5" cy="15.5" r="2.5"/>',
+  '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10.5 9.5l5 2.5-5 2.5z" fill="currentColor" stroke="none"/>',
+  '<rect x="7" y="7" width="10" height="10" rx="2"/><path d="M10 7V4M14 7V4M10 20v-3M14 20v-3M7 10H4M7 14H4M20 10h-3M20 14h-3"/>',
+  '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3.6 12.6L12 17l8.4-4.4M3.6 16.6L12 21l8.4-4.4"/>'
+];
+const proIconSvg = (i) => '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + PRO_ICON_PATHS[i % PRO_ICON_PATHS.length] + "</svg>";
 function rolesHtml() {
   return '<div class="roles-box"><h3>' + escapeHtml(t("roles.heading")) + "</h3><ul>" +
     ["roles.audience", "roles.filmmakers", "roles.professionals", "roles.supporters"].map((k) => "<li>" + escapeHtml(t(k)) + "</li>").join("") + "</ul></div>";
@@ -1320,7 +1556,7 @@ function fillRoles(id) { const el = document.getElementById(id); if (el) el.inne
 function renderPros() {
   fillRoles("roles-pro");
   $("#pro-grid").innerHTML = PRO_CATEGORIES.map((c, i) =>
-    '<div class="pro-card">' + escapeHtml(t(PRO_CAT_KEYS[i])) + '<br><button type="button" class="btn btn-small" data-action="pro" data-cat="' + escapeHtml(c) + '">' + escapeHtml(t("pro.registerButton")) + '</button></div>').join("");
+    '<div class="pro-card"><span class="pro-icon" aria-hidden="true">' + proIconSvg(i) + '</span><span class="pro-card-name">' + escapeHtml(t(PRO_CAT_KEYS[i])) + '</span><button type="button" class="btn btn-small" data-action="pro" data-cat="' + escapeHtml(c) + '">' + escapeHtml(t("pro.registerButton")) + '</button></div>').join("");
   const sel = $("#p-role");
   if (sel && !sel.options.length) {
     sel.innerHTML = '<option value="">' + escapeHtml(t("pro.choose")) + '</option>' + PRO_CATEGORIES.map((c, i) => '<option value="' + escapeHtml(c) + '">' + escapeHtml(t(PRO_CAT_KEYS[i])) + "</option>").join("");
@@ -1487,8 +1723,27 @@ document.addEventListener("click", (e) => {
     authSetReturnTo("#/film/" + id);
   } else if (btn.dataset.action === "pledge-pick") {
     pledgePick.cents = Number(btn.dataset.cents);
+    pledgePick.custom = false;
     const custom = $("#pledge-custom"); if (custom) custom.value = "";
     refreshDynamic();
+  } else if (btn.dataset.action === "pledge-custom") {
+    /* Round 4: the grid's Custom chip reveals the same #pledge-custom
+       input the submit handler has always read first — it only toggles
+       which amount source is armed, never the amounts or the submit. */
+    pledgePick.custom = true;
+    refreshDynamic();
+    const ci = $("#pledge-custom"); if (ci) ci.focus({ preventScroll: true });
+  } else if (btn.dataset.action === "film-tab") {
+    filmTabState.tab = btn.dataset.tab || "overview";
+    applyFilmTab();
+  } else if (btn.dataset.action === "open-gallery") {
+    const f = filmById(id);
+    if (f) openLightbox(f, artworkFor(f.id), 0, btn);
+  } else if (btn.dataset.action === "play-teaser") {
+    const sec = $("#film-teaser");
+    const vid = sec ? sec.querySelector("video") : null;
+    if (sec) sec.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (vid) { const p = vid.play(); if (p && p.catch) p.catch(() => {}); }
   } else if (btn.dataset.action === "pledge-submit") {
     if (!server.user || !sb) return;
     const custom = $("#pledge-custom");
@@ -1520,7 +1775,7 @@ document.addEventListener("click", (e) => {
     sb.from("pledges").update({ status: "cancelled" }).eq("id", btn.dataset.pledge)
       .then(async () => { await sbFetchMine(); await sbFetchCounts(); refreshDynamic(); });
   } else if (btn.dataset.action === "clear-filters") {
-    state.query = ""; state.genreExact = "All"; state.stageFilter = "All"; state.typeFilter = "All";
+    state.query = ""; state.genreExact = "All"; state.stageFilter = "All"; state.typeFilter = "All"; state.sortBy = "featured";
     const searchEl = $("#search"); if (searchEl) searchEl.value = "";
     renderDiscover();
   } else if (btn.dataset.action === "save") {
@@ -1547,6 +1802,18 @@ document.addEventListener("click", (e) => {
     const nameEl = $("#p-name");
     if (nameEl) nameEl.focus({ preventScroll: true });
   }
+});
+/* Round 4: typing a custom pledge amount arms the Custom chip (visual
+   state only, synced in place so the input never loses focus or value
+   mid-typing; the submit handler's read order is unchanged). */
+document.addEventListener("input", (e) => {
+  if (!e.target || e.target.id !== "pledge-custom" || !e.target.value) return;
+  pledgePick.custom = true;
+  const panel = $("#support-panel");
+  if (!panel) return;
+  $$(".chip[data-action='pledge-pick']", panel).forEach((c) => c.setAttribute("aria-pressed", "false"));
+  const cc = panel.querySelector(".chip[data-action='pledge-custom']");
+  if (cc) cc.setAttribute("aria-pressed", "true");
 });
 $("#search").addEventListener("input", (e) => { state.query = e.target.value; renderDiscover(); });
 const watchSearchEl = $("#watch-search");
@@ -1641,7 +1908,8 @@ document.addEventListener("change", (e) => {
   const el = e.target;
   if (!el || !el.id) return;
   if (el.id === "genre-select") { state.genreExact = el.value; renderDiscover(); }
-  else if (el.id === "stage-select") { state.stageFilter = el.value; renderDiscover(); }
+  else if (el.id === "sort-select") { state.sortBy = el.value; renderDiscover(); }
+  else if (el.id === "watch-genre") { state.watchGenre = el.value; renderWatch(); }
 });
 const draftBtn = $("#submit-savedraft");
 if (draftBtn) draftBtn.addEventListener("click", () => { saveSubmitDraft(); const m = $("#submit-draft-msg"); if (m) m.textContent = t("submit2.draftSaved"); });
