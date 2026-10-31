@@ -779,8 +779,12 @@ body.modal-open { overflow: hidden; }
 .footer-slogan2 { color: var(--text); font-weight: 800; font-size: 1.05rem; line-height: 1.35; margin: 1rem 0 0.5rem; max-width: 34ch; }
 .footer-slogan2 .accent { display: block; }
 .footer-support { color: var(--muted); margin: 0 0 1rem; max-width: 38ch; }
-.footer-social a { font-weight: 700; text-decoration: none; }
-.footer-social a:hover { text-decoration: underline; }
+/* Round 9: footer social icon row (Instagram, Facebook, YouTube, TikTok, X) */
+.footer-social { display: flex; flex-wrap: wrap; align-items: center; gap: 0.55rem; margin: 0.9rem 0 0; }
+.footer-social a { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border); background: var(--panel2); color: var(--muted); text-decoration: none; transition: color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease; }
+.footer-social a svg { width: 20px; height: 20px; display: block; }
+.footer-social a:hover { color: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px rgba(124,252,0,0.35); transform: translateY(-1px); }
+.footer-social a:focus-visible { color: var(--accent); border-color: var(--accent); outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: 0 0 10px rgba(124,252,0,0.35); }
 .footer-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
 .footer-col-head { margin: 0 0 0.7rem; font-size: 0.98rem; }
 .footer-col-label { color: var(--text); font-weight: 800; }
@@ -1135,56 +1139,194 @@ body.modal-open { overflow: hidden; }
    padding for separation. */
 .site-footer { margin-top: 0; }
 
-/* ================================================================
-   GreenlitX Mobile App promo — ADD-ONLY (2026-10-31).
-   Every selector below is glxapp- prefixed and styles ONLY the two
-   new components (homepage app section + footer app box).
-   No existing rule is modified by this block.
-   ================================================================ */
-.glxapp-section { position: relative; overflow: hidden; padding: 4.2rem 1.1rem 4.6rem; background: radial-gradient(1100px 480px at 78% 30%, rgba(124,252,0,0.13), rgba(124,252,0,0) 60%), radial-gradient(800px 500px at 8% 90%, rgba(20,80,30,0.35), rgba(0,0,0,0) 65%), linear-gradient(160deg, #060a06 0%, #030503 55%, #071007 100%); border-top: 1px solid rgba(124,252,0,0.16); border-bottom: 1px solid rgba(124,252,0,0.16); }
-.glxapp-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 3rem; }
-.glxapp-copy { flex: 1 1 430px; min-width: 280px; }
-.glxapp-title { color: #7cfc00; font-size: clamp(2.1rem, 4.5vw, 3.4rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.01em; margin: 0 0 0.4rem; }
-.glxapp-soon { color: #f2f7f2; font-size: clamp(1.3rem, 2.4vw, 1.8rem); font-weight: 700; margin: 0 0 1rem; }
-.glxapp-body { color: #b9c8bb; font-size: 1.06rem; line-height: 1.65; max-width: 46ch; margin: 0 0 1.7rem; }
-.glxapp-badges { display: flex; flex-wrap: wrap; gap: 0.7rem; }
-.glxapp-badge { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.95rem; border: 1.5px solid rgba(235,245,236,0.75); border-radius: 10px; color: #eef6ee; background: rgba(0,0,0,0.55); cursor: default; user-select: none; }
-.glxapp-badge-ic { flex: 0 0 auto; }
-.glxapp-badge-txt { display: flex; flex-direction: column; line-height: 1.15; text-align: left; }
-.glxapp-badge-txt small { font-size: 0.62rem; letter-spacing: 0.02em; color: #cfe0cf; }
-.glxapp-badge-txt strong { font-size: 1.02rem; font-weight: 700; }
-.glxapp-phones { flex: 0 1 520px; display: flex; justify-content: center; align-items: flex-start; }
-.glxapp-phone { width: 228px; flex: 0 0 auto; background: #000; border: 2px solid #2e3d2e; border-radius: 34px; padding: 12px 12px 14px; box-shadow: 0 24px 50px rgba(0,0,0,0.65), 0 0 0 6px rgba(10,16,10,0.9); }
-.glxapp-phone-a { transform: rotate(-3deg); z-index: 1; }
-.glxapp-phone-b { transform: rotate(2.5deg); margin-left: 12px; margin-top: 34px; }
-.glxapp-phone-notch { width: 74px; height: 15px; border-radius: 8px; background: #151a15; margin: 0 auto 8px; }
-.glxapp-phone-logo { text-align: center; font-weight: 800; letter-spacing: 0.14em; font-size: 0.78rem; color: #eef6ee; margin: 0 0 9px; }
-.glxapp-x { color: #7cfc00; }
-.glxapp-phone-hero { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 12px; display: block; }
-.glxapp-phone-wide { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 10px; display: block; }
-.glxapp-phone-film { color: #eef6ee; font-size: 0.72rem; font-weight: 700; margin: 6px 2px 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.glxapp-phone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.glxapp-phone-grid figure { margin: 0; }
-.glxapp-phone-grid img { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 9px; display: block; }
-.glxapp-phone-grid figcaption { color: #a9bda9; font-size: 0.56rem; margin-top: 4px; line-height: 1.25; }
-.glxapp-phone-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; }
-.glxapp-phone-grid3 img { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 8px; display: block; }
-.glxapp-phone-disc { color: #eef6ee; font-weight: 800; font-size: 0.92rem; margin: 0 2px 7px; }
-.glxapp-phone-search { height: 20px; border-radius: 10px; background: #162116; margin: 0 0 10px; }
-.glxapp-phone-tabs { display: flex; justify-content: space-between; border-top: 1px solid #1d2a1d; padding: 8px 2px 0; margin-top: 10px; color: #7e937e; font-size: 0.58rem; }
-.glxapp-phone-tabs .glxapp-tab-on { color: #7cfc00; font-weight: 700; }
-.glxapp-foot { max-width: 1200px; margin: 0 auto; padding: 0 1.1rem 2rem; display: flex; justify-content: flex-end; }
-.glxapp-foot-box { border: 1.5px solid rgba(124,252,0,0.55); border-radius: 14px; padding: 1rem 1.25rem 1.1rem; background: rgba(0,0,0,0.35); max-width: 430px; }
-.glxapp-foot-title { color: #7cfc00; font-weight: 800; font-size: 1.12rem; margin: 0 0 0.15rem; }
-.glxapp-foot-sub { color: #b9c8bb; font-size: 0.92rem; margin: 0 0 0.8rem; }
-@media (max-width: 860px) {
-  .glxapp-inner { flex-direction: column; gap: 2.4rem; }
-  .glxapp-copy { flex: none; text-align: center; }
-  .glxapp-body { margin-left: auto; margin-right: auto; }
-  .glxapp-badges { justify-content: center; }
-  .glxapp-phones { flex: none; }
-  .glxapp-phone { width: 168px; }
-  .glxapp-foot { justify-content: stretch; }
-  .glxapp-foot-box { max-width: none; width: 100%; text-align: center; }
-  .glxapp-foot-box .glxapp-badges { justify-content: center; }
+/* ================= Round 10 (Oct 31): Footer V2 — premium cinematic footer =================
+   Scope: .fv2-footer subtree ONLY. Order: link area (restyled mobile
+   accordions) / app panel / social / divider / signature / language bar.
+   Background: deep charcoal, subtle green ambient glows in the lower
+   corners, soft fade from the page background at the top. CSS-only. */
+.fv2-footer {
+  background:
+    radial-gradient(720px 340px at 4% 108%, rgba(124, 252, 0, 0.075), rgba(124, 252, 0, 0) 62%),
+    radial-gradient(720px 340px at 96% 108%, rgba(124, 252, 0, 0.06), rgba(124, 252, 0, 0) 62%),
+    radial-gradient(340px 190px at 12% 96%, rgba(64, 90, 40, 0.10), rgba(5, 7, 10, 0) 70%),
+    radial-gradient(340px 190px at 88% 96%, rgba(64, 90, 40, 0.09), rgba(5, 7, 10, 0) 70%),
+    linear-gradient(180deg, rgba(124, 252, 0, 0.045), rgba(5, 7, 10, 0) 130px),
+    var(--bg2);
+}
+
+/* ---- (2) App promotion panel ---- */
+.fv2-footer .footer-app { max-width: var(--maxw); margin: 0 auto; padding: 0 1.1rem; }
+.fv2-footer .footer-app-panel {
+  display: flex; align-items: center; gap: 1.6rem;
+  border: 1px solid rgba(124, 252, 0, 0.45); border-radius: 18px;
+  background: linear-gradient(118deg, rgba(124, 252, 0, 0.08), rgba(124, 252, 0, 0) 46%), #090d10;
+  box-shadow: 0 0 26px rgba(124, 252, 0, 0.12), inset 0 0 34px rgba(124, 252, 0, 0.04);
+  padding: 1.35rem 1.5rem;
+}
+.fv2-phones { display: flex; align-items: flex-start; flex: 0 0 auto; padding: 4px 6px 0 8px; }
+.fv2-phone {
+  position: relative; width: 112px; height: 226px; border-radius: 21px;
+  background: #05070a; border: 1.5px solid #2b353e; padding: 5px;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.55), 0 0 16px rgba(124, 252, 0, 0.10);
+}
+.fv2-phone-a { transform: rotate(-4deg); z-index: 2; }
+.fv2-phone-b { transform: rotate(3deg); width: 104px; height: 212px; margin: 12px 0 0 -16px; z-index: 1; }
+.fv2-screen { position: relative; width: 100%; height: 100%; border-radius: 16px; overflow: hidden; background: #000; }
+.fv2-screen::before {
+  content: ""; position: absolute; top: 5px; left: 50%; transform: translateX(-50%);
+  width: 34px; height: 8px; border-radius: 5px; background: #05070a; z-index: 4;
+}
+.fv2-screen-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.fv2-screen-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5, 7, 10, 0.30), rgba(5, 7, 10, 0.02) 42%, rgba(5, 7, 10, 0.80)); }
+.fv2-screen-logo { position: relative; z-index: 2; display: block; width: 70%; height: auto; margin: 17px auto 0; }
+.fv2-screen-words {
+  position: absolute; z-index: 2; left: 0; right: 0; bottom: 13px; text-align: center;
+  color: #eef3f6; font-size: 8.5px; font-weight: 600; letter-spacing: 0.14em; line-height: 1.75;
+}
+.fv2-screen-app { background: #070a0d; padding: 14px 7px 7px; display: flex; flex-direction: column; gap: 6px; }
+.fv2-app-head { display: flex; align-items: center; justify-content: space-between; color: #aeb9c2; padding: 0 1px; }
+.fv2-app-head img { width: 46px; height: auto; display: block; }
+.fv2-app-item { display: block; }
+.fv2-app-item img { display: block; width: 100%; height: 63px; object-fit: cover; object-position: center 22%; border-radius: 5px; }
+.fv2-app-cap { display: block; font-size: 7px; color: var(--muted); margin-top: 2px; letter-spacing: 0.04em; }
+.fv2-footer .footer-app-text { flex: 1 1 auto; min-width: 0; }
+.fv2-footer .footer-app-title { color: var(--text); font-size: clamp(1.45rem, 3.2vw, 2rem); font-weight: 800; line-height: 1.12; margin: 0; }
+.fv2-footer .footer-app-title .accent { color: var(--accent); }
+.fv2-footer .footer-app-tag { color: #cfd8de; font-size: 1.02rem; margin: 0.5rem 0 0.15rem; }
+.fv2-footer .footer-app-soon { color: var(--muted); font-size: 1.02rem; margin: 0 0 1.05rem; }
+.fv2-footer .footer-app-badges { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.fv2-badge {
+  display: inline-flex; align-items: center; gap: 0.55rem; min-height: 48px;
+  padding: 0.45rem 0.85rem; border: 1px solid #454f58; border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03); color: var(--text); user-select: none;
+}
+.fv2-badge svg { flex: 0 0 auto; display: block; }
+.fv2-badge-text { display: flex; flex-direction: column; line-height: 1.2; }
+.fv2-badge-text small { font-size: 0.62rem; color: var(--muted); letter-spacing: 0.02em; }
+.fv2-badge-text strong { font-size: 1.02rem; font-weight: 700; }
+
+/* ---- (3) Social: Follow the movement ---- */
+.fv2-footer .footer-follow { text-align: center; padding: 2.5rem 1.1rem 0; }
+.fv2-footer .footer-follow-title { color: var(--text); font-size: 1.55rem; font-weight: 800; margin: 0; }
+.fv2-footer .footer-follow-sub { color: var(--muted); margin: 0.45rem auto 1.35rem; max-width: 52ch; }
+.fv2-social { display: flex; justify-content: center; gap: clamp(0.5rem, 3.2vw, 1.5rem); max-width: 620px; margin: 0 auto; }
+.fv2-social-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 0.45rem;
+  min-width: 52px; padding: 0.2rem 0.15rem; border-radius: 12px; text-decoration: none;
+}
+.fv2-social-circle {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, #17222b, #0a0e12 72%);
+  border: 1.5px solid rgba(124, 252, 0, 0.65);
+  box-shadow: 0 0 14px rgba(124, 252, 0, 0.22), inset 0 0 10px rgba(124, 252, 0, 0.06);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.fv2-social-circle svg { width: 29px; height: 29px; display: block; }
+.fv2-social-name { font-size: 0.8rem; color: #cfd8de; }
+.fv2-social-btn:hover .fv2-social-circle { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 0 20px rgba(124, 252, 0, 0.38), inset 0 0 10px rgba(124, 252, 0, 0.08); }
+.fv2-social-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.fv2-social-btn:focus-visible .fv2-social-circle { border-color: var(--accent); box-shadow: 0 0 20px rgba(124, 252, 0, 0.38); }
+
+/* ---- (4) Cinematic divider with green X ---- */
+.fv2-divider { display: flex; align-items: center; gap: 14px; max-width: var(--maxw); margin: 2.1rem auto 0; padding: 0 1.1rem; color: var(--accent); }
+.fv2-divider::before, .fv2-divider::after {
+  content: ""; flex: 1 1 auto; height: 1px;
+  background: linear-gradient(90deg, rgba(147, 161, 173, 0), rgba(147, 161, 173, 0.38), rgba(147, 161, 173, 0));
+}
+.fv2-divider svg { flex: 0 0 auto; filter: drop-shadow(0 0 6px rgba(124, 252, 0, 0.55)); }
+
+/* ---- (5) Brand signature ---- */
+.fv2-footer .footer-signature { text-align: center; padding: 1.5rem 1.1rem 0; }
+.fv2-footer .footer-sig-logo { height: 50px; width: auto; max-width: none; display: inline-block; }
+.fv2-footer .footer-signature .footer-tagline { margin: 0.75rem 0 0.35rem; color: #cfd8de; font-size: 0.98rem; }
+.fv2-footer .footer-signature .footer-rights { margin: 0; color: var(--muted); font-size: 0.88rem; }
+
+/* ---- (6) Language bar: centered, separators, green active ---- */
+.fv2-footer .footer-bottom { border-top: 0; justify-content: center; padding-top: 1.15rem; padding-bottom: 1.5rem; }
+.fv2-footer .footer-langs { justify-content: center; gap: 0; }
+.fv2-footer .foot-lang { border: 0; border-radius: 0; padding: 0.45rem 0.95rem; min-height: 44px; }
+.fv2-footer .foot-lang + .foot-lang { border-left: 1px solid rgba(147, 161, 173, 0.35); }
+.fv2-footer .foot-lang:hover { border-color: rgba(147, 161, 173, 0.35); color: var(--text); }
+.fv2-footer .foot-lang.active { color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent); }
+
+/* ---- (1) Mobile accordions: premium mockup styling (restyle only) ---- */
+@media (max-width: 900px) {
+  .fv2-footer .footer-cols {
+    background: #10151b; border: 1px solid var(--border); border-radius: 16px;
+    overflow: hidden; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  }
+  .fv2-footer .footer-col { border-top: 1px solid rgba(30, 40, 48, 0.95); }
+  .fv2-footer .footer-col:first-child { border-top: 0; }
+  .fv2-footer .footer-acc-btn { justify-content: flex-start; gap: 0.7rem; padding: 0.95rem 1rem; min-height: 54px; font-weight: 700; font-size: 1rem; }
+  .fv2-footer .footer-acc-icon { display: inline-flex; flex: 0 0 auto; color: #aeb9c2; }
+  .fv2-footer .footer-acc-chevron { margin-left: auto; display: inline-flex; color: var(--accent); }
+  .fv2-footer .footer-list {
+    display: flex; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden;
+    padding: 0 1rem; transition: max-height 0.38s ease, opacity 0.3s ease, padding 0.38s ease, visibility 0s linear 0.38s;
+  }
+  .fv2-footer .footer-col.open .footer-list {
+    display: flex; max-height: 40rem; opacity: 1; visibility: visible;
+    padding: 0 1rem 1rem; transition: max-height 0.38s ease, opacity 0.3s ease, padding 0.38s ease;
+  }
+  .fv2-footer .footer-list a { padding: 0.35rem 0; min-height: 32px; }
+}
+
+/* ---- Responsive tuning: phones shrink, badges stack, social stays one row ---- */
+@media (max-width: 560px) {
+  .fv2-footer .footer-app-panel { gap: 1rem; padding: 1.1rem 1rem; }
+  .fv2-phone { width: 96px; height: 194px; border-radius: 18px; }
+  .fv2-phone-b { width: 89px; height: 182px; margin-left: -14px; }
+  .fv2-screen { border-radius: 13px; }
+  .fv2-screen-words { font-size: 7.5px; bottom: 10px; }
+  .fv2-app-item img { height: 54px; }
+  .fv2-footer .footer-app-title { font-size: 1.32rem; }
+  .fv2-footer .footer-app-tag, .fv2-footer .footer-app-soon { font-size: 0.94rem; }
+  .fv2-badge { padding: 0.4rem 0.65rem; }
+  .fv2-badge-text strong { font-size: 0.94rem; }
+  .fv2-social-circle { width: 48px; height: 48px; }
+  .fv2-social-circle svg { width: 25px; height: 25px; }
+  .fv2-social-name { font-size: 0.7rem; }
+  .fv2-footer .foot-lang { padding: 0.45rem 0.6rem; font-size: 0.85rem; }
+}
+@media (max-width: 340px) {
+  .fv2-phone { width: 84px; height: 170px; }
+  .fv2-phone-b { width: 78px; height: 160px; margin-left: -12px; }
+  .fv2-app-item img { height: 46px; }
+  .fv2-social-btn { min-width: 46px; }
+}
+
+/* ---- Round 10 QA fixes: app panel becomes a grid (phones | text / badges).
+   Badges are a direct panel child so they can take a full-width row on
+   narrow screens instead of being crushed inside the text column. ---- */
+.fv2-footer .footer-app-panel {
+  display: grid; grid-template-columns: auto minmax(0, 600px);
+  grid-template-areas: "phones text" "phones badges";
+  justify-content: center; align-items: center; column-gap: 1.6rem; row-gap: 0.9rem;
+}
+.fv2-phones { grid-area: phones; }
+.fv2-footer .footer-app-text { grid-area: text; }
+.fv2-footer .footer-app-badges { grid-area: badges; align-self: start; }
+.fv2-footer .footer-app-soon { margin-bottom: 0; }
+.fv2-badge-text small { white-space: nowrap; }
+@media (max-width: 560px) {
+  .fv2-footer .footer-app-panel { grid-template-columns: auto 1fr; grid-template-areas: "phones text" "badges badges"; justify-content: stretch; column-gap: 0.9rem; }
+  .fv2-phone { width: 88px; height: 178px; }
+  .fv2-phone-b { width: 82px; height: 166px; margin-left: -30px; }
+  .fv2-phones { padding: 4px 0 0 2px; }
+  .fv2-footer .footer-app-badges { justify-content: flex-start; }
+  .fv2-app-item img { height: 50px; }
+}
+@media (max-width: 380px) {
+  .fv2-footer .footer-app-panel { grid-template-columns: 1fr; grid-template-areas: "phones" "text" "badges"; justify-items: center; }
+  .fv2-footer .footer-app-text { text-align: center; }
+  .fv2-footer .footer-app-badges { justify-content: center; justify-self: stretch; }
+}
+
+/* ---- Round 10 QA fixes (2): phone-B presence + 320px language bar ---- */
+@media (max-width: 560px) {
+  .fv2-phone-b { margin-left: -22px; }
+}
+@media (max-width: 380px) {
+  .fv2-footer .foot-lang { padding: 0.45rem 0.5rem; font-size: 0.82rem; }
 }
