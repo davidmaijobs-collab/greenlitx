@@ -395,7 +395,11 @@ async function sbInit() {
 }
 function updateAccountNav() {
   const link = document.querySelector('[data-nav="account"]');
-  if (link) link.textContent = server.user ? t("nav.myAccount") : t("nav.account");
+  if (!link) return;
+  /* Round 7: the nav link carries an icon + label span; only the label
+     text changes with auth state (compact nav7 label when signed out). */
+  const label = link.querySelector(".nav-label") || link;
+  label.textContent = server.user ? t("nav.myAccount") : t("nav7.account");
 }
 
 /* ---------- posters ---------- */
@@ -468,7 +472,7 @@ function showcaseHtml() {
   const slideHtml = slides.map((s, i) => {
     if (s.brand) {
       return '<div class="showcase-slide' + (i === 0 ? " active" : "") + '">' +
-        '<img class="backdrop" src="backdrops/letters-from-the-sun.webp" width="1600" height="900" alt="" aria-hidden="true">' +
+        '<img class="backdrop" src="assets/site/hero-chair.webp" width="1280" height="720" alt="" aria-hidden="true">' +
         '<div class="showcase-shade"></div>' +
         '<div class="showcase-content"><div class="showcase-inner">' +
         '<h1 class="showcase-title" tabindex="-1">' + escapeHtml(t("hero.titleStart")) + ' <span class="accent">' + escapeHtml(t("hero.titleAccent")) + '</span></h1>' +
@@ -577,7 +581,7 @@ function watchGridCardHtml(w) {
 
 function fmPanelHtml() {
   return '<section class="fm-panel" aria-label="' + escapeHtml(t("home3.fmTitle")) + '">' +
-    '<img class="fm-bg" src="backdrops/the-last-picture-house.webp" width="1600" height="900" loading="lazy" alt="" aria-hidden="true">' +
+    '<img class="fm-bg" src="assets/site/pro-hero.webp" width="1280" height="720" loading="lazy" alt="" aria-hidden="true">' +
     '<div class="fm-shade"></div><div class="fm-content">' +
     '<h2>' + escapeHtml(t("home3.fmTitle")) + "</h2>" +
     "<p>" + escapeHtml(t("home3.fmText")) + "</p>" +
@@ -1199,7 +1203,7 @@ function filmLinks(ids) {
 function accountHeroHtml() {
   const ben = (n, icon) => '<div class="trust-item"><span class="account-ben-icon" aria-hidden="true">' + icon + '</span><div><h3>' + escapeHtml(t("account6.ben" + n + "T")) + "</h3><p>" + escapeHtml(t("account6.ben" + n + "X")) + "</p></div></div>";
   const ic = (path) => '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + path + "</svg>";
-  return '<div class="account-hero"><img class="account-hero-bg" src="backdrops/the-night-orchestra.webp" alt="" aria-hidden="true">' +
+  return '<div class="account-hero"><img class="account-hero-bg" src="assets/site/hero-chair.webp" alt="" aria-hidden="true">' +
     '<div class="account-hero-shade"></div><div class="account-hero-content">' +
     '<p class="eyebrow">' + escapeHtml(t("account6.eyebrow")) + "</p>" +
     '<h3 class="account-hero-title">' + escapeHtml(t("account6.heroTitle")) + "</h3>" +
@@ -1511,7 +1515,7 @@ function renderMembership() {
     '<details class="detail-details faq-item"><summary>' + tt(q) + "</summary><p>" + tt(a) + "</p></details>";
   el.innerHTML =
     '<div class="member-hero r6-hero">' +
-    '<img class="member-hero-bg" src="backdrops/the-great-escape-club.webp" alt="" aria-hidden="true">' +
+    '<img class="member-hero-bg" src="assets/site/hero-chair.webp" alt="" aria-hidden="true">' +
     '<div class="member-hero-shade"></div><div class="member-hero-content">' +
     '<p class="eyebrow">' + tt("nav.membership") + "</p>" +
     "<h2 tabindex='-1'>" + tt("member6.heroTitle") + "</h2>" +
@@ -1554,15 +1558,15 @@ function renderAbout() {
      or the page's existing published text; the membership strip states
      the approved five-tier model with the honesty line that paid
      checkout is not yet operational. */
-  const partImgs = ["letters-from-the-sun", "the-second-moon", "dead-freight", "the-last-picture-house"];
+  const partImgs = ["about-discover", "about-follow", "about-record", "about-watch"];
   const partCard = (n) =>
-    '<div class="step-card part-card"><img class="part-card-img" src="backdrops/' + partImgs[n - 1] + '.webp" width="1600" height="900" loading="lazy" alt="">' +
+    '<div class="step-card part-card"><img class="part-card-img" src="assets/site/' + partImgs[n - 1] + '.webp" width="640" height="400" loading="lazy" alt="">' +
     '<span class="part-num" aria-hidden="true">0' + n + '</span><h4>' + tt("about6.part" + n + "T") + "</h4><p>" + tt("about6.part" + n + "X") + "</p></div>";
   const tierLine = (nameKey, amountKey, durText) =>
     '<li><strong>' + tt(nameKey) + '</strong> — ' + tt(amountKey) + " · " + durText + "</li>";
   el.innerHTML =
     '<div class="page-hero about-hero">' +
-    '<img class="page-hero-bg" src="backdrops/the-keeper-of-forgotten-things.webp" alt="" aria-hidden="true">' +
+    '<img class="page-hero-bg" src="assets/site/hero-about.webp" alt="" aria-hidden="true">' +
     '<div class="page-hero-shade"></div><div class="page-hero-content">' +
     '<p class="eyebrow">' + tt("about6.eyebrow") + "</p>" +
     "<h2 tabindex='-1' class='about-hero-title'>" + tt("hero.titleStart") + ' <span class="accent">' + tt("hero.titleAccent") + "</span></h2>" +
@@ -1722,13 +1726,15 @@ function rolesHtml() {
     ["roles.audience", "roles.filmmakers", "roles.professionals", "roles.supporters"].map((k) => "<li>" + escapeHtml(t(k)) + "</li>").join("") + "</ul></div>";
 }
 function fillRoles(id) { const el = document.getElementById(id); if (el) el.innerHTML = rolesHtml(); }
-/* Round 6: discipline tiles carry existing catalog artwork (backdrops),
-   one per category; the tile button keeps the existing data-action="pro"
-   behaviour (sets the form's role select, scrolls to the form). */
-const PRO_TILE_ART = ["the-woman-in-apartment-9", "the-last-picture-house", "the-retirement-job", "letters-from-the-sun", "the-last-train-below", "the-devils-frequency", "the-night-orchestra", "the-keeper-of-forgotten-things", "before-the-city-wakes", "dead-freight"];
+/* Round 7: discipline tiles carry occupation-true imagery extracted from
+   the owner's professionals mockup (assets/site/pro-*.webp, in
+   PRO_CATEGORIES order) — film artwork no longer decorates this functional
+   section. The tile button keeps the existing data-action="pro" behaviour
+   (sets the form's role select, scrolls to the form). */
+const PRO_TILE_IMGS = ["pro-actors", "pro-directors", "pro-producers", "pro-screenwriters", "pro-cinematographers", "pro-editors", "pro-composers", "pro-animators", "pro-ai-filmmakers", "pro-production-designers"];
 function renderPros() {
   $("#pro-grid").innerHTML = PRO_CATEGORIES.map((c, i) =>
-    '<div class="pro-card pro-tile"><img class="pro-tile-img" src="backdrops/' + PRO_TILE_ART[i % PRO_TILE_ART.length] + '.webp" width="1600" height="900" loading="lazy" alt="">' +
+    '<div class="pro-card pro-tile"><img class="pro-tile-img" src="assets/site/' + PRO_TILE_IMGS[i % PRO_TILE_IMGS.length] + '.webp" width="640" height="480" loading="lazy" alt="">' +
     '<div class="pro-tile-body"><span class="pro-icon" aria-hidden="true">' + proIconSvg(i) + '</span><span class="pro-card-name">' + escapeHtml(t(PRO_CAT_KEYS[i])) + '</span>' +
     '<button type="button" class="btn btn-small" data-action="pro" data-cat="' + escapeHtml(c) + '">' + escapeHtml(t("pro.registerButton")) + '</button></div></div>').join("");
   const sel = $("#p-role");
@@ -1765,6 +1771,7 @@ function updateMeta(r) {
   if (r.view === "membership") { title = t("meta.membershipTitle"); }
   if (r.view === "about") { title = t("meta.aboutTitle"); }
   if (r.view === "account") { title = t("account.heading") + " — GreenlitX"; }
+  if (r.view === "support") { title = t("support7.supTitle") + " — GreenlitX"; }
   if (r.view === "film") {
     const f = filmById(r.id);
     if (f) { title = t("meta.filmTitle", { title: f.title }); desc = filmText(f, "logline"); img = "posters/" + f.id + ".webp"; }
@@ -1781,13 +1788,13 @@ function applyStaticI18n() {
   $$("[data-i18n-aria]").forEach((el) => { el.setAttribute("aria-label", t(el.dataset.i18nAria)); });
   syncLangControl(); closeLangMenu(); syncFooterLangs();
   const acc = document.querySelector('[data-nav="account"]');
-  if (acc && !server.user) acc.textContent = t("nav.account");
+  if (acc && !server.user) { const accLabel = acc.querySelector(".nav-label") || acc; accLabel.textContent = t("nav7.account"); }
   const srch = $("#search"); if (srch) { srch.placeholder = t("discover.searchPlaceholder"); srch.setAttribute("aria-label", t("discover.searchLabel")); }
   const ws = $("#watch-search"); if (ws) { ws.placeholder = t("watch.searchPlaceholder"); ws.setAttribute("aria-label", t("watch.searchLabel")); }
 }
 
 /* ---------- routing ---------- */
-const VIEWS = ["home", "discover", "film", "watch", "watchdetail", "professionals", "submit", "account", "legal", "legaldoc", "funding", "membership", "about"];
+const VIEWS = ["home", "discover", "film", "watch", "watchdetail", "professionals", "submit", "account", "legal", "legaldoc", "funding", "membership", "about", "support"];
 function parseRoute() {
   const rawHash = location.hash || "";
   /* Final2 P1: Supabase email links return with auth fragments
@@ -1807,6 +1814,11 @@ function parseRoute() {
 }
 function render() {
   applyStaticI18n();
+  /* Round 7 fix: the account nav label is auth-dependent, so it is owned by
+     updateAccountNav (its span carries no data-i18n). Re-sync it at the end
+     of every static-i18n pass so a signed-in user's "My Account" can never
+     be stranded on the signed-out wording after a route/language change. */
+  updateAccountNav();
   const r = parseRoute();
   if (r.view !== "home" && showcaseTimer) { clearInterval(showcaseTimer); showcaseTimer = null; }
   VIEWS.forEach((v) => { $("#view-" + v).hidden = v !== r.view; });
@@ -1833,6 +1845,7 @@ function render() {
   if (r.view === "funding") renderFunding();
   if (r.view === "membership") renderMembership();
   if (r.view === "about") renderAbout();
+  if (r.view === "support") renderSupport();
   updateMeta(r);
   window.scrollTo(0, 0);
   const focusEl = $("#view-" + r.view + " h1, #view-" + r.view + " h2");
@@ -2126,6 +2139,176 @@ document.addEventListener("keydown", (e) => {
     }
   }
 });
+/* ---------- Round 7 (Oct 31): Support page + investor inquiries ---------- */
+/* Ko-fi is NOT configured yet. When the owner provides the real Ko-fi page
+   URL, set it here and the Support card's button becomes a live link.
+   Empty string = the honest unavailable state (never a fake checkout). */
+const GLX_KOFI_URL = "";
+let supportFormOpen = false;
+
+const SUP_ICONS = {
+  cart: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9.5" cy="20.4" r="1.2"/><circle cx="17.5" cy="20.4" r="1.2"/><path d="M2.5 3.5h2.4l2.5 11.2a1.8 1.8 0 0 0 1.8 1.4h8.9a1.8 1.8 0 0 0 1.8-1.4L21.5 7H6"/></svg>',
+  heart: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21.2l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>',
+  chart: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 20.5h17"/><path d="M7 20.5v-5.5M12 20.5V5.5M17 20.5v-8.5"/></svg>'
+};
+
+function renderSupport() {
+  const el = $("#support-body"); if (!el) return;
+  const tt = (k, vars) => escapeHtml(t(k, vars));
+  const hl = (keys) => '<ul class="check-list sup-list">' + keys.map((k) => "<li>" + tt(k) + "</li>").join("") + "</ul>";
+  const card = (img, altKey, icon, titleK, subK, descK, hKeys, foot) =>
+    '<article class="sup-card">' +
+    '<div class="sup-card-media"><img src="assets/site/' + img + '" alt="' + tt(altKey) + '" loading="lazy">' +
+    '<span class="sup-card-icon" aria-hidden="true">' + icon + "</span></div>" +
+    '<div class="sup-card-body"><h3>' + tt(titleK) + "</h3>" +
+    '<p class="sup-card-sub">' + tt(subK) + "</p>" +
+    '<p class="sup-card-desc">' + tt(descK) + "</p>" + hl(hKeys) +
+    '<div class="sup-card-foot">' + foot + "</div></div></article>";
+  const shopFoot = '<button type="button" class="btn btn-primary sup-btn" disabled aria-disabled="true">' + tt("support7.shopButton") + "</button>";
+  const supFoot = GLX_KOFI_URL
+    ? '<a class="btn btn-primary sup-btn" href="' + escapeHtml(GLX_KOFI_URL) + '" target="_blank" rel="noopener">' + tt("support7.supButton") + "</a>"
+    : '<button type="button" class="btn btn-primary sup-btn" disabled aria-disabled="true">' + tt("support7.supButton") + '</button><p class="sup-unavailable">' + tt("support7.supUnavailable") + "</p>";
+  const invFoot = '<button type="button" class="btn btn-primary sup-btn" data-action="support-inquiry-open">' + tt("support7.invButton") + "</button>";
+  el.innerHTML =
+    '<div class="sup-hero"><img class="sup-hero-bg" src="assets/site/hero-chair.webp" alt="" aria-hidden="true"><div class="sup-hero-shade"></div>' +
+    '<div class="sup-hero-content"><p class="eyebrow">' + tt("support7.eyebrow") + "</p>" +
+    '<h2 tabindex="-1" class="sup-hero-title">' + tt("support7.title") + "</h2>" +
+    '<p class="sup-hero-sub">' + tt("support7.subtitle") + "</p>" +
+    '<p class="sup-hero-desc">' + tt("support7.description") + "</p></div></div>" +
+    '<div class="sup-cards">' +
+    card("support-shop.webp", "support7.shopImgAlt", SUP_ICONS.cart, "support7.shopTitle", "support7.shopSubtitle", "support7.shopDesc", ["support7.shopH1", "support7.shopH2", "support7.shopH3", "support7.shopH4"], shopFoot) +
+    card("support-heart.webp", "support7.supImgAlt", SUP_ICONS.heart, "support7.supTitle", "support7.supSubtitle", "support7.supDesc", ["support7.supH1", "support7.supH2", "support7.supH3", "support7.supH4"], supFoot) +
+    card("support-investor.webp", "support7.invImgAlt", SUP_ICONS.chart, "support7.invTitle", "support7.invSubtitle", "support7.invDesc", ["support7.invH1", "support7.invH2", "support7.invH3", "support7.invH4"], invFoot) +
+    "</div>" +
+    '<p class="sup-disclaimer">' + tt("support7.disclaimer") + "</p>" +
+    '<div id="support-inquiry"></div>';
+  if (supportFormOpen) renderInvestorForm(false);
+}
+
+function renderInvestorForm(focusFirst) {
+  const host = $("#support-inquiry"); if (!host) return;
+  const tt = (k, vars) => escapeHtml(t(k, vars));
+  const polName = t("footer.privacyPolicy");
+  const consentHtml = tt("support7.fConsent").replace(escapeHtml(polName), '<a href="#/legal/privacy">' + escapeHtml(polName) + "</a>");
+  const errP = (id) => '<p class="field-error" id="err-' + id + '" hidden></p>';
+  host.innerHTML =
+    '<section class="sup-form-panel" aria-labelledby="sup-form-title">' +
+    '<div class="sup-form-head"><h3 id="sup-form-title" tabindex="-1">' + tt("support7.formTitle") + "</h3>" +
+    '<button type="button" class="sup-form-close" data-action="support-inquiry-close" aria-label="' + tt("support7.closeForm") + '">&times;</button></div>' +
+    '<p class="sup-form-intro">' + tt("support7.formIntro") + "</p>" +
+    '<form id="investor-form" novalidate>' +
+    '<div class="field"><label for="inv-name">' + tt("support7.fName") + ' <span aria-hidden="true">*</span></label><input id="inv-name" type="text" maxlength="120" autocomplete="name" required>' + errP("inv-name") + "</div>" +
+    '<div class="field"><label for="inv-email">' + tt("support7.fEmail") + ' <span aria-hidden="true">*</span></label><input id="inv-email" type="email" maxlength="254" autocomplete="email" required>' + errP("inv-email") + "</div>" +
+    '<div class="field"><label for="inv-company">' + tt("support7.fCompany") + '</label><input id="inv-company" type="text" maxlength="160" autocomplete="organization"></div>' +
+    '<div class="field"><label for="inv-type">' + tt("support7.fType") + ' <span aria-hidden="true">*</span></label><select id="inv-type" required>' +
+    '<option value="Investment Interest">' + tt("support7.typeInvestment") + "</option>" +
+    '<option value="Strategic Partnership">' + tt("support7.typePartner") + "</option>" +
+    '<option value="General Business Inquiry">' + tt("support7.typeGeneral") + "</option></select></div>" +
+    '<div class="field"><label for="inv-message">' + tt("support7.fMessage") + ' <span aria-hidden="true">*</span></label><textarea id="inv-message" rows="5" maxlength="4000" required></textarea>' + errP("inv-message") + "</div>" +
+    '<div class="field field-consent"><label class="consent-label"><input type="checkbox" id="inv-consent" required> <span>' + consentHtml + "</span></label>" + errP("inv-consent") + "</div>" +
+    '<p class="sup-securities">' + tt("support7.securitiesNotice") + "</p>" +
+    '<div class="sup-form-status" id="inv-status" role="status" aria-live="polite"></div>' +
+    '<button type="submit" class="btn btn-primary sup-btn" id="inv-submit">' + tt("support7.fSubmit") + "</button>" +
+    "</form></section>";
+  const form = $("#investor-form");
+  if (form) form.addEventListener("submit", onInvestorSubmit);
+  if (focusFirst) { const h = $("#sup-form-title"); if (h) h.focus({ preventScroll: true }); }
+}
+
+function investorFieldError(id, msgKey) {
+  const err = $("#err-" + id);
+  const input = $("#" + id);
+  if (msgKey) {
+    if (err) { err.textContent = t(msgKey); err.hidden = false; }
+    if (input) input.setAttribute("aria-invalid", "true");
+    return false;
+  }
+  if (err) { err.textContent = ""; err.hidden = true; }
+  if (input) input.removeAttribute("aria-invalid");
+  return true;
+}
+
+async function onInvestorSubmit(e) {
+  e.preventDefault();
+  const tt = (k, vars) => escapeHtml(t(k, vars));
+  const name = $("#inv-name").value.trim();
+  const email = $("#inv-email").value.trim();
+  const company = $("#inv-company").value.trim();
+  const type = $("#inv-type").value;
+  const message = $("#inv-message").value.trim();
+  const consent = $("#inv-consent").checked;
+  let ok = true;
+  ok = investorFieldError("inv-name", (!name || name.length > 120) ? "support7.errRequired" : null) && ok;
+  ok = investorFieldError("inv-email", (!email) ? "support7.errRequired" : (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) ? "support7.errEmail" : null) && ok;
+  ok = investorFieldError("inv-message", (!message || message.length > 4000) ? "support7.errRequired" : null) && ok;
+  ok = investorFieldError("inv-consent", !consent ? "support7.errConsent" : null) && ok;
+  if (!ok) {
+    const firstBad = document.querySelector('#investor-form [aria-invalid="true"]') || $("#inv-consent");
+    if (firstBad) firstBad.focus({ preventScroll: false });
+    return;
+  }
+  const btn = $("#inv-submit");
+  const status = $("#inv-status");
+  if (btn) { btn.disabled = true; btn.textContent = t("support7.sending"); }
+  let stored = false;
+  if (sb) {
+    try {
+      const r = await sb.from("investor_inquiries").insert({
+        full_name: name, email: email, company: company || null,
+        inquiry_type: type, message: message, privacy_consent: true
+      });
+      stored = !r.error;
+    } catch (ex) { stored = false; }
+  }
+  if (btn) { btn.disabled = false; btn.textContent = t("support7.fSubmit"); }
+  if (!status) return;
+  if (stored) {
+    /* Success is shown ONLY on a confirmed insert. */
+    status.innerHTML = '<p class="sup-status sup-status-ok" role="status">' + tt("support7.successMsg") + "</p>";
+    const form = $("#investor-form"); if (form) form.reset();
+  } else {
+    /* Honest failure (incl. the table not existing yet): nothing was
+       stored; the mailto link is offered as an email alternative, clearly
+       labeled as email — not as a stored submission. */
+    status.innerHTML = '<p class="sup-status sup-status-err" role="alert">' + tt("support7.errorMsg") + ' <a href="mailto:team@greenlitx.com">team@greenlitx.com</a></p>';
+  }
+}
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest ? e.target.closest("[data-action]") : null;
+  if (!btn) return;
+  if (btn.dataset.action === "support-inquiry-open") {
+    supportFormOpen = true;
+    renderInvestorForm(true);
+    const panel = document.querySelector(".sup-form-panel");
+    if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  } else if (btn.dataset.action === "support-inquiry-close") {
+    supportFormOpen = false;
+    const host = $("#support-inquiry"); if (host) host.innerHTML = "";
+  }
+});
+
+/* Round 7: mobile nav panel — close on nav-link tap (even when the route
+   does not change) and on Escape, per the nav brief's behaviour contract. */
+document.addEventListener("click", (e) => {
+  const nav = $("#main-nav");
+  if (!nav || !nav.classList.contains("open")) return;
+  const link = e.target.closest ? e.target.closest("#main-nav a") : null;
+  if (link) {
+    nav.classList.remove("open");
+    const tog = $("#nav-toggle"); if (tog) tog.setAttribute("aria-expanded", "false");
+  }
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  const nav = $("#main-nav");
+  if (nav && nav.classList.contains("open")) {
+    nav.classList.remove("open");
+    const tog = $("#nav-toggle");
+    if (tog) { tog.setAttribute("aria-expanded", "false"); tog.focus(); }
+  }
+});
+
 /* ---------- Round 6 (Oct 30): trailer modal, footer accordions + language ---------- */
 let trailerTrigger = null;
 function openTrailerModal(trigger) {
@@ -2136,7 +2319,7 @@ function openTrailerModal(trigger) {
   document.body.classList.add("modal-open");
   syncTrailerSubtitles();
   const vid = $("#trailer-video");
-  if (vid) { const pr = vid.play(); if (pr && pr.catch) pr.catch(() => {}); }
+  if (vid) { if (vid.readyState === 0) { try { vid.load(); } catch (e) {} } const pr = vid.play(); if (pr && pr.catch) pr.catch(() => {}); }
   const closeBtn = modal.querySelector(".trailer-modal-close");
   if (closeBtn) closeBtn.focus({ preventScroll: true });
 }
