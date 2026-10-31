@@ -1795,6 +1795,22 @@ function applyStaticI18n() {
 
 /* ---------- routing ---------- */
 const VIEWS = ["home", "discover", "film", "watch", "watchdetail", "professionals", "submit", "account", "legal", "legaldoc", "funding", "membership", "about", "support"];
+/* Round 8 (Oct 31): static pre-rendered pages live at real paths
+   (/membership/, /film/<slug>/, /watch/, …) and boot this same app.
+   When no hash route is present, map the pathname to the equivalent
+   SPA route so a visitor landing on a static URL gets the full
+   interactive app at the right view. Hash routes always win, so all
+   existing #/… links behave exactly as before. The /preview/ guard
+   above is unaffected: these pathnames never start with /preview/. */
+function routeFromPathname() {
+  const p = (window.location.pathname || "/").replace(/\/+$/, "");
+  const parts = p.split("/").filter(Boolean);
+  if (!parts.length) return null;
+  if (parts[0] === "film" && parts[1]) return { view: "film", id: parts[1] };
+  if (parts[0] === "legal" && parts[1]) return { view: "legaldoc", id: parts[1] };
+  const simple = { discover: "discover", watch: "watch", professionals: "professionals", submit: "submit", legal: "legal", membership: "membership", about: "about", support: "support" };
+  return simple[parts[0]] ? { view: simple[parts[0]] } : null;
+}
 function parseRoute() {
   const rawHash = location.hash || "";
   /* Final2 P1: Supabase email links return with auth fragments
@@ -1806,6 +1822,9 @@ function parseRoute() {
   }
   const h = rawHash.replace(/^#\//, "");
   const parts = h.split("/");
+  /* Round 8: no hash route (or a bare "#/") on a static path boots the
+     view that path was pre-rendered for. */
+  if (!parts[0]) { const pr = routeFromPathname(); if (pr) return pr; }
   if (parts[0] === "film" && parts[1]) return { view: "film", id: parts[1] };
   if (parts[0] === "watch" && parts[1]) return { view: "watchdetail", id: parts[1] };
   if (parts[0] === "legal" && parts[1]) return { view: "legaldoc", id: parts[1] };
