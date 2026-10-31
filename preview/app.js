@@ -510,34 +510,14 @@ function startShowcase() {
   if (!root) return;
   root.innerHTML = showcaseHtml();
   const tb = $("#hero-trailer-btn");
-  if (tb) tb.addEventListener("click", () => {
-    const frame = document.querySelector("#trailer .trailer-frame");
-    const vid = document.querySelector("#trailer video");
-    if (frame) frame.scrollIntoView({ behavior: "smooth", block: "center" });
-    if (vid) { syncTrailerSubtitles(); const pr = vid.play(); if (pr && pr.catch) pr.catch(() => {}); }
-  });
+  if (tb) tb.addEventListener("click", () => { openTrailerModal(tb); });
   showcaseIdx = 0;
   if (showcaseTimer) clearInterval(showcaseTimer);
   startShowcaseRotationOnly();
 }
-function latestArtworkHtml() {
-  const fresh = [];
-  FILMS.forEach((f) => { artworkFor(f.id).forEach((a) => { if (a.created === "2026-10-25") fresh.push({ film: f, a }); }); });
-  if (!fresh.length) return "";
-  const picked = [], usedFilms = new Set();
-  for (const kind of ["portrait", "location", "moment", "detail", "portrait", "location", "moment", "portrait", "location", "moment"]) {
-    const hit = fresh.find((x) => x.a.kind === kind && !usedFilms.has(x.film.id) && !picked.includes(x));
-    if (hit) { picked.push(hit); usedFilms.add(hit.film.id); }
-    if (picked.length >= 10) break;
-  }
-  for (const x of fresh) { if (picked.length >= 10) break; if (!picked.includes(x)) picked.push(x); }
-  return '<section class="row-section" aria-label="' + escapeHtml(t("home.latestArtwork")) + '">' +
-    '<div class="section-head"><h2>' + escapeHtml(t("home.latestArtwork")) + '</h2><span class="fineprint">' + escapeHtml(t("home.latestArtworkDate")) + '</span></div>' +
-    '<div class="poster-row artwork-row">' + picked.map(({ film, a }) =>
-      '<figure class="card artwork-tile"><div class="poster-wrap"><a class="poster-link" href="#/film/' + film.id + '">' +
-      '<div class="poster artwork-thumb"><img src="' + escapeHtml(a.file) + '" loading="lazy" alt="' + escapeHtml(t("gallery.view", { caption: t("artworkKind." + a.kind) + " — " + a.subject })) + '"></div></a></div>' +
-      '<figcaption><p class="fineprint">' + escapeHtml(t("artworkKind." + a.kind)) + "</p></figcaption></figure>").join("") + "</div></section>";
-}
+/* Round 6 (Oct 30): the homepage "Latest Concept Artwork" section was
+   removed entirely at the owner's order — artwork lives on the film
+   pages. latestArtworkHtml() and its renderHome call are gone. */
 
 /* ---------- homepage redesign (Oct 30): process bar, featured cards, wide watch cards, filmmakers panel ---------- */
 const FEATURED5 = ["the-last-train-below", "the-woman-in-apartment-9", "dead-freight", "the-second-moon", "the-keeper-of-forgotten-things"];
@@ -620,7 +600,7 @@ function renderHome() {
   const recentRow = recentFilms.length ?
     '<section class="row-section" aria-label="' + escapeHtml(t("home2.recentlyViewed")) + '"><div class="section-head"><h2>' + escapeHtml(t("home2.recentlyViewed")) + '</h2></div>' +
     '<div class="poster-row">' + recentFilms.map(filmById).filter(Boolean).map(cardHtml).join("") + "</div></section>" : "";
-  $("#home-rows").innerHTML = featuredHtml + watchRow + fmPanelHtml() + recentRow + latestArtworkHtml() + SECTIONS.filter((s) => s.key !== "section.featured").map((s) => {
+  $("#home-rows").innerHTML = featuredHtml + watchRow + fmPanelHtml() + recentRow + SECTIONS.filter((s) => s.key !== "section.featured").map((s) => {
     const films = s.films();
     if (!films.length) return "";
     const title = s.key ? t(s.key) : s.title;
@@ -638,9 +618,10 @@ function renderHome() {
    sorting were removed with this redesign; the home rails still use
    bucket() for their curated rows. Saved glx_fav_genres data is left
    untouched on the device, simply no longer consumed. */
+const METHOD_LABEL_KEYS = { "All": "discover6.methodAll", "LIVE ACTION": "discover6.methodLive", "AI FILM": "discover6.methodAi", "HYBRID": "discover6.methodHybrid", "ANIMATION": "discover6.methodAnim" };
 function chipsHtml(items, current, attr) {
   return '<span class="chip-label">' + escapeHtml(t("discover.filterMethod")) + "</span>" + items.map((i) =>
-    '<button type="button" class="chip" data-' + attr + '="' + escapeHtml(i) + '" aria-pressed="' + (current === i) + '">' + escapeHtml(i) + "</button>").join("");
+    '<button type="button" class="chip" data-' + attr + '="' + escapeHtml(i) + '" aria-pressed="' + (current === i) + '">' + escapeHtml(METHOD_LABEL_KEYS[i] ? t(METHOD_LABEL_KEYS[i]) : i) + "</button>").join("");
 }
 function renderChips() {
   const el = $("#type-chips");
@@ -684,6 +665,10 @@ function filteredFilms() {
 function renderDiscover() {
   renderFilterSelects();
   renderChips();
+  const introEl = $("#discover-intro");
+  if (introEl) introEl.textContent = t("discover6.intro", { count: FILMS.length });
+  const projEl = $("#discover-projects-count");
+  if (projEl) projEl.textContent = t("discover6.projectsCount", { count: FILMS.length });
   const list = filteredFilms();
   if (state.sortBy === "title") list.sort((a, b) => a.title.localeCompare(b.title));
   else if (state.sortBy === "newest") list.sort((a, b) => b.n - a.n);
@@ -726,6 +711,72 @@ function watchFiltered() {
     return true;
   });
 }
+/* Round 6 (Oct 30): Watch Free as a streaming surface — featured
+   carousel, genre tiles and curated rails, all populated from the real
+   catalog (WATCH). Category membership uses ONLY the existing metadata:
+   the catalog `category` field (classic / modern / short / documentary)
+   and the `genres` arrays (Animation tile). Counts are computed live. */
+let watchFeatIdx = 0;
+function watchFeaturedPool() {
+  const valid = WATCH.filter((w) => w.embedUrl && w.posterUrl);
+  const ed = valid.find((w) => /elephants dream/i.test(w.title));
+  const rest = valid.filter((w) => w !== ed);
+  return (ed ? [ed] : []).concat(rest).slice(0, 6);
+}
+function watchFeaturedHtml() {
+  const pool = watchFeaturedPool();
+  if (!pool.length) return "";
+  if (watchFeatIdx >= pool.length) watchFeatIdx = 0;
+  const slides = pool.map((w, i) =>
+    '<div class="watch-feat-slide' + (i === watchFeatIdx ? " active" : "") + '" data-wf-slide="' + i + '"' + (i === watchFeatIdx ? "" : " hidden") + '>' +
+    '<img class="watch-feat-bg" src="' + escapeHtml(w.posterUrl) + '" alt="" aria-hidden="true" loading="lazy">' +
+    '<div class="watch-feat-shade"></div>' +
+    '<div class="watch-feat-content">' +
+    '<p class="eyebrow">' + escapeHtml(t("watch6.featured")) + "</p>" +
+    '<h3 class="watch-feat-title">' + escapeHtml(w.title) + "</h3>" +
+    '<p class="watch-feat-meta">' + escapeHtml(t("watch.cardMeta", { year: w.year, minutes: w.runtimeMinutes, category: watchCatLabel(w.category) })) + "</p>" +
+    '<p class="watch-feat-syn">' + escapeHtml(w.synopsis || "") + "</p>" +
+    '<div class="watch-feat-actions"><a class="btn btn-primary" href="#/watch/' + w.id + '">' + escapeHtml(t("watch6.watchFree")) + '</a>' +
+    '<a class="btn btn-ghost" href="#/watch/' + w.id + '">' + escapeHtml(t("watch6.details")) + "</a></div>" +
+    "</div>" +
+    '<img class="watch-feat-poster" src="' + escapeHtml(w.posterUrl) + '" width="880" height="1320" loading="lazy" alt="' + escapeHtml(t("card.watchPosterAlt", { title: w.title })) + '">' +
+    "</div>").join("");
+  const dots = pool.map((w, i) => '<button type="button" class="watch-feat-dot" data-action="watch-feat-go" data-idx="' + i + '" aria-current="' + (i === watchFeatIdx) + '" aria-label="' + escapeHtml(w.title) + '"></button>').join("");
+  return '<section class="watch-feat" aria-label="' + escapeHtml(t("watch6.featured")) + '">' + slides +
+    '<div class="watch-feat-nav"><button type="button" class="watch-feat-arrow" data-action="watch-feat-prev" aria-label="' + escapeHtml(t("gallery.prev")) + '">‹</button>' +
+    '<div class="watch-feat-dots">' + dots + '</div>' +
+    '<button type="button" class="watch-feat-arrow" data-action="watch-feat-next" aria-label="' + escapeHtml(t("gallery.next")) + '">›</button></div></section>';
+}
+const WATCH_TILES = [
+  { labelKey: "watch6.tileAnimation", genre: "Animation" },
+  { labelKey: "watch.cat.shorts", cat: "short" },
+  { labelKey: "watch.cat.documentaries", cat: "documentary" },
+  { labelKey: "watch.cat.classics", cat: "classic" },
+  { labelKey: "watch.cat.modern", cat: "modern" }
+];
+function watchTileFilms(tile) {
+  return tile.genre ? WATCH.filter((w) => (w.genres || []).includes(tile.genre)) : WATCH.filter((w) => w.category === tile.cat);
+}
+function watchTilesHtml() {
+  return '<section class="row-section watch-tiles-section" aria-label="' + escapeHtml(t("watch6.browseGenre")) + '">' +
+    '<div class="section-head"><h2>' + escapeHtml(t("watch6.browseGenre")) + "</h2></div>" +
+    '<div class="watch-tiles">' + WATCH_TILES.map((tile) => {
+      const films = watchTileFilms(tile);
+      const img = films.length ? films[0].posterUrl : "";
+      return '<button type="button" class="watch-tile" data-action="watch-tile"' + (tile.cat ? ' data-wcat="' + tile.cat + '"' : "") + (tile.genre ? ' data-wgenre="' + escapeHtml(tile.genre) + '"' : "") + '>' +
+        (img ? '<img src="' + escapeHtml(img) + '" loading="lazy" alt="">' : "") +
+        '<span class="watch-tile-shade"></span>' +
+        '<span class="watch-tile-body"><span class="watch-tile-name">' + escapeHtml(t(tile.labelKey)) + '</span>' +
+        '<span class="watch-tile-count">' + escapeHtml(t("watch6.filmCount", { count: films.length })) + '</span></span>' +
+        '<span class="watch-tile-arrow" aria-hidden="true">›</span></button>';
+    }).join("") + "</div></section>";
+}
+const WATCH_RAIL_TITLES = ["Big Buck Bunny", "Sintel", "Tears of Steel", "Spring", "Cosmos Laundromat"];
+function watchRailHtml(headingKey, films) {
+  if (!films.length) return "";
+  return '<section class="row-section" aria-label="' + escapeHtml(t(headingKey)) + '"><div class="section-head"><h2>' + escapeHtml(t(headingKey)) + '</h2></div>' +
+    '<div class="poster-row watch-rail">' + films.map(watchGridCardHtml).join("") + "</div></section>";
+}
 function renderWatch() {
   const chipsEl = $("#watch-chips");
   if (chipsEl) chipsEl.innerHTML = WATCH_CATS.map((c) =>
@@ -739,16 +790,37 @@ function renderWatch() {
       genres.map((g) => '<option value="' + escapeHtml(g) + '">' + escapeHtml(g) + "</option>").join("");
     genreSel.value = state.watchGenre;
   }
+  const featEl = $("#watch-featured");
+  if (featEl) featEl.innerHTML = watchFeaturedHtml();
   const list = watchFiltered();
   const countEl = $("#watch-count");
   if (countEl) countEl.textContent = t("watch.resultsCount", { shown: list.length, total: WATCH.length });
+  const filtersDefault = state.watchCategory === "All" && state.watchGenre === "All" && !state.watchQuery.trim();
+  const tilesEl = $("#watch-genre-tiles");
+  if (tilesEl) tilesEl.innerHTML = filtersDefault ? watchTilesHtml() : "";
   const savedList = list.filter((w) => watchSaved.has(w.id));
   const savedRow = savedList.length ?
     '<section class="row-section" aria-label="' + escapeHtml(t("home2.myWatchlist")) + '"><div class="section-head"><h2>' + escapeHtml(t("home2.myWatchlist")) + '</h2></div>' +
     '<div class="poster-row">' + savedList.map(watchCardHtml).join("") + "</div></section>" : "";
-  $("#watch-rows").innerHTML = savedRow + (list.length ?
-    '<div class="watch-grid">' + list.map(watchGridCardHtml).join("") + "</div>"
-    : '<p class="section-intro">' + escapeHtml(t("watch.noResults")) + '</p>');
+  if (!filtersDefault) {
+    $("#watch-rows").innerHTML = savedRow + (list.length ?
+      '<div class="watch-grid">' + list.map(watchGridCardHtml).join("") + "</div>"
+      : '<p class="section-intro">' + escapeHtml(t("watch.noResults")) + '</p>');
+    return;
+  }
+  const railFilms = WATCH_RAIL_TITLES.map((title) => WATCH.find((w) => w.title === title)).filter(Boolean);
+  const railIds = new Set(railFilms.map((w) => w.id));
+  const exploreFilms = WATCH.filter((w) => !railIds.has(w.id)).slice(0, 10);
+  const allSection =
+    '<section class="row-section watch-all" id="watch-all" aria-label="' + escapeHtml(t("watch6.allFilms")) + '"><div class="section-head"><h2>' + escapeHtml(t("watch6.allFilms")) + "</h2></div>" +
+    '<div class="watch-grid">' + WATCH.map(watchGridCardHtml).join("") + "</div></section>" +
+    '<section class="watch-grow"><div class="watch-grow-inner"><h2>' + escapeHtml(t("watch6.growTitle")) + "</h2>" +
+    "<p>" + escapeHtml(t("watch6.growText")) + "</p>" +
+    '<p><a class="btn btn-primary" href="#/watch" data-scroll="watch-all">' + escapeHtml(t("watch6.exploreAll")) + "</a></p></div></section>";
+  $("#watch-rows").innerHTML = savedRow +
+    watchRailHtml("watch6.featuredFilms", railFilms) +
+    watchRailHtml("watch6.exploreMore", exploreFilms) +
+    allSection;
 }
 function renderWatchDetail(id) {
   const el = $("#watch-detail");
@@ -758,7 +830,10 @@ function renderWatchDetail(id) {
     return;
   }
   const sourceName = w.source === "youtube" ? t("watch.sourceYoutube") : t("watch.sourceArchive");
-  const related = WATCH.filter((x) => x.category === w.category && x.id !== w.id);
+  /* Round 6: related films share a genre first; the previous same-category
+     rail is the fallback when no genre matches exist. */
+  const genreRelated = WATCH.filter((x) => x.id !== w.id && (x.genres || []).some((g) => (w.genres || []).includes(g)));
+  const related = (genreRelated.length ? genreRelated : WATCH.filter((x) => x.category === w.category && x.id !== w.id)).slice(0, 10);
   el.innerHTML =
     '<div class="section watch-detail">' +
     '<p class="watch-back"><a href="#/watch">' + escapeHtml(t("watch.backAll")) + "</a></p>" +
@@ -1119,6 +1194,22 @@ function filmLinks(ids) {
   if (!ids.length) return "<p class='fineprint'>" + escapeHtml(t("account2.noneYet")) + "</p>";
   return "<ul>" + ids.map((id) => { const f = filmById(id); return f ? '<li><a href="#/film/' + f.id + '">' + escapeHtml(f.title) + "</a></li>" : ""; }).join("") + "</ul>";
 }
+/* Round 6 (Oct 30): account hero (mockup) — cinematic band with the
+   three real account benefits. Used by the signed-out view. */
+function accountHeroHtml() {
+  const ben = (n, icon) => '<div class="trust-item"><span class="account-ben-icon" aria-hidden="true">' + icon + '</span><div><h3>' + escapeHtml(t("account6.ben" + n + "T")) + "</h3><p>" + escapeHtml(t("account6.ben" + n + "X")) + "</p></div></div>";
+  const ic = (path) => '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + path + "</svg>";
+  return '<div class="account-hero"><img class="account-hero-bg" src="backdrops/the-night-orchestra.webp" alt="" aria-hidden="true">' +
+    '<div class="account-hero-shade"></div><div class="account-hero-content">' +
+    '<p class="eyebrow">' + escapeHtml(t("account6.eyebrow")) + "</p>" +
+    '<h3 class="account-hero-title">' + escapeHtml(t("account6.heroTitle")) + "</h3>" +
+    '<p class="account-hero-sub">' + escapeHtml(t("account6.heroDesc")) + "</p>" +
+    '<div class="trust-row account-benefits">' +
+    ben(1, ic('<path d="M6 3.5h12A1.5 1.5 0 0 1 19.5 5v14A1.5 1.5 0 0 1 18 20.5H6z"/><path d="M6 3.5V20.5"/>')) +
+    ben(2, ic('<path d="M12 20.5C7 16.5 3.5 13.2 3.5 9.3 3.5 6.4 5.7 4.5 8.2 4.5c1.5 0 3 .8 3.8 2 .8-1.2 2.3-2 3.8-2 2.5 0 4.7 1.9 4.7 4.8 0 3.9-3.5 7.2-8.5 11.2z"/>')) +
+    ben(3, ic('<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>')) +
+    "</div></div></div>";
+}
 async function renderAccount() {
   const el = $("#account-body");
   if (!el) return;
@@ -1167,24 +1258,33 @@ async function renderAccount() {
   }
   if (!server.user) {
     el.innerHTML =
-      "<p class='section-intro' style='padding-left:0'>" + escapeHtml(t("account2.guestIntro")) + "</p>" +
+      accountHeroHtml() +
       authBanners +
       "<div id='auth-success-panel'></div>" +
-      "<form id='auth-form' novalidate>" +
+      "<form id='auth-form' novalidate><div class='auth-grid'>" +
+      "<div class='auth-card'><h3>" + escapeHtml(t("account6.signinHeading")) + "</h3>" +
+      "<p class='auth-card-sub'>" + escapeHtml(t("account6.signinSub")) + "</p>" +
       "<div class='field'><label for='a-email'>" + escapeHtml(t("account.email")) + "</label><input id='a-email' type='email' autocomplete='email' required aria-describedby='a-email-err'>" +
       "<p class='form-msg' id='a-email-err' role='alert' style='color:#b3261e'></p></div>" +
       "<div class='field'><label for='a-pass'>" + escapeHtml(t("account.password")) + "</label><input id='a-pass' type='password' autocomplete='current-password' required aria-describedby='a-pass-hint a-pass-err'>" +
       "<p class='fineprint' id='a-pass-hint' style='margin:0.25rem 0 0'>" + escapeHtml(t("auth2.passwordRule")) + "</p>" +
       "<p class='form-msg' id='a-pass-err' role='alert' style='color:#b3261e'></p></div>" +
-      "<button class='btn btn-primary' type='submit' name='mode' value='signin' id='auth-signin-btn'>" + escapeHtml(t("auth2.signIn")) + "</button> " +
-      "<button class='btn' type='submit' name='mode' value='signup' id='auth-signup-btn'>" + escapeHtml(t("auth2.createAccount")) + "</button>" +
+      "<button class='btn btn-primary btn-block' type='submit' name='mode' value='signin' id='auth-signin-btn'>" + escapeHtml(t("auth2.signIn")) + "</button>" +
       "<p class='form-msg' id='auth-msg' role='status'></p>" +
       "<p style='margin-top:0.6rem'><button type='button' class='btn btn-ghost' id='forgot-btn'>" + escapeHtml(t("account.forgotPassword")) + "</button></p>" +
       "<div id='forgot-panel' hidden style='margin-top:0.6rem'>" +
       "<div class='field'><label for='forgot-email'>" + escapeHtml(t("account.forgotEmailLabel")) + "</label><input id='forgot-email' type='email' autocomplete='email'></div>" +
       "<button type='button' class='btn' id='forgot-send'>" + escapeHtml(t("account.sendResetButton")) + "</button>" +
-      "<p class='form-msg' id='forgot-msg' role='status'></p></div>" +
-      "<p class='fineprint'>" + escapeHtml(t("account2.privacyNote")) + "</p></form>";
+      "<p class='form-msg' id='forgot-msg' role='status'></p></div></div>" +
+      "<div class='auth-card'><h3>" + escapeHtml(t("account6.createHeading")) + "</h3>" +
+      "<p class='auth-card-sub'>" + escapeHtml(t("account6.createSub")) + "</p>" +
+      "<ul class='auth-benefits'>" +
+      "<li><strong>" + escapeHtml(t("account6.freeT")) + "</strong><span>" + escapeHtml(t("account6.freeX")) + "</span></li>" +
+      "<li><strong>" + escapeHtml(t("account6.communityT")) + "</strong><span>" + escapeHtml(t("account6.communityX")) + "</span></li>" +
+      "<li><strong>" + escapeHtml(t("account6.manageT")) + "</strong><span>" + escapeHtml(t("account6.manageX")) + "</span></li></ul>" +
+      "<button class='btn btn-block btn-outline-green' type='submit' name='mode' value='signup' id='auth-signup-btn'>" + escapeHtml(t("auth2.createAccount")) + "</button>" +
+      "<p class='fineprint'>" + escapeHtml(t("account2.privacyNote")) + "</p></div>" +
+      "</div></form>";
     if (justConfirmed || linkError) setTimeout(() => { try { sessionStorage.removeItem("glx_just_confirmed"); sessionStorage.removeItem("glx_auth_link_error"); } catch (e) {} }, 1500);
     $("#forgot-btn").addEventListener("click", () => {
       const panel = $("#forgot-panel");
@@ -1380,88 +1480,121 @@ async function renderAccount() {
 function renderMembership() {
   const el = $("#membership-body"); if (!el) return;
   const tt = (k, vars) => escapeHtml(t(k, vars));
-  /* Compact proposal card: the site's published proposed figures/terms,
-     labelled as a concept that cannot be bought. No purchase controls. */
-  const proposedCard = (n, showAmount) =>
-    '<div class="tier-card"><p class="tier-badge">' + tt("membership2.proposedBadge") + '</p>' +
-    "<h3>" + tt("membership2.tier" + n + "Name") + "</h3>" +
-    (showAmount ? '<p class="tier-price">' + tt("membership2.tier" + n + "Amount") + "</p>" : "") +
-    "<p>" + tt("membership2.discussedTerm", { term: t("membership2.tier" + n + "Term") }) + "</p>" +
-    '<p class="tier-concept">' + tt("membership3.conceptOnly") + "</p></div>";
-  /* FAQs are expandable; every answer is an existing published disclosure
-     string, unedited — nothing material is hidden or shortened away. */
-  const faqItem = (q, parts) =>
-    '<details class="detail-details faq-item"><summary>' + tt(q) + "</summary>" +
-    parts.map((p) => "<p>" + tt(p) + "</p>").join("") + "</details>";
+  /* Round 6 (Oct 30): membership page rebuilt to the owner's approved
+     mockup + brief. Five tiers in the approved order with the approved
+     one-time prices/durations. Producer is removed entirely. Paid tiers
+     cannot be bought today (no checkout exists): their action is a
+     truthful Register Interest route to the free account, with the
+     payment-status microcopy the brief requires. Paid-tier benefit
+     lists are NOT itemized in the site's published specification, so no
+     benefit list is printed for them (see REPORT6). */
+  const benefitIcon = (path) => '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + path + "</svg>";
+  const heroBen = (n, icon) =>
+    '<div class="trust-item"><span class="member-ben-icon" aria-hidden="true">' + benefitIcon(icon) + '</span><div><p>' + tt("member6.ben" + n) + "</p></div></div>";
+  const paidCard = (n, icon, emphasis) => {
+    const amount = t("membership2.tier" + n + "Amount");
+    const durKey = "member6.dur" + n;
+    return '<div class="tier-card r6-tier' + (emphasis ? " r6-tier-emphasis" : "") + '">' +
+      '<p class="tier-icon" aria-hidden="true">' + benefitIcon(icon) + "</p>" +
+      "<h3>" + tt("membership2.tier" + n + "Name") + "</h3>" +
+      '<p class="tier-price">' + tt("membership2.tier" + n + "Amount") + "</p>" +
+      '<p class="tier-terms">' + tt("member6.oneTime") + " · " + tt(durKey) + "</p>" +
+      (n === 4 ? '<p class="tier-cap">' + tt("member6.proposedLimit") + "</p>" : "") +
+      '<p><a class="btn btn-primary" href="#/account">' + tt("member6.registerInterest") + "</a></p>" +
+      '<p class="tier-micro">' + tt("member6.registerMicro", { amount: amount, duration: t(durKey) }) + "</p></div>";
+  };
+  const faqItem = (q, a) =>
+    '<details class="detail-details faq-item"><summary>' + tt(q) + "</summary><p>" + tt(a) + "</p></details>";
   el.innerHTML =
-    '<div class="member-hero">' +
-    "<h2 tabindex='-1'>" + tt("membership3.heroTitle") + "</h2>" +
-    '<p class="member-hero-sub">' + tt("membership3.heroSub") + "</p>" +
-    '<p class="footer-slogan">' + tt("membership2.slogan") + "</p>" +
-    "<p>" + tt("membership2.intro") + "</p></div>" +
-    '<div class="tier-card tier-free member-free"><div class="member-free-head"><h3>' + tt("membership3.freeName") + '</h3>' +
+    '<div class="member-hero r6-hero">' +
+    '<img class="member-hero-bg" src="backdrops/the-great-escape-club.webp" alt="" aria-hidden="true">' +
+    '<div class="member-hero-shade"></div><div class="member-hero-content">' +
+    '<p class="eyebrow">' + tt("nav.membership") + "</p>" +
+    "<h2 tabindex='-1'>" + tt("member6.heroTitle") + "</h2>" +
+    '<p class="member-hero-sub">' + tt("member6.heroSub") + "</p>" +
+    '<div class="trust-row member-benefits">' +
+    heroBen(1, '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10.5 9.5l5 2.5-5 2.5z" fill="currentColor" stroke="none"/>') +
+    heroBen(2, '<path d="M12 20.5C7 16.5 3.5 13.2 3.5 9.3 3.5 6.4 5.7 4.5 8.2 4.5c1.5 0 3 .8 3.8 2 .8-1.2 2.3-2 3.8-2 2.5 0 4.7 1.9 4.7 4.8 0 3.9-3.5 7.2-8.5 11.2z"/>') +
+    heroBen(3, '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3 2.8-4.5 5.5-4.5S13.9 16 14.5 19"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.6c2.3.2 3.9 1.6 4.4 4"/>') +
+    heroBen(4, '<path d="M4 19V6l8-2.5L20 6v13l-8-2.5z"/><path d="M12 3.5V16.5"/>') +
+    "</div></div></div>" +
+    '<h3 class="tick-title">' + tt("member6.plansHeading") + "</h3>" +
+    "<p>" + tt("member6.plansSub") + "</p>" +
+    '<div class="membership-cards r6-tiers">' +
+    '<div class="tier-card tier-free r6-tier"><div class="member-free-head"><h3>' + tt("membership3.freeName") + '</h3>' +
     '<p class="tier-badge tier-live">' + tt("membership3.availableNow") + "</p></div>" +
     '<p class="tier-price">$0</p>' +
+    '<p class="tier-terms">' + tt("member6.durFree") + "</p>" +
     "<p>" + tt("membership2.freeIntro") + "</p>" +
     '<ul class="check-list">' + [1, 2, 3, 4, 5].map((i) => "<li>" + tt("membership2.freeItem" + i) + "</li>").join("") + "</ul>" +
     "<p>" + tt("membership2.freeCost") + "</p>" +
     '<p><a class="btn btn-primary" href="#/account">' + tt("membership3.joinFree") + "</a></p></div>" +
-    '<h3 class="tick-title">' + tt("membership2.tiersHeading") + "</h3>" +
-    "<p>" + tt("membership2.tiersIntro") + "</p>" +
-    '<div class="membership-cards founding-grid">' + proposedCard(2, true) + proposedCard(3, true) + proposedCard(4, true) + "</div>" +
-    '<h3 class="tick-title">' + tt("membership3.moreProposals") + "</h3>" +
-    '<div class="membership-cards proposal-grid">' + proposedCard(1, true) +
-    '<div class="tier-card"><p class="tier-badge">' + tt("membership2.proposedBadge") + '</p>' +
-    "<h3>" + tt("membership2.tier5Name") + "</h3>" +
-    "<p>" + tt("membership2.producerText") + "</p>" +
-    '<p class="tier-concept">' + tt("membership3.conceptOnly") + "</p></div></div>" +
-    '<div class="campaign-panel"><h3>' + tt("membership2.foundingHeading") + "</h3>" +
-    "<p>" + tt("membership2.foundingIntro") + "</p>" +
-    "<p><strong>" + tt("membership2.foundingNotOpen") + "</strong></p>" +
-    "<p>" + tt("membership2.foundingTerms") + "</p></div>" +
-    '<h3 class="tick-title">' + tt("membership2.diffHeading") + "</h3>" +
-    '<div class="compare-grid"><div class="compare-card"><p>' + tt("membership2.diffMembership") + '</p></div>' +
-    '<div class="compare-card"><p>' + tt("membership2.diffPledge") + "</p></div></div>" +
-    '<p class="compare-short"><strong>' + tt("membership2.diffShort") + "</strong></p>" +
-    '<h3 class="tick-title">' + tt("membership2.questionsHeading") + "</h3>" +
+    paidCard(1, '<path d="M12 20.5C7 16.5 3.5 13.2 3.5 9.3 3.5 6.4 5.7 4.5 8.2 4.5c1.5 0 3 .8 3.8 2 .8-1.2 2.3-2 3.8-2 2.5 0 4.7 1.9 4.7 4.8 0 3.9-3.5 7.2-8.5 11.2z"/>', false) +
+    paidCard(2, '<path d="M12 3.5l2.5 5.6 6 .7-4.4 4.1 1.2 5.9L12 17l-5.3 2.8 1.2-5.9L3.5 9.8l6-.7z"/>', true) +
+    paidCard(3, '<path d="M4 18V8l4 3 4-6 4 6 4-3v10z"/><path d="M4 21h16"/>', false) +
+    paidCard(4, '<path d="M7 3.5h10L21 9l-9 11.5L3 9z"/><path d="M3 9h18M9.5 9L12 20.5 14.5 9 12 3.5"/>', false) +
+    "</div>" +
+    '<p class="member-status-note">' + tt("member6.statusLine") + ' <a href="#/legal/membership-terms">' + tt("footer6.membershipTerms") + "</a></p>" +
+    '<div class="community-banner"><div class="community-banner-text"><h3>' + tt("member6.bannerTitle") + "</h3><p>" + tt("member6.bannerText") + '</p></div>' +
+    '<p class="community-banner-brand">Real stories.<br>Real people.<br><span class="accent">GreenlitX.</span></p></div>' +
+    '<h3 class="tick-title">' + tt("member6.faqHeading") + "</h3>" +
     '<div class="faq-list">' +
-    faqItem("membership3.faq1Q", ["membership2.foundingNotOpen", "membership2.tiersNoBuy"]) +
-    faqItem("membership3.faq2Q", ["membership2.tiersIntro"]) +
-    faqItem("membership3.faq3Q", ["membership2.foundingTerms"]) +
-    faqItem("membership3.faq4Q", ["membership2.tiersApproach"]) +
-    faqItem("membership3.faq5Q", ["membership2.questionsText"]) +
+    [1, 2, 3, 4, 5, 6, 7, 8].map((n) => faqItem("member6.faq" + n + "Q", "member6.faq" + n + "A")).join("") +
     "</div>";
 }
 function renderAbout() {
   const el = $("#about-body"); if (!el) return;
-  const tt = (k) => escapeHtml(t(k));
-  const panel = (cls, heading, paras) =>
-    '<div class="about-panel' + (cls ? " " + cls : "") + '"><h3 class="tick-title">' + tt(heading) + "</h3>" +
-    paras.map((p) => "<p>" + tt(p) + "</p>").join("") + "</div>";
+  const tt = (k, vars) => escapeHtml(t(k, vars));
+  /* Round 6 (Oct 30): About rebuilt to the owner's approved mockup +
+     brief section order. Copy is the brief's approved text (about6.*)
+     or the page's existing published text; the membership strip states
+     the approved five-tier model with the honesty line that paid
+     checkout is not yet operational. */
+  const partImgs = ["letters-from-the-sun", "the-second-moon", "dead-freight", "the-last-picture-house"];
+  const partCard = (n) =>
+    '<div class="step-card part-card"><img class="part-card-img" src="backdrops/' + partImgs[n - 1] + '.webp" width="1600" height="900" loading="lazy" alt="">' +
+    '<span class="part-num" aria-hidden="true">0' + n + '</span><h4>' + tt("about6.part" + n + "T") + "</h4><p>" + tt("about6.part" + n + "X") + "</p></div>";
+  const tierLine = (nameKey, amountKey, durText) =>
+    '<li><strong>' + tt(nameKey) + '</strong> — ' + tt(amountKey) + " · " + durText + "</li>";
   el.innerHTML =
     '<div class="page-hero about-hero">' +
     '<img class="page-hero-bg" src="backdrops/the-keeper-of-forgotten-things.webp" alt="" aria-hidden="true">' +
     '<div class="page-hero-shade"></div><div class="page-hero-content">' +
-    "<h2 tabindex='-1'>" + tt("about2.heading") + "</h2>" +
-    '<blockquote class="about-slogan">' + tt("about2.slogan") + "</blockquote>" +
+    '<p class="eyebrow">' + tt("about6.eyebrow") + "</p>" +
+    "<h2 tabindex='-1' class='about-hero-title'>" + tt("hero.titleStart") + ' <span class="accent">' + tt("hero.titleAccent") + "</span></h2>" +
+    "<p>" + tt("about6.heroSupport") + "</p>" +
+    '<p class="page-hero-actions"><a class="btn btn-primary" href="#/discover">' + tt("nav.discover") + '</a> ' +
+    '<button type="button" class="btn btn-ghost" data-scroll="about-participate">' + tt("about6.howItWorks") + "</button></p>" +
     "</div></div>" +
     '<div class="about-grid">' +
-    panel("", "about2.missionHeading", ["about2.missionP1", "about2.missionP2"]) +
-    panel("", "about2.whyHeading", ["about2.whyP1", "about2.whyP2", "about2.whyP3"]) +
+    '<div class="about-panel"><h3 class="tick-title">' + tt("about2.missionHeading") + "</h3><p>" + tt("about6.missionX") + "</p></div>" +
+    '<div class="about-panel"><h3 class="tick-title">' + tt("about2.whyHeading") + "</h3><p>" + tt("about6.whyX") + "</p></div>" +
     "</div>" +
-    '<div class="about-steps"><h3 class="tick-title">' + tt("about2.participateHeading") + "</h3>" +
-    '<div class="steps-grid">' + [1, 2, 3, 4].map((i) =>
-      '<div class="step-card"><h4>' + tt("about2.step" + i + "Name") + "</h4><p>" + tt("about2.step" + i + "Text") + "</p></div>").join("") + "</div>" +
-    '<p class="about-note">' + tt("about2.freeNote") + "</p></div>" +
-    panel("", "about2.developedHeading", ["about2.developedP1", "about2.developedP2"]) +
+    '<div class="about-steps" id="about-participate"><h3 class="tick-title">' + tt("about6.participateHeading") + "</h3>" +
+    "<p>" + tt("about6.participateSub") + "</p>" +
+    '<div class="steps-grid part-grid">' + [1, 2, 3, 4].map(partCard).join("") + "</div></div>" +
     '<div class="about-grid">' +
-    panel("", "about2.submitHeading", ["about2.submitText"]) +
-    panel("", "about2.proHeading", ["about2.proText"]) +
+    '<div class="about-panel"><h3 class="tick-title">' + tt("about6.fmHeading") + "</h3><p>" + tt("about6.fmX") + '</p><p><a class="btn btn-primary" href="#/submit">' + tt("nav.submitFilm") + "</a></p></div>" +
+    '<div class="about-panel"><h3 class="tick-title">' + tt("about6.proHeading") + "</h3><p>" + tt("about6.proX") + '</p><p><a class="btn btn-primary" href="#/professionals">' + tt("nav.professionals") + "</a></p></div>" +
     "</div>" +
-    '<div class="about-panel about-vision"><h3 class="tick-title">' + tt("about2.diffHeading") + "</h3>" +
-    '<div class="about-diff-grid">' + [1, 2, 3, 4].map((i) => "<p>" + tt("about2.diff" + i) + "</p>").join("") + "</div>" +
-    '<p class="footer-slogan">' + tt("about2.diffSlogan") + "</p></div>" +
-    panel("about-status", "about2.nowHeading", ["about2.nowText"]);
+    '<div class="compare-panels">' +
+    '<div class="compare-panel compare-trad"><h3>' + tt("about6.tradT") + '</h3><ul class="x-list">' + [1, 2, 3, 4].map((n) => "<li>" + tt("about6.trad" + n) + "</li>").join("") + "</ul></div>" +
+    '<div class="compare-panel compare-glx"><h3>' + tt("about6.glxT") + '</h3><ul class="check-list">' + [1, 2, 3, 4].map((n) => "<li>" + tt("about6.glx" + n) + "</li>").join("") + "</ul></div>" +
+    "</div>" +
+    '<div class="community-banner about-banner"><div class="community-banner-text"><h3>' + tt("about6.moreTitle") + "</h3><p>" + tt("about6.moreX") + '</p></div>' +
+    '<p class="community-banner-brand">Real stories.<br>Real people.<br><span class="accent">GreenlitX.</span></p></div>' +
+    '<div class="info-panel about-transparency"><h3 class="tick-title">' + tt("about6.transpT") + '</h3><ul class="plain-list">' +
+    [1, 2, 3, 4, 5, 6].map((n) => "<li>" + tt("about6.transp" + n) + "</li>").join("") + "</ul>" +
+    '<p><a href="#/legal/pledge-funding-terms">' + tt("footer6.pledgeTerms") + '</a> · <a href="#/legal/membership-terms">' + tt("footer6.membershipTerms") + '</a> · <a href="#/legal/submission-agreement">' + tt("footer6.submissionAgreement") + "</a></p></div>" +
+    '<div class="about-panel about-membership"><h3 class="tick-title">' + tt("about6.memberT") + "</h3><p>" + tt("about6.memberX") + "</p>" +
+    '<ul class="tier-strip">' +
+    tierLine("membership3.freeName", "member6.priceFree", tt("member6.durFree")) +
+    tierLine("membership2.tier1Name", "membership2.tier1Amount", tt("member6.dur1")) +
+    tierLine("membership2.tier2Name", "membership2.tier2Amount", tt("member6.dur2")) +
+    tierLine("membership2.tier3Name", "membership2.tier3Amount", tt("member6.dur3")) +
+    tierLine("membership2.tier4Name", "membership2.tier4Amount", tt("member6.dur4") + " · " + tt("member6.proposedLimit")) +
+    "</ul>" +
+    "<p>" + tt("about6.memberNote") + '</p><p><a class="btn" href="#/membership">' + tt("nav.membership") + "</a></p></div>";
 }
 /* Admin review surface (Stage 2c): rendered ONLY when is_admin() is true for
    the signed-in user. The allowlist (public.admin_users) is empty until the
@@ -1496,19 +1629,51 @@ function legalCardHtml(href, title) {
   return '<a class="legal-card" href="' + href + '"><span class="legal-card-icon" aria-hidden="true">' + LEGAL_DOC_SVG + '</span>' +
     '<span class="legal-card-title">' + escapeHtml(title) + '</span><span class="legal-card-arrow" aria-hidden="true">\u203A</span></a>';
 }
+/* Round 6 (Oct 30): Legal & Trust Center — directory of exactly the
+   nine policy documents (icons + one-line descriptions from each
+   document's own introduction), the "Your rights matter" panel and the
+   closing banner. Funding Transparency is not a card (its page stays at
+   #/funding, footer-linked). Document substance is untouched except the
+   scoped membership-consistency edits recorded in REPORT6. */
+const LEGAL_CENTER_SLUGS = ["terms", "privacy", "membership-terms", "pledge-funding-terms", "submission-agreement", "copyright-dmca", "community-guidelines", "cookie-policy", "accessibility"];
+const LEGAL_CENTER_ICONS = {
+  "terms": '<path d="M6 2.5h8L19 7.5v14H6z"/><path d="M13.5 2.5v5.5H19"/><path d="M9 12.5h6M9 16h6"/>',
+  "privacy": '<path d="M12 3l7 2.5v5.5c0 4.6-3 7.6-7 9.5-4-1.9-7-4.9-7-9.5V5.5z"/><path d="M9 11.5l2.2 2.2L15.5 9.5"/>',
+  "membership-terms": '<circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19.5c.6-3.2 2.8-4.8 5.5-4.8s4.9 1.6 5.5 4.8"/><path d="M16 5.5h5M16 10h5M16 14.5h5"/>',
+  "pledge-funding-terms": '<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/>',
+  "submission-agreement": '<path d="M12 19V5.5"/><path d="M6.5 11L12 5l5.5 6"/><path d="M5 19.5h14"/>',
+  "copyright-dmca": '<circle cx="12" cy="12" r="8.5"/><path d="M15.5 9.5A4.8 4.8 0 1 0 15.5 14.5"/>',
+  "community-guidelines": '<circle cx="8.5" cy="9" r="3"/><path d="M3 19.5c.5-3 2.7-4.6 5.5-4.6s5 1.6 5.5 4.6"/><circle cx="16.8" cy="10" r="2.4"/><path d="M16.2 14.9c2.2.2 3.9 1.6 4.4 4"/>',
+  "cookie-policy": '<circle cx="12" cy="12" r="8.5"/><circle cx="9.5" cy="10" r="0.6" fill="currentColor"/><circle cx="13.5" cy="8.8" r="0.6" fill="currentColor"/><circle cx="10.8" cy="14.2" r="0.6" fill="currentColor"/><circle cx="14.8" cy="13" r="0.6" fill="currentColor"/>',
+  "accessibility": '<circle cx="12" cy="5" r="1.8"/><path d="M4.5 9.5c5 1 10 1 15 0"/><path d="M12 10.5v4l3 5.5M12 14.5l-3 5.5"/>'
+};
+function legalCenterCardHtml(doc) {
+  const icon = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + (LEGAL_CENTER_ICONS[doc.slug] || LEGAL_CENTER_ICONS["terms"]) + "</svg>";
+  return '<a class="legal-card legal-card2" href="#/legal/' + doc.slug + '"><span class="legal-card-icon" aria-hidden="true">' + icon + '</span>' +
+    '<span class="legal-card-body"><span class="legal-card-title">' + escapeHtml(doc.title) + '</span>' +
+    '<span class="legal-card-desc">' + escapeHtml(t("legal6.desc." + doc.slug)) + '</span></span>' +
+    '<span class="legal-card-arrow" aria-hidden="true">\u203A</span></a>';
+}
 function renderLegalIndex() {
   const el = $("#legal-index");
   if (!el) return;
-  el.innerHTML = '<p class="section-intro" style="padding-left:0">Every GreenlitX policy in one place.</p>' +
-    '<div class="legal-grid">' + LEGAL_DOCS.map((d) => legalCardHtml("#/legal/" + d.slug, d.title)).join("") +
-    legalCardHtml("#/funding", t("legal.fundingTitle")) + "</div>";
+  const docs = LEGAL_CENTER_SLUGS.map(legalBySlug).filter(Boolean);
+  el.innerHTML =
+    '<h3 class="tick-title">' + escapeHtml(t("legal6.docsHeading")) + '</h3>' +
+    '<div class="legal-grid legal-grid2">' + docs.map(legalCenterCardHtml).join("") + "</div>" +
+    '<div class="info-panel rights-panel"><h3>' + escapeHtml(t("legal6.rightsTitle")) + '</h3><ul class="plain-list">' +
+    [1, 2, 3, 4, 5].map((n) => "<li>" + escapeHtml(t("legal6.rights" + n)) + "</li>").join("") + "</ul></div>" +
+    '<div class="community-banner legal-banner"><div class="community-banner-text"><h3>' + escapeHtml(t("legal6.banner")) + '</h3>' +
+    '<p class="footer-slogan2"><span>' + escapeHtml(t("hero.titleStart")) + '</span> <span class="accent">' + escapeHtml(t("hero.titleAccent")) + "</span></p></div>" +
+    '<p class="community-banner-brand">Real stories.<br>Real people.<br><span class="accent">GreenlitX.</span></p></div>' +
+    '<p class="fineprint">' + escapeHtml(t("legal.documentsInEnglish")) + " " + escapeHtml(t("legal.draftNotice")) + "</p>";
 }
 function renderLegalDoc(slug) {
   const el = $("#legal-doc");
   if (!el) return;
   const doc = legalBySlug(slug);
-  if (!doc) { el.innerHTML = '<div class="section"><h2 tabindex="-1">Document not found</h2><p><a href="#/legal">Back to the Legal &amp; Trust Center</a>.</p></div>'; return; }
-  el.innerHTML = legalDocHtml(doc);
+  if (!doc) { el.innerHTML = '<div class="section"><h2 tabindex="-1">' + escapeHtml(t("legal.notFoundTitle")) + '</h2><p><a href="#/legal">' + escapeHtml(t("legal.backToCenter")) + "</a>.</p></div>"; return; }
+  el.innerHTML = legalDocHtml(doc, escapeHtml(t("legal.backToCenter")));
 }
 function renderFunding() {
   const el = $("#funding-body");
@@ -1553,10 +1718,15 @@ function rolesHtml() {
     ["roles.audience", "roles.filmmakers", "roles.professionals", "roles.supporters"].map((k) => "<li>" + escapeHtml(t(k)) + "</li>").join("") + "</ul></div>";
 }
 function fillRoles(id) { const el = document.getElementById(id); if (el) el.innerHTML = rolesHtml(); }
+/* Round 6: discipline tiles carry existing catalog artwork (backdrops),
+   one per category; the tile button keeps the existing data-action="pro"
+   behaviour (sets the form's role select, scrolls to the form). */
+const PRO_TILE_ART = ["the-woman-in-apartment-9", "the-last-picture-house", "the-retirement-job", "letters-from-the-sun", "the-last-train-below", "the-devils-frequency", "the-night-orchestra", "the-keeper-of-forgotten-things", "before-the-city-wakes", "dead-freight"];
 function renderPros() {
-  fillRoles("roles-pro");
   $("#pro-grid").innerHTML = PRO_CATEGORIES.map((c, i) =>
-    '<div class="pro-card"><span class="pro-icon" aria-hidden="true">' + proIconSvg(i) + '</span><span class="pro-card-name">' + escapeHtml(t(PRO_CAT_KEYS[i])) + '</span><button type="button" class="btn btn-small" data-action="pro" data-cat="' + escapeHtml(c) + '">' + escapeHtml(t("pro.registerButton")) + '</button></div>').join("");
+    '<div class="pro-card pro-tile"><img class="pro-tile-img" src="backdrops/' + PRO_TILE_ART[i % PRO_TILE_ART.length] + '.webp" width="1600" height="900" loading="lazy" alt="">' +
+    '<div class="pro-tile-body"><span class="pro-icon" aria-hidden="true">' + proIconSvg(i) + '</span><span class="pro-card-name">' + escapeHtml(t(PRO_CAT_KEYS[i])) + '</span>' +
+    '<button type="button" class="btn btn-small" data-action="pro" data-cat="' + escapeHtml(c) + '">' + escapeHtml(t("pro.registerButton")) + '</button></div></div>').join("");
   const sel = $("#p-role");
   if (sel && !sel.options.length) {
     sel.innerHTML = '<option value="">' + escapeHtml(t("pro.choose")) + '</option>' + PRO_CATEGORIES.map((c, i) => '<option value="' + escapeHtml(c) + '">' + escapeHtml(t(PRO_CAT_KEYS[i])) + "</option>").join("");
@@ -1605,7 +1775,7 @@ function updateMeta(r) {
 function applyStaticI18n() {
   $$("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
   $$("[data-i18n-aria]").forEach((el) => { el.setAttribute("aria-label", t(el.dataset.i18nAria)); });
-  syncLangControl(); closeLangMenu();
+  syncLangControl(); closeLangMenu(); syncFooterLangs();
   const acc = document.querySelector('[data-nav="account"]');
   if (acc && !server.user) acc.textContent = t("nav.account");
   const srch = $("#search"); if (srch) { srch.placeholder = t("discover.searchPlaceholder"); srch.setAttribute("aria-label", t("discover.searchLabel")); }
@@ -1801,6 +1971,20 @@ document.addEventListener("click", (e) => {
     if (form) form.scrollIntoView({ behavior: "smooth", block: "start" });
     const nameEl = $("#p-name");
     if (nameEl) nameEl.focus({ preventScroll: true });
+  } else if (btn.dataset.action === "watch-tile") {
+    if (btn.dataset.wcat) { state.watchCategory = btn.dataset.wcat; state.watchGenre = "All"; }
+    if (btn.dataset.wgenre) { state.watchGenre = btn.dataset.wgenre; state.watchCategory = "All"; }
+    renderWatch();
+    const rows = $("#watch-rows"); if (rows) rows.scrollIntoView({ behavior: "smooth", block: "start" });
+  } else if (btn.dataset.action === "watch-feat-prev" || btn.dataset.action === "watch-feat-next") {
+    const pool = watchFeaturedPool();
+    if (pool.length) {
+      watchFeatIdx = (watchFeatIdx + (btn.dataset.action === "watch-feat-next" ? 1 : -1) + pool.length) % pool.length;
+      const featEl = $("#watch-featured"); if (featEl) featEl.innerHTML = watchFeaturedHtml();
+    }
+  } else if (btn.dataset.action === "watch-feat-go") {
+    watchFeatIdx = Number(btn.dataset.idx || 0);
+    const featEl = $("#watch-featured"); if (featEl) featEl.innerHTML = watchFeaturedHtml();
   }
 });
 /* Round 4: typing a custom pledge amount arms the Custom chip (visual
@@ -1938,6 +2122,57 @@ document.addEventListener("keydown", (e) => {
     }
   }
 });
+/* ---------- Round 6 (Oct 30): trailer modal, footer accordions + language ---------- */
+let trailerTrigger = null;
+function openTrailerModal(trigger) {
+  const modal = $("#trailer-modal");
+  if (!modal) return;
+  trailerTrigger = trigger || null;
+  modal.hidden = false;
+  document.body.classList.add("modal-open");
+  syncTrailerSubtitles();
+  const vid = $("#trailer-video");
+  if (vid) { const pr = vid.play(); if (pr && pr.catch) pr.catch(() => {}); }
+  const closeBtn = modal.querySelector(".trailer-modal-close");
+  if (closeBtn) closeBtn.focus({ preventScroll: true });
+}
+function closeTrailerModal() {
+  const modal = $("#trailer-modal");
+  if (!modal || modal.hidden) return;
+  const vid = $("#trailer-video");
+  if (vid) { try { vid.pause(); vid.currentTime = 0; } catch (e) {} }
+  modal.hidden = true;
+  document.body.classList.remove("modal-open");
+  if (trailerTrigger && trailerTrigger.focus) trailerTrigger.focus({ preventScroll: true });
+  trailerTrigger = null;
+}
+function syncFooterLangs() {
+  $$(".foot-lang").forEach((b) => {
+    const on = b.dataset.footlang === lang;
+    b.classList.toggle("active", on);
+    if (on) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current");
+  });
+}
+document.addEventListener("click", (e) => {
+  const close = e.target.closest ? e.target.closest("[data-trailer-close]") : null;
+  if (close) { closeTrailerModal(); return; }
+  const accBtn = e.target.closest ? e.target.closest(".footer-acc-btn") : null;
+  if (accBtn) {
+    const col = accBtn.closest(".footer-col");
+    const open = col ? col.classList.toggle("open") : false;
+    accBtn.setAttribute("aria-expanded", String(open));
+    return;
+  }
+  const fl = e.target.closest ? e.target.closest("[data-footlang]") : null;
+  if (fl) { setLang(fl.dataset.footlang); syncFooterLangs(); }
+}, true);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    const modal = $("#trailer-modal");
+    if (modal && !modal.hidden) { closeTrailerModal(); e.stopPropagation(); }
+  }
+}, true);
+
 window.addEventListener("hashchange", render);
 window.addEventListener("pageshow", (e) => { if (e.persisted) render(); });
 render();
