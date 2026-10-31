@@ -1486,11 +1486,13 @@ function renderMembership() {
      cannot be bought today (no checkout exists): their action is a
      truthful Register Interest route to the free account, with the
      payment-status microcopy the brief requires. Paid-tier benefit
-     lists are NOT itemized in the site's published specification, so no
-     benefit list is printed for them (see REPORT6). */
+     lists were added in round 6b (Oct 30) from the owner's confirmed
+     October 1 proposal — cumulative stacks (member6.tierNPlus /
+     member6.tierNBenM keys; see REPORT6, round 6b section). */
   const benefitIcon = (path) => '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + path + "</svg>";
   const heroBen = (n, icon) =>
     '<div class="trust-item"><span class="member-ben-icon" aria-hidden="true">' + benefitIcon(icon) + '</span><div><p>' + tt("member6.ben" + n) + "</p></div></div>";
+  const paidBenCounts = { 1: 2, 2: 2, 3: 3, 4: 1 };
   const paidCard = (n, icon, emphasis) => {
     const amount = t("membership2.tier" + n + "Amount");
     const durKey = "member6.dur" + n;
@@ -1500,6 +1502,8 @@ function renderMembership() {
       '<p class="tier-price">' + tt("membership2.tier" + n + "Amount") + "</p>" +
       '<p class="tier-terms">' + tt("member6.oneTime") + " · " + tt(durKey) + "</p>" +
       (n === 4 ? '<p class="tier-cap">' + tt("member6.proposedLimit") + "</p>" : "") +
+      "<p>" + tt("member6.tier" + n + "Plus") + "</p>" +
+      '<ul class="check-list">' + Array.from({ length: paidBenCounts[n] }, (_, i) => "<li>" + tt("member6.tier" + n + "Ben" + (i + 1)) + "</li>").join("") + "</ul>" +
       '<p><a class="btn btn-primary" href="#/account">' + tt("member6.registerInterest") + "</a></p>" +
       '<p class="tier-micro">' + tt("member6.registerMicro", { amount: amount, duration: t(durKey) }) + "</p></div>";
   };
