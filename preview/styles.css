@@ -999,3 +999,138 @@ body.modal-open { overflow: hidden; }
 
 /* R6 QA hardening: featured poster frame */
 .watch-feat-poster{background:#0d120b;color:transparent}
+
+/* ================= Round 7 (Oct 31): icon nav, Support page, footer email ================= */
+/* --- Desktop nav: inline-SVG icon above a short label (mockup-nav.png) --- */
+.main-nav { gap: 0.12rem; }
+.main-nav a { flex-direction: column; align-items: center; justify-content: center; gap: 0.22rem; padding: 0.34rem 0.58rem; border-radius: 10px; position: relative; color: var(--text); line-height: 1.05; }
+.main-nav a .nav-icon { display: inline-flex; color: #c9d4da; transition: color 0.15s ease; }
+.main-nav a .nav-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.01em; white-space: nowrap; }
+.main-nav a .nav-chevron { display: none; }
+.main-nav a:hover { background: var(--panel2); color: var(--text); }
+.main-nav a:hover .nav-icon { color: #ffffff; }
+.main-nav a.active, .main-nav a[aria-current="page"] { background: transparent; color: var(--accent); }
+.main-nav a.active .nav-icon, .main-nav a[aria-current="page"] .nav-icon { color: var(--accent); }
+.main-nav a.active::after, .main-nav a[aria-current="page"]::after { content: ""; position: absolute; left: 22%; right: 22%; bottom: 1px; height: 2px; border-radius: 2px; background: var(--accent); box-shadow: 0 0 9px rgba(124, 252, 0, 0.65); }
+.nav-divider { width: 1px; align-self: stretch; margin: 0.35rem 0.4rem; background: var(--border); flex: 0 0 auto; }
+.nav-toggle .nav-toggle-open { display: inline-flex; }
+.nav-toggle .nav-toggle-close { display: none; }
+.nav-toggle[aria-expanded="true"] .nav-toggle-open { display: none; }
+.nav-toggle[aria-expanded="true"] .nav-toggle-close { display: inline-flex; }
+
+/* --- Mobile/tablet nav: premium panel menu under the header (mockup-nav.png).
+       The 1150px breakpoint is set from measurement: in German (the longest
+       labels) the single desktop row needs ~1140px; see REPORT7. --- */
+@media (max-width: 1150px) {
+  .nav-toggle { display: inline-flex; align-items: center; justify-content: center; }
+  .main-nav { display: none; }
+  .main-nav.open { display: flex; position: absolute; top: calc(var(--header-h) + 0.5rem); left: 0.6rem; right: 0.6rem; flex-direction: column; align-items: stretch; gap: 0.15rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 0.55rem; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55); max-height: calc(100vh - var(--header-h) - 1.5rem); overflow-y: auto; }
+  .main-nav a { flex-direction: row; justify-content: flex-start; gap: 0.7rem; min-height: 50px; padding: 0.55rem 0.75rem; border-radius: 10px; }
+  .main-nav a .nav-label { font-size: 0.98rem; }
+  .main-nav a .nav-icon { color: #c9d4da; }
+  .main-nav a .nav-chevron { display: inline-flex; margin-left: auto; color: var(--muted); }
+  .main-nav a.active::after, .main-nav a[aria-current="page"]::after { display: none; }
+  .main-nav a.active, .main-nav a[aria-current="page"] { background: rgba(124, 252, 0, 0.13); color: var(--accent); }
+  .main-nav a.active .nav-icon, .main-nav a[aria-current="page"] .nav-icon { color: var(--accent); }
+  .main-nav a.active .nav-chevron, .main-nav a[aria-current="page"] .nav-chevron { color: var(--accent); }
+  .nav-divider { width: auto; height: 1px; margin: 0.4rem 0.25rem; align-self: auto; }
+}
+
+/* --- Footer: visible email address (owner point 2) --- */
+.footer-email { margin: 0.4rem 0 0; }
+.footer-email a { display: inline-flex; align-items: center; gap: 0.45rem; font-weight: 700; }
+.footer-email-icon { color: var(--accent); display: inline-flex; }
+
+/* --- Occupation-true professional tiles (mockup ratio) --- */
+.pro-tile-img { height: 132px; }
+
+/* --- Support page (mockup-support.png) --- */
+.sup-hero { position: relative; overflow: hidden; border-radius: 0 0 18px 18px; max-width: var(--maxw); margin: 0 auto; }
+.sup-hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 40%; }
+.sup-hero-shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(5, 7, 10, 0.93) 0%, rgba(5, 7, 10, 0.62) 55%, rgba(5, 7, 10, 0.26) 100%), linear-gradient(0deg, var(--bg) 0%, rgba(5, 7, 10, 0) 42%); }
+.sup-hero-content { position: relative; z-index: 2; padding: 3rem 1.6rem 2.8rem; max-width: 700px; }
+.sup-hero-title { font-size: clamp(2.3rem, 5vw, 3.5rem); font-weight: 900; margin: 0.35rem 0 0.5rem; line-height: 1.05; }
+.sup-hero-sub { font-size: clamp(1.15rem, 2.4vw, 1.5rem); font-weight: 800; color: #ffffff; margin: 0 0 0.6rem; }
+.sup-hero-desc { color: #d5dde2; font-size: 1.02rem; max-width: 580px; margin: 0; }
+.sup-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; max-width: var(--maxw); margin: 1.6rem auto 0; padding: 0 1rem; align-items: stretch; }
+.sup-card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; }
+.sup-card-media { position: relative; }
+.sup-card-media img { width: 100%; height: 185px; object-fit: cover; display: block; }
+.sup-card-icon { position: absolute; left: 1.1rem; bottom: -24px; width: 52px; height: 52px; border-radius: 50%; background: #0b0f0a; border: 2px solid var(--accent); color: var(--accent); display: grid; place-items: center; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45); z-index: 2; }
+.sup-card-body { padding: 2.1rem 1.25rem 1.25rem; display: flex; flex-direction: column; flex: 1; }
+.sup-card-body h3 { margin: 0 0 0.25rem; font-size: 1.32rem; }
+.sup-card-sub { font-weight: 700; margin: 0 0 0.5rem; }
+.sup-card-desc { color: var(--muted); margin: 0 0 0.6rem; }
+.sup-list { margin: 0.2rem 0 0; }
+.sup-card-foot { margin-top: auto; padding-top: 1.1rem; }
+.sup-btn { width: 100%; text-align: center; padding: 0.8rem 1rem; font-size: 1rem; }
+.btn-primary[disabled] { opacity: 0.55; filter: saturate(0.65); cursor: not-allowed; }
+.sup-unavailable { color: var(--muted); font-size: 0.9rem; margin: 0.55rem 0 0; text-align: center; }
+.sup-disclaimer { text-align: center; color: var(--muted); font-size: 0.92rem; margin: 1.5rem auto 0.4rem; max-width: 880px; padding: 0 1rem; }
+#support-inquiry { max-width: var(--maxw); margin: 0 auto; padding: 0 1rem; }
+.sup-form-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 1.4rem; margin: 1.2rem auto 0.5rem; max-width: 760px; }
+.sup-form-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.sup-form-head h3 { margin: 0; font-size: 1.4rem; }
+.sup-form-close { background: none; border: none; color: var(--muted); font-size: 1.7rem; line-height: 1; cursor: pointer; padding: 0.1rem 0.4rem; }
+.sup-form-close:hover { color: var(--text); }
+.sup-form-intro { color: var(--muted); }
+.field-error { color: #e08a84; font-size: 0.9rem; margin: 0.35rem 0 0; font-weight: 600; }
+.field [aria-invalid="true"] { border-color: #e08a84; }
+.field-consent .consent-label { display: flex; gap: 0.55rem; align-items: flex-start; font-weight: 500; }
+.field-consent input[type="checkbox"] { width: 18px; height: 18px; margin-top: 0.15rem; accent-color: var(--accent); flex: 0 0 auto; padding: 0; }
+.sup-securities { color: var(--muted); font-size: 0.88rem; border: 1px solid var(--border); border-radius: 10px; padding: 0.7rem 0.9rem; background: var(--bg2); }
+.sup-status-ok { color: var(--accent); font-weight: 700; }
+.sup-status-err { color: #e08a84; font-weight: 600; }
+.sup-status-err a { color: var(--accent); }
+@media (max-width: 900px) {
+  .sup-cards { grid-template-columns: 1fr; }
+  .sup-hero-content { padding: 2.2rem 1.1rem 2rem; }
+  .sup-card-media img { height: 200px; }
+}
+
+/* ================= Round 7 point 14 (Oct 31): full-bleed page language =================
+   Owner correction: pages must read as ONE continuous page — heroes span the
+   full viewport width edge-to-edge with square corners; no page-level rounded
+   "floating box" framing, no black gutters, no dead voids before the footer.
+   Content cards (support cards, membership tiers, legal doc cards, film
+   cards, auth cards) are unchanged — they are content elements, not framing. */
+
+/* Heroes that sit inside the padded .section column (About / Professionals /
+   Submit page-hero, Account hero, Membership hero): break out of the column
+   to the full viewport width, square corners, no border, and absorb the
+   section's top padding so the hero meets the header directly. */
+.page-hero, .account-hero, .r6-hero {
+  width: 100vw; max-width: 100vw;
+  margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);
+  margin-top: -2.2rem;
+  border-radius: 0; border: none;
+}
+/* Heroes that are direct view children (Discover / Watch / Legal / Support):
+   drop the max-width cap and the rounded bottom corners. */
+.discover-hero, .watch-hero, .legal-hero, .sup-hero {
+  max-width: none; margin: 0; border-radius: 0; width: 100%;
+}
+/* Hero text stays aligned to the content column on wide screens: shift the
+   content block right by the column's viewport offset; its own side padding
+   (1.1rem, matching .section) insets the text from there. */
+.page-hero-content, .account-hero-content, .member-hero-content,
+.discover-hero-content, .watch-hero-content, .legal-hero-content, .sup-hero-content {
+  margin-left: max(0px, calc((100vw - var(--maxw)) / 2));
+}
+.page-hero-content { padding-left: 1.1rem; padding-right: 1.1rem; }
+.account-hero-content { padding-left: 1.1rem; padding-right: 1.1rem; }
+.member-hero-content { padding-left: 1.1rem; padding-right: 1.1rem; }
+
+/* One continuous flow: trim the shared section shell's bottom padding so the
+   last section meets the footer without a dead void (footer keeps its own
+   internal padding). */
+.section { padding-bottom: 1.5rem; }
+/* The support disclaimer is the page's last element: tighten its tail. */
+.sup-disclaimer { margin-bottom: 0; }
+#support-inquiry:empty { display: none; }
+
+/* Point 14 (void fix): the footer's own 3.5rem top margin was the dead black
+   band between the last section and the footer on every page. The last
+   section now meets the footer directly; the footer keeps its internal
+   padding for separation. */
+.site-footer { margin-top: 0; }
