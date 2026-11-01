@@ -1501,3 +1501,22 @@ body.modal-open { overflow: hidden; }
 .interest-facts div:nth-child(1) dd { color: var(--muted); font-style: italic; }
 .interest-facts div:nth-child(2) { border-left: 3px solid var(--accent); }
 .interest-facts div:nth-child(2) dd { color: var(--accent); }
+
+/* === Phase 7 (Master Prompt v3, 2026-11-01): mobile overflow + tap fixes ===
+   Measured with headless Chromium at 360/390/430px (CDP): the Discover grid
+   overflowed the viewport by 92/62/22px because a card's min-content — the
+   nowrap process-labels row (~210px) — forced each 1fr track wider than the
+   screen; the same labels spilled past poster-card edges on Home. Grid items
+   must be allowed to shrink below min-content, and the compact labels wrap
+   inside narrow cards on small screens instead of pushing them wider. */
+.film-grid > .card { min-width: 0; }
+.process-labels { min-width: 0; }
+@media (max-width: 760px) {
+  .process-labels { flex-wrap: wrap; row-gap: 0.12rem; }
+}
+@media (max-width: 640px) {
+  /* measured tap heights were 28px (gallery filter chips) and 33px
+     (Discover filter chips); 38px floor on small screens */
+  .chip { min-height: 38px; }
+  .fp-follow-actions .btn { min-height: 38px; }
+}
