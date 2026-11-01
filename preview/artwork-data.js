@@ -660,6 +660,12 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
+   "file": "artwork/the-devils-frequency/moment-a-call-on-a-powered-down-board.webp",
+   "kind": "moment",
+   "subject": "A Call on a Powered-Down Board",
+   "created": "2026-11-01"
+  },
+  {
    "file": "artwork/the-devils-frequency/moment-ruthies-call.webp",
    "kind": "moment",
    "subject": "Vivian \"Viv\" Cross",
@@ -968,6 +974,12 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
+   "file": "artwork/the-keeper-of-forgotten-things/portrait-the-keeper.webp",
+   "kind": "portrait",
+   "subject": "The Keeper",
+   "created": "2026-11-01"
+  },
+  {
    "file": "artwork/the-keeper-of-forgotten-things/portrait-wren-halloway.webp",
    "kind": "portrait",
    "subject": "Wren Halloway",
@@ -996,6 +1008,12 @@ window.GLX_ARTWORK = {
    "kind": "moment",
    "subject": "Wren falls through the linen closet",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-keeper-of-forgotten-things/moment-the-bear-in-the-breach.webp",
+   "kind": "moment",
+   "subject": "The Bear in the Breach",
+   "created": "2026-11-01"
   },
   {
    "file": "artwork/the-keeper-of-forgotten-things/detail-mothlight.webp",
@@ -1244,6 +1262,12 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
+   "file": "artwork/the-last-train-below/portrait-ines-okafor.webp",
+   "kind": "portrait",
+   "subject": "Ines Okafor",
+   "created": "2026-11-01"
+  },
+  {
    "file": "artwork/the-last-train-below/portrait-maren-okafor.webp",
    "kind": "portrait",
    "subject": "Maren Okafor",
@@ -1278,6 +1302,12 @@ window.GLX_ARTWORK = {
    "kind": "moment",
    "subject": "Maren boards the phantom train",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-last-train-below/moment-two-knowledges-one-map.webp",
+   "kind": "moment",
+   "subject": "Two Knowledges, One Map",
+   "created": "2026-11-01"
   },
   {
    "file": "artwork/the-last-train-below/detail-driver-cab.webp",
@@ -1746,6 +1776,12 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
+   "file": "artwork/the-woman-in-apartment-9/portrait-david-lenz.webp",
+   "kind": "portrait",
+   "subject": "David Lenz",
+   "created": "2026-11-01"
+  },
+  {
    "file": "artwork/the-woman-in-apartment-9/portrait-keller.webp",
    "kind": "portrait",
    "subject": "Hauptsturmführer Keller",
@@ -1774,6 +1810,12 @@ window.GLX_ARTWORK = {
    "kind": "moment",
    "subject": "Anna transmits from Apartment 9",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-woman-in-apartment-9/moment-piano-through-the-floorboards.webp",
+   "kind": "moment",
+   "subject": "Piano Through the Floorboards",
+   "created": "2026-11-01"
   },
   {
    "file": "artwork/the-woman-in-apartment-9/moment-transmitter-in-coat.webp",
@@ -1818,6 +1860,12 @@ window.GLX_ARTWORK = {
    "kind": "portrait",
    "subject": "Daniel Reyes",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/tomorrows-witness/portrait-julian-voss.webp",
+   "kind": "portrait",
+   "subject": "Julian Voss",
+   "created": "2026-11-01"
   },
   {
    "file": "artwork/tomorrows-witness/location-courtroom.webp",
