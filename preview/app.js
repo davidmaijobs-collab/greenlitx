@@ -1445,6 +1445,28 @@ function accountHeroHtml() {
     ben(3, ic('<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>')) +
     "</div></div></div>";
 }
+/* Phase 6 (Master Prompt v3): the dashboard membership status sentence
+   renders from the translated dashboard.membershipStatus key — it was
+   hardcoded English in every language (Phase 3 memo §2). The key's final
+   sentence is the "See Membership" pointer in all four languages: its
+   final word becomes the Membership link, and the lead before the em
+   dash keeps the <strong> treatment the hardcoded version had. */
+function membershipStatusHtml() {
+  const s = String(t("dashboard.membershipStatus") || "");
+  const dash = s.indexOf(" \u2014 ");
+  const lead = dash > 0 ? s.slice(0, dash) : "";
+  let rest = dash > 0 ? s.slice(dash + 3) : s;
+  let tail = "";
+  const cut = rest.lastIndexOf(". ");
+  if (cut > 0) { tail = rest.slice(cut + 2); rest = rest.slice(0, cut + 1); }
+  let tailHtml = escapeHtml(tail);
+  const sp = tail.lastIndexOf(" ");
+  if (tail && sp > 0) {
+    const noun = tail.slice(sp + 1).replace(/\.$/, "");
+    tailHtml = escapeHtml(tail.slice(0, sp + 1)) + "<a href='#/membership'>" + escapeHtml(noun) + "</a>.";
+  }
+  return (lead ? "<strong>" + escapeHtml(lead) + "</strong> \u2014 " : "") + escapeHtml(rest) + (tail ? " " + tailHtml : "");
+}
 async function renderAccount() {
   const el = $("#account-body");
   if (!el) return;
@@ -1673,7 +1695,7 @@ async function renderAccount() {
     statCard(t("dash2.statSubmissions"), subsCount === null ? "\u2014" : subsCount) +
     "</div>" +
     '<section class="dash-panel" id="dash-membership"><h3>' + escapeHtml(t("dashboard.membershipHeading")) + "</h3>" +
-    "<p><strong>Free member</strong> \u2014 free membership is live. The founding membership campaign is planned \u2014 not yet open; no paid membership can be bought today. See <a href='#/membership'>Membership</a>.</p></section>" +
+    "<p>" + membershipStatusHtml() + "</p></section>" +
     '<section class="dash-panel" id="dash-profile"><h3>' + escapeHtml(t("dash2.profile")) + "</h3>" +
     "<form id='profile-form' novalidate><div class='field'><label for='a-name'>" + escapeHtml(t("account.displayNameLabel")) + "</label><input id='a-name' value='" + escapeHtml(profileName) + "'></div>" +
     "<button class='btn' type='submit'>" + escapeHtml(t("account.saveNameButton")) + "</button> <span class='form-msg' id='profile-msg' role='status'></span></form></section>" +

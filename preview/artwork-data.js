@@ -888,7 +888,7 @@ window.GLX_ARTWORK = {
   {
    "file": "artwork/seven-minutes-to-midnight/portrait-kate-lindholm.webp",
    "kind": "portrait",
-   "subject": "Kate Lindholm",
+   "subject": "Supervisory Agent Kate Lindholm",
    "created": "2026-10-25"
   },
   {
@@ -1980,7 +1980,7 @@ window.GLX_ARTWORK = {
   {
    "file": "artwork/the-kings-last-cook/portrait-helene-barbeau.webp",
    "kind": "portrait",
-   "subject": "Hélène Barbeau",
+   "subject": "Citizen Prosecutor Hélène Barbeau",
    "created": "2026-10-25"
   },
   {
@@ -2440,7 +2440,7 @@ window.GLX_ARTWORK = {
   {
    "file": "artwork/the-last-train-below/portrait-passenger-zero.webp",
    "kind": "portrait",
-   "subject": "The Old Man — Passenger Zero",
+   "subject": "The Old Man — \"Passenger Zero\"",
    "created": "2026-10-25"
   },
   {
@@ -2882,7 +2882,7 @@ window.GLX_ARTWORK = {
   {
    "file": "artwork/the-republic-of-tomorrow/portrait-tomas-reyes.webp",
    "kind": "portrait",
-   "subject": "Tomas Reyes",
+   "subject": "Tomas Reyes (the Co-Predicted)",
    "created": "2026-10-25"
   },
   {
@@ -3508,7 +3508,7 @@ window.GLX_ARTWORK = {
   {
    "file": "artwork/tomorrows-witness/portrait-ada-okonkwo.webp",
    "kind": "portrait",
-   "subject": "Adaeze 'Ada' Okonkwo",
+   "subject": "Adaeze \"Ada\" Okonkwo",
    "created": "2026-10-25"
   },
   {
