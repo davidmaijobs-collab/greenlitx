@@ -299,6 +299,15 @@ form .hint { color: var(--muted); font-size: 0.85rem; }
 .funding-facts div { display: flex; justify-content: space-between; gap: 1rem; background: var(--panel2); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.7rem; }
 .funding-facts dt { color: var(--muted); font-size: 0.82rem; font-weight: 700; }
 .funding-facts dd { margin: 0; font-weight: 700; text-align: right; }
+/* V2 WS5: the four funding facts must read as four DISTINCT facts, never
+   as a progress sequence — budget (neutral), target (dashed outline,
+   still to be set), verified supporter interest (accent edge), collected
+   (muted, payments inactive). No fill, no bar, no percentage anywhere. */
+.funding-facts div:nth-child(2) { border-style: dashed; background: transparent; }
+.funding-facts div:nth-child(2) dd { color: var(--muted); font-style: italic; }
+.funding-facts div:nth-child(3) { border-left: 3px solid var(--accent); }
+.funding-facts div:nth-child(3) dd { color: var(--accent); }
+.funding-facts div:nth-child(4) dd { color: var(--muted); }
 
 /* ---------- legal & trust center (Wave A) ---------- */
 .legal-list { list-style: none; padding: 0; display: grid; gap: 0.5rem; }
@@ -467,8 +476,8 @@ li.done .milestone-mark { color: var(--accent); }
 }
 .watch-wide-row { max-width: var(--maxw); margin: 0 auto; padding: 0.4rem 1.1rem 0.6rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
 .watch-wide { margin: 0; }
-.watch-wide-wrap { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 16/9; background: #0a0f16; border: 1px solid rgba(255,255,255,0.09); }
-.watch-wide-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center 22%; display: block; transition: transform 0.35s ease; }
+.watch-wide-wrap { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 4/3; background: #0a0f16; border: 1px solid rgba(255,255,255,0.09); }
+.watch-wide-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; display: block; transition: transform 0.35s ease; }
 .watch-wide:hover .watch-wide-wrap img { transform: scale(1.04); }
 .watch-play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; color: #fff; background: radial-gradient(circle at center, rgba(5,7,10,0.55) 0 26px, transparent 27px); text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
 .watch-wide .card-title { margin: 0.55rem 0 0.1rem; font-size: 0.98rem; font-weight: 800; text-transform: uppercase; }
@@ -551,7 +560,9 @@ li.done .milestone-mark { color: var(--accent); }
 .fp-main .detail-section:first-child { margin-top: 1.4rem; }
 .fp-meta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.6rem; }
 .fp-meta-row--single { grid-template-columns: 1fr; }
-.meta-box { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem 1.2rem; }
+/* V2 WS4 flow rule: the meta list is editorial content, not a panel —
+   no background, border or radius; it reads as a slim definition list. */
+.meta-box { background: transparent; border: 0; border-radius: 0; padding: 0; }
 .meta-box dl { margin: 0; display: grid; gap: 0.85rem; }
 .meta-box dt { color: var(--muted); font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.15rem; }
 .meta-box dd { margin: 0; font-weight: 600; }
@@ -966,10 +977,19 @@ body.modal-open { overflow: hidden; }
 
 /* Item 9: About */
 .about-hero-title .accent { display: block; }
-.part-card { padding: 0 0 1rem; overflow: hidden; }
-.part-card-img { width: 100%; height: 130px; object-fit: cover; display: block; margin-bottom: 0.8rem; }
-.part-card h4, .part-card p { padding: 0 1rem; }
-.part-num { display: block; padding: 0 1rem; color: var(--accent); font-weight: 900; font-size: 1.05rem; }
+/* V2 design refinement (owner, Nov 1): participation items FLOW — no box
+   chrome. The step-card panel/border is removed for these items, each image
+   spans its column and dissolves into the section background via a bottom
+   gradient mask, and the number/title/text follow on the same continuous
+   surface. Items are separated by space and the numbered flow only. */
+.part-card { padding: 0; overflow: visible; background: transparent; border: 0; border-radius: 0; box-shadow: none; }
+.part-card-img { width: 100%; height: 150px; object-fit: cover; display: block; margin: 0; border-radius: 12px 12px 0 0;
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 98%);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent 98%); }
+.part-card h4, .part-card p { padding: 0; }
+.part-num { display: block; padding: 0; margin-top: -1.5rem; position: relative; color: var(--accent); font-weight: 900; font-size: 1.05rem; }
+.about-steps .part-grid { gap: 1.6rem 0.9rem; }
+@media (max-width: 560px) { .about-steps .part-grid { row-gap: 2.1rem; } }
 .compare-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.6rem 0; }
 .compare-panel { border: 1px solid var(--border); border-radius: 14px; padding: 1.2rem; background: var(--panel); }
 .compare-panel h3 { margin-top: 0; }
@@ -1330,3 +1350,133 @@ body.modal-open { overflow: hidden; }
 @media (max-width: 380px) {
   .fv2-footer .foot-lang { padding: 0.45rem 0.5rem; font-size: 0.82rem; }
 }
+
+/* ================= V2 WS4 — visual-first film page + WS5 pledge polish ===
+   FLOW RULE (owner, Nov 1): the storytelling stack flows on ONE continuous
+   background. No bordered boxes, panel backgrounds or radius on editorial
+   sections; wide images dissolve into the page background at the edge
+   where they meet text (same mask pattern as About .part-card-img). The
+   pledge panel and forms are interactive units and keep their surfaces. */
+.fp-flow { margin-top: 2.4rem; }
+.fp-main .fp-flow:first-child { margin-top: 1.4rem; }
+.fp-flow p { color: #c9d2d9; max-width: 68ch; }
+/* Discover the Story (C) */
+.ovw-media { margin: 0 0 1rem; }
+.ovw-media img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; display: block;
+  -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 99%);
+  mask-image: linear-gradient(to bottom, #000 62%, transparent 99%); }
+.ovw-intro { font-size: 1.06rem; line-height: 1.65; }
+.ovw-read { margin-top: 0.9rem; }
+/* Characters (D): cards flow — no panel chrome; portrait/monogram media
+   dissolves at its bottom edge into the page background. */
+.char-card { background: transparent; border: 0; border-radius: 0; }
+.char-media { -webkit-mask-image: linear-gradient(to bottom, #000 68%, transparent 99%);
+  mask-image: linear-gradient(to bottom, #000 68%, transparent 99%); }
+.char-body { padding: 0.55rem 0.1rem 0; }
+.char-intro { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.char-profile-heading { margin: 0.7rem 0 0.2rem; font-size: 0.92rem; color: var(--text); }
+/* Explore the World (E) */
+.world-grid { display: grid; grid-template-columns: 1fr; gap: 1.6rem; }
+.world-card { margin: 0; }
+.world-card img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; display: block;
+  -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 99%);
+  mask-image: linear-gradient(to bottom, #000 62%, transparent 99%); }
+.world-card figcaption { color: var(--muted); font-size: 0.92rem; margin-top: -0.7rem; position: relative; font-weight: 600; }
+@media (min-width: 900px) { .world-grid { grid-template-columns: 1fr 1fr; } }
+/* Signature Scenes (F): concept note once under the heading; cards flow. */
+.concept-note { color: var(--muted); font-size: 0.9rem; font-style: italic; margin: -0.3rem 0 0.9rem; }
+.signature-card { background: transparent; border: 0; border-radius: 0; }
+.scene-body { padding: 0.7rem 0.1rem 0; }
+.scene-media img { -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent 99%);
+  mask-image: linear-gradient(to bottom, #000 74%, transparent 99%); }
+@media (max-width: 760px) {
+  /* horizontal swipeable rail with scroll-snap on mobile */
+  .signature-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 0.9rem; padding-bottom: 0.4rem; scrollbar-width: thin; }
+  .signature-card { flex: 0 0 84%; scroll-snap-align: start; }
+}
+/* Creative Vision (G): flowing text + one visual, alternating on desktop */
+.vision-flow .vision-text h2 { font-size: 1.3rem; }
+.vision-flow .vision-text h2::after { content: ""; display: block; width: 36px; height: 3px; background: var(--accent); margin-top: 0.35rem; border-radius: 2px; }
+.vision-flow .vision-text p { color: #c9d2d9; margin: 0 0 0.5rem; max-width: 68ch; }
+.vision-media { margin: 0 0 1rem; }
+.vision-media img { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; display: block;
+  -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 99%);
+  mask-image: linear-gradient(to bottom, #000 62%, transparent 99%); }
+@media (min-width: 900px) {
+  .vision-flow { display: grid; grid-template-columns: 1fr 1fr; gap: 1.8rem; align-items: center; }
+  .vision-media { margin: 0; order: 2; }
+}
+/* Producer Experience (H): Confirmed (accent, checkmarks, real facts) vs
+   Planned (muted, dashed, no promises) — visually and verbally distinct. */
+.producer-sub { font-size: 1.02rem; margin: 1.2rem 0 0.45rem; }
+.producer-confirmed-label { color: var(--accent); }
+.producer-list { list-style: none; padding: 0; margin: 0.4rem 0 0.6rem; }
+.producer-list li { position: relative; padding-left: 1.75rem; margin: 0.5rem 0; color: #c9d2d9; max-width: 68ch; }
+.producer-list li::before { content: "\2713"; position: absolute; left: 0.25rem; top: 0; color: var(--accent); font-weight: 900; }
+.producer-planned-label { color: var(--muted); }
+.producer-planned { border: 1px dashed var(--border); border-radius: 10px; padding: 0.8rem 0.95rem; color: var(--muted); }
+/* Meta facts: one slim flowing definition list (Overview + Story tabs) */
+.fp-meta-row { display: block; margin-top: 2.4rem; }
+.fp-meta-row .meta-box dl { grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+@media (max-width: 760px) { .fp-meta-row .meta-box dl { grid-template-columns: 1fr 1fr; } }
+/* WS5 pledge polish: the nonbinding note is unmissable in every panel
+   state (it keeps its exact disclosure text — presentation only). */
+.pledge-panel .panel-note { background: rgba(124, 252, 0, 0.08); border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0; padding: 0.6rem 0.7rem; color: #dbe3e9; }
+@media (max-width: 640px) {
+  /* compact pledge panel on mobile: tighter padding, chips stay 3x2 */
+  .pledge-panel { padding: 0.85rem 0.9rem; }
+  .pledge-panel h3 { margin-bottom: 0.6rem; }
+  .pledge-grid { gap: 0.45rem; margin-bottom: 0.6rem; }
+  .pledge-grid .chip { padding: 0.55rem 0.2rem; font-size: 0.95rem; }
+}
+
+/* ================= V2 WS6 — Investors page =================
+   FLOW RULE (owner): one continuous background, no bordered box stacks;
+   separation by spacing + headings; product imagery dissolves into the
+   page background via bottom-fade masks (About .part-card pattern).
+   Confirmed/Planned reuse the film page's producer distinction. */
+.inv-hero { padding: 1.2rem 0 0.4rem; }
+.inv-title { font-size: clamp(1.9rem, 5.2vw, 3.1rem); line-height: 1.12; margin: 0 0 0.9rem; max-width: 20ch; }
+.inv-pitch { font-size: 1.12rem; line-height: 1.65; color: #dbe3e9; max-width: 62ch; }
+.inv-notice { color: var(--muted); font-size: 0.88rem; line-height: 1.55; max-width: 68ch; margin-top: 1.1rem; }
+.inv-section { margin-top: 3rem; }
+.inv-lead { color: #c9d2d9; line-height: 1.65; max-width: 68ch; }
+.inv-grid { display: grid; grid-template-columns: 1fr; gap: 1.4rem 2rem; margin-top: 1.2rem; }
+@media (min-width: 820px) { .inv-grid { grid-template-columns: 1fr 1fr; } }
+.inv-item h4 { margin: 0 0 0.35rem; font-size: 1.02rem; }
+.inv-item p { color: #c9d2d9; line-height: 1.6; margin: 0; max-width: 56ch; }
+.inv-media { display: grid; grid-template-columns: 1fr; gap: 1.4rem; margin: 1.4rem 0 1.2rem; align-items: start; }
+@media (min-width: 820px) { .inv-media { grid-template-columns: 1.9fr 0.72fr 0.9fr; } }
+.inv-shot { margin: 0; }
+.inv-shot img { width: 100%; height: auto; display: block;
+  -webkit-mask-image: linear-gradient(to bottom, #000 68%, transparent 99%);
+  mask-image: linear-gradient(to bottom, #000 68%, transparent 99%); }
+.inv-facts { margin-top: 0.4rem; }
+.inv-sub { font-size: 1.08rem; margin: 2rem 0 0.4rem; }
+.inv-posters { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.1rem; margin-top: 1.1rem; }
+@media (min-width: 820px) { .inv-posters { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1100px) { .inv-posters { grid-template-columns: repeat(6, 1fr); } }
+.inv-poster { background: transparent; border: 0; }
+.inv-poster figcaption { padding: 0.5rem 0.1rem 0; }
+.inv-poster h4 { margin: 0 0 0.2rem; font-size: 0.94rem; line-height: 1.3; }
+.inv-poster p { margin: 0; color: var(--muted); font-size: 0.84rem; }
+.inv-model { display: grid; grid-template-columns: 1fr; gap: 1.4rem 2rem; margin-top: 1.2rem; }
+@media (min-width: 820px) { .inv-model { grid-template-columns: 1fr 1fr; } }
+.inv-model-item h4 { margin: 0.25rem 0 0.35rem; font-size: 1.02rem; }
+.inv-model-item p { color: #c9d2d9; line-height: 1.6; margin: 0; max-width: 56ch; }
+.inv-tag { display: inline-block; color: var(--muted); font-size: 0.74rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; border: 1px dashed var(--border); border-radius: 999px; padding: 0.18rem 0.55rem; }
+.inv-model-item .inv-tag { color: var(--muted); }
+.inv-status { margin-top: 1.6rem; color: #dbe3e9; background: rgba(124, 252, 0, 0.08); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 0.65rem 0.75rem; max-width: 68ch; }
+.inv-stats { list-style: none; padding: 0; margin: 1.2rem 0; }
+.inv-stats li { position: relative; padding-left: 1.75rem; margin: 0.7rem 0; color: #dbe3e9; font-size: 1.04rem; line-height: 1.55; max-width: 68ch; }
+.inv-stats li::before { content: "\2713"; position: absolute; left: 0.25rem; top: 0; color: var(--accent); font-weight: 900; }
+.inv-roadmap { display: grid; grid-template-columns: 1fr; gap: 1.6rem 2.4rem; margin-top: 1rem; }
+@media (min-width: 820px) { .inv-roadmap { grid-template-columns: 1fr 1fr; } }
+.inv-roadmap h4 { margin: 0 0 0.5rem; font-size: 1.02rem; }
+.inv-planned-list { list-style: none; padding: 0; margin: 0.6rem 0; }
+.inv-planned-list li { position: relative; padding-left: 1.75rem; margin: 0.5rem 0; color: var(--muted); }
+.inv-planned-list li::before { content: "\2013"; position: absolute; left: 0.35rem; top: 0; color: var(--muted); font-weight: 900; }
+.inv-note-text { color: var(--muted); line-height: 1.6; max-width: 68ch; margin-top: 1.2rem; }
+.inv-team-name { font-size: 1.12rem; margin: 0.6rem 0 0.4rem; }
+.inv-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; align-items: center; margin-top: 1.1rem; }
