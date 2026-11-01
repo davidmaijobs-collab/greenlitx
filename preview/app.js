@@ -134,6 +134,40 @@ const artworkFor = (id) => ARTWORK[id] || [
   { file: "posters/" + id + ".webp", kind: "poster", subject: "Poster artwork", created: "2026-10-24" },
   { file: "backdrops/" + id + ".webp", kind: "backdrop", subject: "Backdrop artwork", created: "2026-10-24" }
 ];
+/* ---------- Phase 4 (Master Prompt v3, Nov 2026): short synopses ----------
+   80–120-word synopses for all 40 films in all 4 launch languages, each
+   condensed strictly from that film's preserved long synopsis. Canonical
+   homes: the `shortSynopsis` field of each GLX_I18N.films record (and
+   master/i18n/films.json), plus the standalone dataset short-synopses.json
+   — the same content, which the Android app syncs from. shortSynopsisFor
+   reads the i18n record first, then the fetched dataset; if neither has
+   the film, the story section falls back to the derived intro
+   (storyIntroText) — the pre-Phase-4 behaviour, so nothing can regress. */
+let SHORT_SYNOPSES = {};
+function shortSynopsisFor(film) {
+  /* Primary source: the film's i18n record (Phase 4 integration put
+     `shortSynopsis` alongside tagline/logline/synopsis in every
+     language). The fetched dataset below is the same content in
+     standalone form — kept as a fallback and as the app's sync source. */
+  const rec = I18N.films && I18N.films[film.id];
+  if (rec && rec[lang] && rec[lang].shortSynopsis) return rec[lang].shortSynopsis;
+  if (rec && rec.en && rec.en.shortSynopsis && lang === "en") return rec.en.shortSynopsis;
+  const ds = SHORT_SYNOPSES[film.id];
+  if (ds) return ds[lang] || ds.en || null;
+  return null;
+}
+try {
+  fetch("short-synopses.json")
+    .then((r) => (r && r.ok ? r.json() : null))
+    .then((j) => {
+      if (j && typeof j === "object") {
+        SHORT_SYNOPSES = j;
+        const r = parseRoute();
+        if (r.view === "film") refreshDynamic();
+      }
+    })
+    .catch(() => {});
+} catch (e) {}
 function slugifyName(v) { return String(v || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""); }
 function translatedCharacters(film) {
   const rec = I18N.films && I18N.films[film.id];
@@ -176,24 +210,65 @@ function characterBioHtml(film, c, index) {
   return '<details class="char-bio"><summary>' + escapeHtml(t("film3.readBio")) + "</summary>" +
     (note ? "<p>" + escapeHtml(note) + "</p>" : "") + dl + "</details>";
 }
+/* Phase 4: scene ↔ artwork pairing (prompt §9.4). A "moment" artwork is
+   paired with a signature sequence ONLY when the correspondence is
+   verifiable from the data itself: after light stemming, every token of
+   the sequence title appears in the artwork subject (or vice versa) —
+   e.g. "Reading the Names" ↔ moment "Reading the Names", "Doyle at the
+   Board" ↔ "Doyle at the dispatch board". Unpaired sequences keep the
+   Round-4 behaviour (the film's concept stills in gallery order, never
+   captioned as depicting the sequence; the section's concept note says
+   exactly that). Each artwork is paired at most once. */
+function sceneTokens(text) {
+  return Array.from(new Set(charNameTokens(text).map((w) => {
+    if (w.length > 5 && w.endsWith("ing")) return w.slice(0, -3);
+    if (w.length > 3 && w.endsWith("s")) return w.slice(0, -1);
+    return w;
+  })));
+}
+function pairSceneStills(film, items) {
+  const assets = artworkFor(film.id);
+  const stills = assets.filter((a) => ["location", "moment", "detail", "backdrop"].includes(a.kind));
+  const moments = assets.filter((a) => a.kind === "moment");
+  const used = new Set();
+  const paired = items.map((s) => {
+    const tt = sceneTokens(s.title || "");
+    if (!tt.length) return null;
+    const hit = moments.find((m) => {
+      if (used.has(m.file)) return false;
+      const st = sceneTokens(m.subject || "");
+      if (!st.length) return false;
+      return tt.every((x) => st.includes(x)) || st.every((x) => tt.includes(x));
+    });
+    if (hit) { used.add(hit.file); return hit; }
+    return null;
+  });
+  const fallbackPool = stills.filter((a) => !used.has(a.file));
+  let fi = 0;
+  return items.map((s, i) => {
+    if (paired[i]) return paired[i];
+    if (!stills.length) return null;
+    const st = fallbackPool.length ? fallbackPool[fi++ % fallbackPool.length] : stills[i % stills.length];
+    return st;
+  });
+}
 function signatureSequencesHtml(film) {
   const seqs = localizedArrayField(film, "signatureSequences");
   if (!seqs) return "";
   const items = seqs.filter((s) => s && (String(s.title || "").trim() || String(s.description || "").trim()));
   if (!items.length) return "";
-  /* Round 4 (Oct 30): mockup scene cards carry the film's real artwork
-     stills — the non-portrait, non-poster gallery pieces (locations,
-     moments, details, backdrop) in gallery order. They are concept
-     artwork for the film, presented in sequence order; no still is
-     captioned as depicting a specific sequence. The play overlay is
-     honest: it appears ONLY on the five flagship films that have a real
-     teaser video, and it scrolls to and plays that teaser. */
-  const stills = artworkFor(film.id).filter((a) => ["location", "moment", "detail", "backdrop"].includes(a.kind));
+  /* Round 4 (Oct 30) + Phase 4: scene cards in a swipeable carousel.
+     Artwork comes from pairSceneStills: verifiably paired moments where
+     the data supports the pairing, the film's other concept stills in
+     gallery order otherwise. The play overlay is honest: it appears
+     ONLY on the five flagship films that have a real teaser video, and
+     it scrolls to and plays that teaser. */
+  const stills = pairSceneStills(film, items);
   const hasTeaser = FLAGSHIPS.includes(film.id) && !!TEASERS[film.id];
-  return '<div class="detail-section signature-section fp-flow" data-fp-section="scenes"><h2>' + escapeHtml(t("filmPage.scenesHeading")) + '</h2>' +
+  return '<div class="detail-section signature-section fp-flow" id="fp-scenes" data-fp-section="scenes"><h2>' + escapeHtml(t("filmPage.scenesHeading")) + '</h2>' +
     '<p class="concept-note">' + escapeHtml(t("filmV2.conceptNote")) + '</p>' +
     '<div class="signature-grid">' + items.map((s, i) => {
-      const st = stills.length ? stills[i % stills.length] : null;
+      const st = stills[i];
       const media = st ? '<div class="scene-media"><img src="' + escapeHtml(st.file) + '" width="1200" height="675" loading="lazy" alt="' + escapeHtml(galleryCaption(film, st)) + '">' +
         (hasTeaser ? '<button type="button" class="scene-play" data-action="play-teaser" aria-label="' + escapeHtml(t("filmPage.watchTrailer")) + '"><span aria-hidden="true">▶</span></button>' : "") + "</div>" : "";
       return '<article class="signature-card">' + media + '<div class="scene-body"><h3>' + escapeHtml(s.title || "") + "</h3><p>" + escapeHtml(s.description || "") + "</p></div></article>";
@@ -868,6 +943,23 @@ function renderWatchDetail(id) {
 
 /* ---------- film detail ---------- */
 function myPledgeFor(filmId) { return server.myPledges.find((p) => p.film_id === filmId && p.status === "pledged"); }
+/* Phase 4: the interest summary the reference layout shows beside the
+   pledge action — the film's REAL recorded interest from pledge_totals
+   (server-refetched, never client arithmetic), the funding target stated
+   as not yet set, and funds collected stated as $0 / payments inactive.
+   No percentage bar exists here by design: there is no per-film funding
+   target to divide by, and none may be invented. Labels reuse the
+   funding.* keys verbatim (the "Audience Interest" label convergence is
+   Phase 6's tracked copy change). */
+function interestSummaryHtml(film) {
+  const n = supporterCount(film), tot = supporterTotal(film);
+  const row = (label, value) => "<div><dt>" + escapeHtml(label) + "</dt><dd>" + escapeHtml(value) + "</dd></div>";
+  return '<dl class="funding-facts interest-facts">' +
+    row(t("funding.targetLabel"), t("funding.targetTBD")) +
+    row(t("funding.supporterInterestLabel"), n ? t(n === 1 ? "funding.supporterLineOne" : "funding.supporterLineMany", { count: n, amount: fmtCents(tot) }) : t("funding.noSupporterInterest")) +
+    row(t("funding.collectedLabel"), t("funding.collectedValue")) +
+    "</dl>";
+}
 function pledgePanelHtml(film) {
   /* Round 4 (Oct 30): restyled to the owner's film-page mockup — amount
      chips in a 3×2 grid ($5/$10/$25 / $50/$100/Custom) and ONE full-width
@@ -899,7 +991,7 @@ function pledgePanelHtml(film) {
       '<p class="panel-note">' + escapeHtml(t("pledge.termsNote")) + '</p>';
   }
   return '<div class="action-panel pledge-panel" id="support-panel"><h3>' + escapeHtml(t("filmPage.pledgeHeading")) + '</h3>' +
-    action + "</div>";
+    interestSummaryHtml(film) + action + "</div>";
 }
 
 const ROADMAP_KEYS = ["roadmap.1", "roadmap.2", "roadmap.3", "roadmap.4", "roadmap.5", "roadmap.6"];
@@ -962,13 +1054,46 @@ function galleryCaption(film, a) {
   if (a.kind === "backdrop") return t("film2.artworkBackdropCaption");
   return t("artworkKind." + a.kind) + " — " + a.subject;
 }
+/* Phase 4: curated gallery (prompt §9.5) — category filters over the
+   film's registry assets: All / Characters (portraits) / Locations /
+   Signature Scenes (moments). The registry is already duplicate-free, so
+   each asset renders exactly once, under All and under its one category.
+   The lightbox steps through the currently visible (filtered) set. */
+let galleryFilterState = { id: null, filter: "all" };
+const GALLERY_CATEGORIES = [
+  ["all", () => t("filter.all")],
+  ["portrait", () => t("filmPage.tabCharacters")],
+  ["location", () => t("filmPage.galleryLocations")],
+  ["moment", () => t("filmPage.scenesHeading")]
+];
+function galleryVisibleAssets(film) {
+  const assets = artworkFor(film.id);
+  if (galleryFilterState.id !== film.id || galleryFilterState.filter === "all") return assets;
+  return assets.filter((a) => a.kind === galleryFilterState.filter);
+}
+function applyGalleryFilter() {
+  const root = $("#film-detail");
+  if (!root) return;
+  const f = galleryFilterState.filter;
+  $$(".concept-gallery figure[data-kind]", root).forEach((fig) => {
+    fig.hidden = !(f === "all" || fig.dataset.kind === f);
+  });
+  $$("[data-action='gallery-filter']", root).forEach((b) =>
+    b.setAttribute("aria-pressed", String(b.dataset.filter === f)));
+}
 function galleryHtml(film) {
   const assets = artworkFor(film.id);
-  return '<div class="detail-section" data-fp-section="gallery"><h2>' + escapeHtml(t("film3.galleryHeading")) + '</h2>' +
+  if (galleryFilterState.id !== film.id) galleryFilterState = { id: film.id, filter: "all" };
+  const chips = GALLERY_CATEGORIES
+    .filter(([kind]) => kind === "all" || assets.some((a) => a.kind === kind))
+    .map(([kind, label]) =>
+      '<button type="button" class="chip" data-action="gallery-filter" data-filter="' + kind + '" aria-pressed="' + (galleryFilterState.filter === kind) + '">' + escapeHtml(label()) + "</button>").join("");
+  return '<div class="detail-section" id="fp-gallery" data-fp-section="gallery"><h2>' + escapeHtml(t("film3.galleryHeading")) + '</h2>' +
     '<p class="fineprint gallery-label">' + escapeHtml(t("film2.artworkHeading")) + "</p>" +
+    '<div class="chip-row gallery-filters" role="group">' + chips + "</div>" +
     '<div class="concept-gallery">' +
     assets.map((a, i) =>
-      '<figure><button type="button" class="gallery-item" data-lightbox-film="' + film.id + '" data-lightbox-idx="' + i + '" aria-label="' + escapeHtml(t("gallery.view", { caption: galleryCaption(film, a) })) + '">' +
+      '<figure data-kind="' + escapeHtml(a.kind) + '"><button type="button" class="gallery-item" data-lightbox-film="' + film.id + '" data-lightbox-idx="' + i + '" data-file="' + escapeHtml(a.file) + '" aria-label="' + escapeHtml(t("gallery.view", { caption: galleryCaption(film, a) })) + '">' +
       '<img src="' + escapeHtml(a.file) + '" width="' + (a.kind === "portrait" ? 1200 : a.kind === "poster" ? 880 : a.kind === "backdrop" ? 1600 : 1200) + '" height="' + (a.kind === "portrait" ? 1800 : a.kind === "poster" ? 1320 : a.kind === "backdrop" ? 900 : 800) + '" loading="lazy" alt="' + escapeHtml(galleryCaption(film, a)) + '"></button>' +
       "<figcaption>" + escapeHtml(galleryCaption(film, a)) + "</figcaption></figure>").join("") +
     "</div></div>";
@@ -1019,21 +1144,27 @@ function charactersHtml(film) {
       characterBioHtml(film, c, idx) + "</div></div>";
   }).join("");
 }
-function progressHtml(film) {
+/* Phase 4 (reconciliation design §4.4): the milestone checklist is
+   retired as a separate vocabulary — it no longer renders as its own
+   "Greenlit status" block. Its computed facts (concept & characters
+   exist · artwork & locations exist · teaser exists · showcase depth ·
+   funding target not reached) fold into the Development roadmap as
+   stage substantiation, driven by the same real signals as before. */
+function milestoneItems(film) {
   const assets = artworkFor(film.id);
-  const items = [
+  return [
     [t("progress.m1"), true],
     [t("progress.m2"), assets.some((a) => a.kind === "location")],
     [t("progress.m3"), FLAGSHIPS.includes(film.id) && !!TEASERS[film.id]],
     [t("progress.m4"), assets.length >= 10],
     [t("progress.m5"), false]
   ];
-  return '<div class="greenlight-status"><h3>' + escapeHtml(t("progress.heading")) + '</h3>' +
-    '<p class="goal-pending"><strong>' + escapeHtml(t("progress.goalPending")) + '</strong></p>' +
-    '<ul class="milestone-list">' + items.map(([label, done], i) =>
-      '<li class="' + (done ? "done" : "pending") + '"><span class="milestone-mark" aria-hidden="true">' + (done ? "✓" : "○") + "</span> " + escapeHtml(label) +
-      ' <span class="fineprint">(' + escapeHtml(done ? t("progress.achieved") : t("progress.notYet")) + ")</span>" +
-      (i === 4 ? '<p class="fineprint milestone-note">' + escapeHtml(t("progress.m5note")) + "</p>" : "") + "</li>").join("") + "</ul></div>";
+}
+function milestoneListHtml(film) {
+  return '<ul class="milestone-list">' + milestoneItems(film).map(([label, done], i) =>
+    '<li class="' + (done ? "done" : "pending") + '"><span class="milestone-mark" aria-hidden="true">' + (done ? "✓" : "○") + "</span> " + escapeHtml(label) +
+    ' <span class="fineprint">(' + escapeHtml(done ? t("progress.achieved") : t("progress.notYet")) + ")</span>" +
+    (i === 4 ? '<p class="fineprint milestone-note">' + escapeHtml(t("progress.m5note")) + "</p>" : "") + "</li>").join("") + "</ul>";
 }
 function relatedFilms(film) {
   const out = [];
@@ -1053,35 +1184,35 @@ function journalText(entry) {
   return entry;
 }
 /* ---------- Round 4 (Oct 30): film-page building blocks ---------- */
-/* V2 WS4: Overview is now an explicit curated list — the full story
-   section (synopsis + treatment) is Story-tab only, so Overview reads as
-   a visual-first flow instead of showing everything. The meta list and
-   the vision block each live in ONE node that both the Overview and the
-   Story lists include. */
-const FP_TAB_SECTIONS = {
-  overview: ["ovw-story", "characters", "ovw-world", "scenes", "vision", "producer", "production", "meta"],
-  story: ["story", "devinfo", "vision", "meta"],
-  characters: ["characters"], gallery: ["gallery", "teaser"], scenes: ["scenes"]
+/* Phase 4 (Master Prompt v3): the film page is ONE continuous cinematic
+   flow in the reference order — hero → Process/Pledge rail → The Story →
+   Characters → Signature Scenes → world strip → Gallery → teaser →
+   vision → producer → Development — and the old tab row is now a compact
+   anchor nav (Overview / Story / Characters / Signature Scenes / Gallery
+   / Development) that scrolls to each section. Nothing is hidden any
+   more; applyFilmTab only tracks which anchor was last chosen. */
+const FP_ANCHOR_TARGETS = {
+  overview: "film-detail", story: "fp-story", characters: "fp-characters",
+  scenes: "fp-scenes", gallery: "fp-gallery", development: "fp-development"
 };
 function applyFilmTab() {
   const root = $("#film-detail");
   if (!root) return;
-  const show = FP_TAB_SECTIONS[filmTabState.tab];
-  $$("[data-fp-section]", root).forEach((sec) => { sec.hidden = !!(show && !show.includes(sec.dataset.fpSection)); });
+  $$("[data-fp-section]", root).forEach((sec) => { sec.hidden = false; });
   $$(".film-tab", root).forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === filmTabState.tab)));
 }
 function filmTabsHtml(film) {
-  /* Mockup tab order: Overview | Story | Characters | Gallery | Scenes.
-     A tab is included only where the film has the real content (all 40
-     founding films currently have all five). The mockup's "Updates" and
-     "Discussion" tabs are omitted — those features do not exist here. */
+  /* Anchor order follows the reference layout. An anchor is included
+     only where the film has the real content (all 40 founding films
+     currently have all six). */
   const tabs = [["overview", t("filmPage.tabOverview")], ["story", t("filmPage.tabStory")]];
   if ((film.characters || []).length) tabs.push(["characters", t("filmPage.tabCharacters")]);
-  tabs.push(["gallery", t("filmPage.tabGallery")]);
   const seqs = localizedArrayField(film, "signatureSequences");
   if (seqs && seqs.some((s) => s && (String(s.title || "").trim() || String(s.description || "").trim()))) tabs.push(["scenes", t("filmPage.tabScenes")]);
-  return '<div class="film-tabs" role="tablist">' + tabs.map(([key, label]) =>
-    '<button type="button" role="tab" class="film-tab" data-action="film-tab" data-tab="' + key + '" aria-selected="' + (filmTabState.tab === key) + '">' + escapeHtml(label) + "</button>").join("") + "</div>";
+  tabs.push(["gallery", t("filmPage.tabGallery")]);
+  tabs.push(["development", t("film3.developmentInfo")]);
+  return '<nav class="film-tabs" aria-label="' + escapeHtml(film.title) + '">' + tabs.map(([key, label]) =>
+    '<button type="button" class="film-tab" data-action="film-tab" data-tab="' + key + '" aria-selected="' + (filmTabState.tab === key) + '">' + escapeHtml(label) + "</button>").join("") + "</nav>";
 }
 const FORMAT_LABELS = { "LIVE ACTION": "Live Action", "AI FILM": "AI Film", "HYBRID": "Hybrid", "ANIMATION": "Animation" };
 function filmMetaHtml(film) {
@@ -1130,11 +1261,23 @@ function storyIntroText(film) {
   }
   return out;
 }
-function overviewStoryHtml(film, art) {
+/* Phase 4 (prompt §9.2): "The Story" leads with the 80–120-word short
+   synopsis (shortSynopsisFor; derived-intro fallback until the dataset
+   lands), beside the film's first location artwork as in the reference.
+   "Read Full Story" reveals the complete preserved text — the logline,
+   the full long synopsis, and the full treatment — nothing is shortened
+   away or rewritten. */
+function storySectionHtml(film, art, synopsisHtml, treatmentHtmlValue) {
   const fig = art ? '<figure class="ovw-media"><img src="' + escapeHtml(art.file) + '" width="1200" height="675" loading="lazy" alt="' + escapeHtml(galleryCaption(film, art)) + '"></figure>' : "";
-  return '<div class="detail-section fp-flow ovw-story" data-fp-section="ovw-story"><h2>' + escapeHtml(t("filmV2.discoverStory")) + "</h2>" +
-    fig + '<p class="ovw-intro">' + escapeHtml(storyIntroText(film)) + "</p>" +
-    '<p class="ovw-read"><button type="button" class="btn btn-ghost" data-action="film-tab" data-tab="story">' + escapeHtml(t("filmPage.readFullStory")) + ' <span aria-hidden="true">›</span></button></p></div>';
+  const shortText = shortSynopsisFor(film) || storyIntroText(film);
+  const fullStory =
+    '<p class="logline">' + escapeHtml(filmText(film, "logline")) + "</p>" + synopsisHtml +
+    (treatmentHtmlValue ? '<p class="fineprint">' + escapeHtml(t("film.treatmentNote")) + '</p><div class="treatment">' + treatmentHtmlValue + "</div>" : "");
+  return '<div class="detail-section fp-flow ovw-story" id="fp-story" data-fp-section="story"><h2>' + escapeHtml(sectionLabel("theStory", t("filmPage.storyOverview"))) + '</h2>' +
+    '<div class="story-layout"><div class="story-text">' +
+    '<p class="ovw-intro">' + escapeHtml(shortText) + "</p>" +
+    '<details class="detail-details treatment-wrap"><summary>' + escapeHtml(t("filmPage.readFullStory")) + ' <span aria-hidden="true">›</span></summary>' + fullStory + "</details>" +
+    "</div>" + fig + "</div></div>";
 }
 function exploreWorldHtml(film) {
   const locs = artworkFor(film.id).filter((a) => a.kind === "location");
@@ -1173,25 +1316,38 @@ function renderFilmDetail(id) {
   const isSaved = savedFilms.has(film.id);
   const isFlagship = FLAGSHIPS.includes(film.id);
   const rd = film.roadmapData || {};
-  const statusText = (rd.currentStatus === "Concept Development") ? t("roadmap.1") : (rd.currentStatus || t("roadmap.1"));
+  /* Phase 4 (reconciliation design §4.3): the roadmap status line names
+     the film's §16 stage — every catalog film is at stage 2, Audience
+     Interest Gathering — instead of the catalog's legacy "Concept
+     Development" wording. The step list below keeps roadmap.1..6. */
+  const statusText = (rd.currentStatus === "Concept Development") ? t("roadmap.stageName") : (rd.currentStatus || t("roadmap.stageName"));
   const roadmapInner =
     '<p class="roadmap-status"><strong>' + escapeHtml(t("film2.statusLabel", { status: statusText })) + '</strong> — ' + escapeHtml(t("film.roadmapNote")) + "</p>" +
     (rd.completedMilestones && rd.completedMilestones.length ? "<h3>" + escapeHtml(t("film2.completedHeading")) + "</h3><ul>" + rd.completedMilestones.map((m) => "<li>" + escapeHtml(m) + "</li>").join("") + "</ul>" : "") +
     "<ol>" + ROADMAP_KEYS.map((k, i) => "<li" + (i === 0 ? ' aria-current="step"><strong>' + escapeHtml(t(k)) + " " + escapeHtml(t("film.youAreHere")) + "</strong>" : ">" + escapeHtml(t(k))) + "</li>").join("") + "</ol>" +
-    (rd.nextSteps && rd.nextSteps.length ? "<h3>" + escapeHtml(t("film2.nextStepsHeading")) + "</h3><ul>" + rd.nextSteps.map((m) => "<li>" + escapeHtml(m) + "</li>").join("") + "</ul>" : "");
+    (rd.nextSteps && rd.nextSteps.length ? "<h3>" + escapeHtml(t("film2.nextStepsHeading")) + "</h3><ul>" + rd.nextSteps.map((m) => "<li>" + escapeHtml(m) + "</li>").join("") + "</ul>" : "") +
+    /* Phase 4: the retired milestone checklist, folded in as stage
+       substantiation (reconciliation design §4.4). */
+    milestoneListHtml(film);
   const journalInner = (film.journalEntries && film.journalEntries.length) ?
     film.journalEntries.map((j) => '<article class="journal-entry"><p class="journal-date">' + escapeHtml(j.date) + "</p><p>" + escapeHtml(journalText(j.entry)) + "</p></article>").join("") : "";
-  /* Round 4 (Oct 30): film page rebuilt to the owner's approved mockup —
-     hero (genre chips, heavy title, tagline, L1 hook, Watch Trailer +
-     View Gallery actions, follow/save), Process + Pledge rail, tab row
-     (Overview | Story | Characters | Gallery | Scenes), the mockup's
-     overview composite (Story Overview + Read Full Story treatment,
-     meta box, Creative Vision box, characters, signature scenes,
-     gallery, teaser, production, development info) and You Might Also
-     Like. Adaptations vs the mockup, all honesty-driven: no Updates /
-     Discussion tabs (features do not exist), no PDF download rows (no
-     such files), no invented director quote (real Creative Vision
-     material instead), no percentage on the Process bar. */
+  /* Round 4 (Oct 30): film page rebuilt to the owner's approved mockup.
+     Phase 4 (Master Prompt v3, Nov 2026): restructured to the v3
+     reference order as ONE continuous flow — hero (genre chips, heavy
+     title, tagline, hook, Pledge Interest + trailer/gallery actions,
+     follow/save), Process + Pledge rail (pledge panel now leads with
+     the recorded-interest summary), compact anchor nav (Overview /
+     Story / Characters / Signature Scenes / Gallery / Development),
+     The Story (short synopsis + Read Full Story → logline, full
+     synopsis, complete treatment), image-first Characters, Signature
+     Scenes carousel with verifiable scene↔artwork pairing, locations
+     strip, curated Gallery with category filters, teaser, Creative
+     Vision, Producer Experience, Development (production & financing,
+     project details, roadmap with the retired milestone checklist
+     folded in, journal), You Might Also Like. Honesty adaptations
+     unchanged: no Updates/Discussion features, no PDF rows, no invented
+     quotes, no percentage on the Process bar, and NO percentage or
+     target on the interest panel — no per-film funding target exists. */
   const hasTeaser = isFlagship && !!TEASERS[film.id];
   const teaserHtml = hasTeaser ?
     '<div class="detail-section" id="film-teaser" data-fp-section="teaser"><h2>' + (lang === "en" ? "Concept Teaser" : escapeHtml(t("film2.teaserHeading"))) + '</h2>' +
@@ -1225,7 +1381,8 @@ function renderFilmDetail(id) {
     '<p class="tagline">' + escapeHtml(filmText(film, "tagline")) + "</p>" +
     hookHtml +
     '<div class="fp-hero-actions">' +
-    (hasTeaser ? '<button type="button" class="btn btn-primary" data-action="play-teaser"><span aria-hidden="true">▶</span> ' + escapeHtml(t("filmPage.watchTrailer")) + "</button>" : "") +
+    '<button type="button" class="btn btn-primary" data-scroll="support-panel">' + escapeHtml(t("filmPage.pledgeHeading")) + "</button>" +
+    (hasTeaser ? '<button type="button" class="btn btn-ghost" data-action="play-teaser"><span aria-hidden="true">▶</span> ' + escapeHtml(t("filmPage.watchTrailer")) + "</button>" : "") +
     '<button type="button" class="btn btn-ghost" data-action="open-gallery" data-id="' + film.id + '">' + escapeHtml(t("filmPage.viewGallery", { count: assets.length })) + "</button>" +
     "</div>" +
     '<div class="fp-hero-actions fp-follow-actions">' +
@@ -1239,19 +1396,15 @@ function renderFilmDetail(id) {
     "</div></div>" +
     filmTabsHtml(film) +
     '<div class="fp-main">' +
-    overviewStoryHtml(film, ovwArt) +
-    '<div class="detail-section" data-fp-section="story"><h2>' + escapeHtml(t("filmPage.storyOverview")) + '</h2>' +
-    '<p class="logline">' + escapeHtml(filmText(film, "logline")) + "</p>" +
-    synopsisHtml +
-    (treatmentHtmlValue ? '<details class="detail-details treatment-wrap"><summary>' + escapeHtml(t("filmPage.readFullStory")) + ' <span aria-hidden="true">›</span></summary><p class="fineprint">' + escapeHtml(t("film.treatmentNote")) + '</p><div class="treatment">' + treatmentHtmlValue + "</div></details>" : "") +
-    "</div>" +
-    '<div class="detail-section fp-flow" data-fp-section="characters"><h2>' + escapeHtml(sectionLabel("mainCharacters", t("film.characters"))) + '</h2><div class="char-grid">' + charactersHtml(film) + "</div></div>" +
-    exploreWorldHtml(film) +
+    storySectionHtml(film, ovwArt, synopsisHtml, treatmentHtmlValue) +
+    '<div class="detail-section fp-flow" id="fp-characters" data-fp-section="characters"><h2>' + escapeHtml(sectionLabel("mainCharacters", t("film.characters"))) + '</h2><div class="char-grid">' + charactersHtml(film) + "</div></div>" +
     signatureSequencesHtml(film) +
-    visionHtml +
+    exploreWorldHtml(film) +
     galleryHtml(film) +
     teaserHtml +
+    visionHtml +
     producerExperienceHtml(film) +
+    '<div id="fp-development">' +
     '<div class="detail-section fp-flow" data-fp-section="production"><h2>' + escapeHtml(t("film3.productionFinancing")) + '</h2>' +
     "<p><strong>" + escapeHtml(film.productionType) + ".</strong> " + escapeHtml(film.productionApproach || film.productionNote) + "</p>" +
     fundingFactsHtml(film) +
@@ -1262,7 +1415,7 @@ function renderFilmDetail(id) {
     '<div class="detail-section" data-fp-section="devinfo"><h2>' + escapeHtml(t("film3.developmentInfo")) + "</h2>" +
     '<details class="detail-details"><summary>' + escapeHtml(sectionLabel("developmentRoadmap", t("film.roadmap"))) + "</summary>" + roadmapInner + "</details>" +
     (journalInner ? '<details class="detail-details"><summary>' + escapeHtml(t("film2.journalHeading")) + "</summary>" + journalInner + "</details>" : "") +
-    progressHtml(film) +
+    "</div>" +
     "</div>" +
     "</div>" +
     '<section class="row-section fp-related" aria-label="' + escapeHtml(t("filmPage.alsoLike")) + '"><div class="section-head"><h2>' + escapeHtml(t("filmPage.alsoLike")) + '</h2><a class="section-link" href="#/discover">' + escapeHtml(t("home.viewAll")) + '</a></div>' +
@@ -2049,7 +2202,14 @@ document.addEventListener("click", (e) => {
   const lbBtn = e.target.closest("[data-lightbox-film]");
   if (lbBtn) {
     const f = filmById(lbBtn.dataset.lightboxFilm);
-    if (f) openLightbox(f, artworkFor(f.id), Number(lbBtn.dataset.lightboxIdx || 0), lbBtn);
+    if (f) {
+      /* Phase 4: the lightbox steps through the gallery's currently
+         visible (filtered) set, opening on the clicked artwork. */
+      const visible = galleryVisibleAssets(f);
+      let idx = visible.findIndex((a) => a.file === lbBtn.dataset.file);
+      if (idx < 0) idx = Math.min(Number(lbBtn.dataset.lightboxIdx || 0), Math.max(visible.length - 1, 0));
+      openLightbox(f, visible, idx, lbBtn);
+    }
     return;
   }
   const btn = e.target.closest("[data-action]");
@@ -2076,8 +2236,16 @@ document.addEventListener("click", (e) => {
     refreshDynamic();
     const ci = $("#pledge-custom"); if (ci) ci.focus({ preventScroll: true });
   } else if (btn.dataset.action === "film-tab") {
+    /* Phase 4: the film page is one continuous flow — the tab row is now
+       an anchor nav that scrolls to the section instead of hiding the
+       rest of the page. */
     filmTabState.tab = btn.dataset.tab || "overview";
     applyFilmTab();
+    const target = document.getElementById(FP_ANCHOR_TARGETS[filmTabState.tab] || "film-detail");
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+  } else if (btn.dataset.action === "gallery-filter") {
+    galleryFilterState.filter = btn.dataset.filter || "all";
+    applyGalleryFilter();
   } else if (btn.dataset.action === "open-gallery") {
     const f = filmById(id);
     if (f) openLightbox(f, artworkFor(f.id), 0, btn);

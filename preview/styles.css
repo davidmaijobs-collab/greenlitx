@@ -1480,3 +1480,24 @@ body.modal-open { overflow: hidden; }
 .inv-note-text { color: var(--muted); line-height: 1.6; max-width: 68ch; margin-top: 1.2rem; }
 .inv-team-name { font-size: 1.12rem; margin: 0.6rem 0 0.4rem; }
 .inv-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; align-items: center; margin-top: 1.1rem; }
+
+/* ---------- Phase 4 (Master Prompt v3, Nov 2026): cinematic film page ----------
+   Single-flow layout: story text beside its artwork, the Signature
+   Scenes as a swipeable carousel, curated gallery filters, the interest
+   summary inside the pledge panel, and anchor targets that clear the
+   fixed header. Appended last so these rules win over the Round-4 grid
+   definitions above at equal specificity. */
+.story-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 1.4rem; align-items: start; }
+.story-layout .ovw-media { margin: 0; }
+.story-text .treatment-wrap { margin-top: 1rem; }
+@media (max-width: 860px) { .story-layout { grid-template-columns: 1fr; } }
+#fp-story, #fp-characters, #fp-scenes, #fp-gallery, #fp-development, #film-teaser { scroll-margin-top: calc(var(--header-h) + 14px); }
+.signature-grid { display: flex; grid-template-columns: none; overflow-x: auto; scroll-snap-type: x mandatory; gap: 0.9rem; padding-bottom: 0.7rem; scrollbar-width: thin; }
+.signature-grid .signature-card { flex: 0 0 min(400px, 86%); scroll-snap-align: start; }
+.gallery-filters { margin: 0.4rem 0 1rem; }
+.concept-gallery figure[hidden] { display: none !important; }
+.interest-facts { margin: 0 0 1rem; }
+.interest-facts div:nth-child(1) { border-style: dashed; background: transparent; }
+.interest-facts div:nth-child(1) dd { color: var(--muted); font-style: italic; }
+.interest-facts div:nth-child(2) { border-left: 3px solid var(--accent); }
+.interest-facts div:nth-child(2) dd { color: var(--accent); }
