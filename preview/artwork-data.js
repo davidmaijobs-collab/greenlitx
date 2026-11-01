@@ -42,6 +42,42 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Book with margin notes",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/before-the-city-wakes/portrait-mrs-ogawa.webp",
+   "kind": "portrait",
+   "subject": "Mrs. Ogawa",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/before-the-city-wakes/portrait-ren-mori.webp",
+   "kind": "portrait",
+   "subject": "Ren Mori",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/before-the-city-wakes/moment-the-umbrella-returned-the-third-time.webp",
+   "kind": "moment",
+   "subject": "The Umbrella, Returned the Third Time",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/before-the-city-wakes/moment-two-hands-in-the-margins.webp",
+   "kind": "moment",
+   "subject": "Two Hands in the Margins",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/before-the-city-wakes/location-ginza-bakery.webp",
+   "kind": "location",
+   "subject": "Ginza bakery before dawn",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/before-the-city-wakes/detail-the-returned-umbrella.webp",
+   "kind": "detail",
+   "subject": "The returned umbrella, dry",
+   "created": "2026-11-01"
   }
  ],
  "blackwater-county": [
@@ -86,6 +122,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Ruth Ann Delaney case file",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/blackwater-county/portrait-sheriff-ret-hollis-brandt.webp",
+   "kind": "portrait",
+   "subject": "Sheriff (ret.) Hollis Brandt",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/blackwater-county/portrait-pearl-delaney.webp",
+   "kind": "portrait",
+   "subject": "Pearl Delaney",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/blackwater-county/moment-the-car-out-of-the-mud.webp",
+   "kind": "moment",
+   "subject": "The Car Out of the Mud",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/blackwater-county/moment-the-inventory-of-an-absence.webp",
+   "kind": "moment",
+   "subject": "The Inventory of an Absence",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/blackwater-county/moment-the-dispatchers-own-copy.webp",
+   "kind": "moment",
+   "subject": "The Dispatcher's Own Copy",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/blackwater-county/moment-the-dress-returned.webp",
+   "kind": "moment",
+   "subject": "The Dress Returned",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/blackwater-county/location-sheriffs-office.webp",
+   "kind": "location",
+   "subject": "Blackwater County sheriff's office",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/blackwater-county/detail-the-dispatch-log-page.webp",
+   "kind": "detail",
+   "subject": "The dispatcher's own log page, 1989",
+   "created": "2026-11-01"
   }
  ],
  "children-of-the-storm": [
@@ -130,6 +214,48 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The insulin cooler and log book",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/children-of-the-storm/portrait-sari.webp",
+   "kind": "portrait",
+   "subject": "Sari",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/children-of-the-storm/portrait-little-edo.webp",
+   "kind": "portrait",
+   "subject": "Little Edo",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/children-of-the-storm/moment-counting-masts-counting-insulin.webp",
+   "kind": "moment",
+   "subject": "Counting Masts, Counting Insulin",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/children-of-the-storm/moment-the-log-read-aloud-in-the-schoolhouse.webp",
+   "kind": "moment",
+   "subject": "The Log Read Aloud in the Schoolhouse",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/children-of-the-storm/moment-the-lamp-room-made-ordinary.webp",
+   "kind": "moment",
+   "subject": "The Lamp Room Made Ordinary",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/children-of-the-storm/location-the-lighthouse-headland.webp",
+   "kind": "location",
+   "subject": "The lighthouse on the far headland",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/children-of-the-storm/detail-the-lighthouse-radio.webp",
+   "kind": "detail",
+   "subject": "The lighthouse radio",
+   "created": "2026-11-01"
   }
  ],
  "dead-freight": [
@@ -174,6 +300,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The manifest across centuries",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/dead-freight/portrait-helena-brandt.webp",
+   "kind": "portrait",
+   "subject": "Helena Brandt",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/dead-freight/portrait-pavel-novak.webp",
+   "kind": "portrait",
+   "subject": "Pavel Novak",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/dead-freight/moment-the-draft-survey.webp",
+   "kind": "moment",
+   "subject": "The Draft Survey",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/dead-freight/moment-coffee-with-brandt.webp",
+   "kind": "moment",
+   "subject": "Coffee with Brandt",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/dead-freight/moment-notebooks-in-the-engine-room.webp",
+   "kind": "moment",
+   "subject": "Notebooks in the Engine Room",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/dead-freight/moment-cutting-the-weld.webp",
+   "kind": "moment",
+   "subject": "Cutting the Weld",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/dead-freight/location-the-engine-room.webp",
+   "kind": "location",
+   "subject": "The Meridian Star's engine room",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/dead-freight/detail-the-welded-seam.webp",
+   "kind": "detail",
+   "subject": "The welded seam of Hold Four",
+   "created": "2026-11-01"
   }
  ],
  "exit-47": [
@@ -218,6 +392,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Thirty years of registration cards",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/exit-47/portrait-vince-marlowe.webp",
+   "kind": "portrait",
+   "subject": "Vince Marlowe",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/exit-47/portrait-birdie-callahan.webp",
+   "kind": "portrait",
+   "subject": "Birdie Callahan",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/exit-47/moment-the-system-working-perfectly.webp",
+   "kind": "moment",
+   "subject": "The System, Working Perfectly",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/exit-47/moment-his-own-card-on-top.webp",
+   "kind": "moment",
+   "subject": "His Own Card, On Top",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/exit-47/moment-two-records-one-counter.webp",
+   "kind": "moment",
+   "subject": "Two Records, One Counter",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/exit-47/moment-three-a-m-one-name.webp",
+   "kind": "moment",
+   "subject": "Three A.M., One Name",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/exit-47/location-the-diner-across-the-lot.webp",
+   "kind": "location",
+   "subject": "The diner across the lot",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/exit-47/detail-the-watchers-notebook.webp",
+   "kind": "detail",
+   "subject": "The watcher's pocket notebook",
+   "created": "2026-11-01"
   }
  ],
  "letters-from-the-sun": [
@@ -262,6 +484,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Jokes stencilled on the bulkhead",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/letters-from-the-sun/portrait-dr-amara-sy.webp",
+   "kind": "portrait",
+   "subject": "Dr. Amara Sy",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/letters-from-the-sun/portrait-helen-vane.webp",
+   "kind": "portrait",
+   "subject": "Helen Vane",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/letters-from-the-sun/moment-the-redesign.webp",
+   "kind": "moment",
+   "subject": "The Redesign",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/letters-from-the-sun/moment-the-last-recording-played-to-the-end.webp",
+   "kind": "moment",
+   "subject": "The Last Recording, Played to the End",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/letters-from-the-sun/moment-one-sentence-past-the-rule.webp",
+   "kind": "moment",
+   "subject": "One Sentence Past the Rule",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/letters-from-the-sun/moment-the-garden-in-starlight.webp",
+   "kind": "moment",
+   "subject": "The Garden, in Starlight",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/letters-from-the-sun/location-houston-mission-control.webp",
+   "kind": "location",
+   "subject": "Houston mission control",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/letters-from-the-sun/detail-seed-packets-and-soil-designs.webp",
+   "kind": "detail",
+   "subject": "Helen's seed packets and soil-bed designs",
+   "created": "2026-11-01"
   }
  ],
  "no-signal-in-paradise": [
@@ -306,6 +576,42 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Ring lights and sponsored rations",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/no-signal-in-paradise/portrait-brock-delgado.webp",
+   "kind": "portrait",
+   "subject": "Brock Delgado",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/no-signal-in-paradise/portrait-mimi-kwan.webp",
+   "kind": "portrait",
+   "subject": "Mimi Kwan",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/no-signal-in-paradise/moment-the-mechanic-names-his-price.webp",
+   "kind": "moment",
+   "subject": "The Mechanic Names His Price",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/no-signal-in-paradise/moment-one-useful-thing-together-on-the-headland.webp",
+   "kind": "moment",
+   "subject": "One Useful Thing, Together, on the Headland",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/no-signal-in-paradise/location-the-island-camp.webp",
+   "kind": "location",
+   "subject": "The Island Camp",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/no-signal-in-paradise/detail-the-beacon-board.webp",
+   "kind": "detail",
+   "subject": "The Beacon Board",
+   "created": "2026-11-01"
   }
  ],
  "one-hundred-winters": [
@@ -350,6 +656,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The hearth-wall letters",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/one-hundred-winters/portrait-clara-wiesner.webp",
+   "kind": "portrait",
+   "subject": "Clara Wiesner",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/one-hundred-winters/portrait-davide-rinaldi.webp",
+   "kind": "portrait",
+   "subject": "Davide Rinaldi",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/one-hundred-winters/moment-the-first-letter.webp",
+   "kind": "moment",
+   "subject": "The First Letter",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/one-hundred-winters/moment-the-bundle-of-the-war-years.webp",
+   "kind": "moment",
+   "subject": "The Bundle of the War Years",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/one-hundred-winters/moment-sixty-years-laid-out-in-order.webp",
+   "kind": "moment",
+   "subject": "Sixty Years Laid Out in Order",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/one-hundred-winters/moment-the-night-climb-and-the-loose-stone.webp",
+   "kind": "moment",
+   "subject": "The Night Climb and the Loose Stone",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/one-hundred-winters/location-the-brenner-pass.webp",
+   "kind": "location",
+   "subject": "The Brenner Pass in winter",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/one-hundred-winters/detail-the-loose-stone.webp",
+   "kind": "detail",
+   "subject": "The loose hearth stone",
+   "created": "2026-11-01"
   }
  ],
  "red-desert-rising": [
@@ -394,6 +748,42 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Vaccine cold-chain box",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/red-desert-rising/portrait-sergeant-mariam-kone.webp",
+   "kind": "portrait",
+   "subject": "Sergeant Mariam Kone",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/red-desert-rising/portrait-commander-ilyas-rahal.webp",
+   "kind": "portrait",
+   "subject": "Commander Ilyas Rahal",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/red-desert-rising/moment-surgery-before-the-trucks-roll.webp",
+   "kind": "moment",
+   "subject": "Surgery Before the Trucks Roll",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/red-desert-rising/moment-tea-at-the-wadi-khem-crossing.webp",
+   "kind": "moment",
+   "subject": "Tea at the Wadi Khem Crossing",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/red-desert-rising/location-the-operating-tent.webp",
+   "kind": "location",
+   "subject": "The canvas operating tent",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/red-desert-rising/detail-failed-temperature-logger.webp",
+   "kind": "detail",
+   "subject": "Amara's failed temperature logger",
+   "created": "2026-11-01"
   }
  ],
  "room-for-one-more": [
@@ -438,6 +828,48 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The birthday table setting",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/room-for-one-more/portrait-marcus-alden.webp",
+   "kind": "portrait",
+   "subject": "Marcus Alden",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/room-for-one-more/portrait-june-alden.webp",
+   "kind": "portrait",
+   "subject": "June Alden",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/room-for-one-more/moment-the-boathouse-staged-twice.webp",
+   "kind": "moment",
+   "subject": "The Boathouse, Staged Twice",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/room-for-one-more/moment-playback-in-the-boathouse-room.webp",
+   "kind": "moment",
+   "subject": "Playback in the Boathouse Room",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/room-for-one-more/moment-the-thirteenth-place.webp",
+   "kind": "moment",
+   "subject": "The Thirteenth Place",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/room-for-one-more/location-the-boathouse.webp",
+   "kind": "location",
+   "subject": "The boathouse on the frozen lake",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/room-for-one-more/detail-the-voice-recorder.webp",
+   "kind": "detail",
+   "subject": "June's voice recorder and headphones",
+   "created": "2026-11-01"
   }
  ],
  "seven-minutes-to-midnight": [
@@ -482,6 +914,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Mara Quinn's dispatch console",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/seven-minutes-to-midnight/portrait-captain-daniel-reyes-voice.webp",
+   "kind": "portrait",
+   "subject": "Captain Daniel Reyes (voice)",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/seven-minutes-to-midnight/portrait-tommy-okafor.webp",
+   "kind": "portrait",
+   "subject": "Tommy Okafor",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/seven-minutes-to-midnight/moment-the-first-window.webp",
+   "kind": "moment",
+   "subject": "The First Window",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/seven-minutes-to-midnight/moment-verification-in-procedure.webp",
+   "kind": "moment",
+   "subject": "Verification in Procedure",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/seven-minutes-to-midnight/moment-the-fragments-become-a-timetable.webp",
+   "kind": "moment",
+   "subject": "The Fragments Become a Timetable",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/seven-minutes-to-midnight/moment-the-final-window.webp",
+   "kind": "moment",
+   "subject": "The Final Window",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/seven-minutes-to-midnight/location-dispatch-center-exterior-night.webp",
+   "kind": "location",
+   "subject": "Regional dispatch center at night",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/seven-minutes-to-midnight/detail-headset-and-logbook.webp",
+   "kind": "detail",
+   "subject": "Dispatcher's headset and logbook",
+   "created": "2026-11-01"
   }
  ],
  "the-blue-orchard": [
@@ -526,6 +1006,48 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Aunt Verity's ledgers",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-blue-orchard/portrait-aunt-verity-hale.webp",
+   "kind": "portrait",
+   "subject": "Aunt Verity Hale",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-blue-orchard/portrait-deputy-ana-ruiz.webp",
+   "kind": "portrait",
+   "subject": "Deputy Ana Ruiz",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-blue-orchard/moment-ripening-in-stone-order.webp",
+   "kind": "moment",
+   "subject": "Ripening in Stone Order",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-blue-orchard/moment-the-ledger-and-the-wall.webp",
+   "kind": "moment",
+   "subject": "The Ledger and the Wall",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-blue-orchard/moment-the-names-at-dusk.webp",
+   "kind": "moment",
+   "subject": "The Names at Dusk",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-blue-orchard/location-the-farmhouse.webp",
+   "kind": "location",
+   "subject": "The Hale Farmhouse",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-blue-orchard/detail-the-blue-fruit.webp",
+   "kind": "detail",
+   "subject": "The Blue Fruit, Cut Open",
+   "created": "2026-11-01"
   }
  ],
  "the-cartographers-daughter": [
@@ -570,6 +1092,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Code in the map border",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-cartographers-daughter/portrait-edmund-harrow.webp",
+   "kind": "portrait",
+   "subject": "Edmund Harrow",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-cartographers-daughter/portrait-sarayu.webp",
+   "kind": "portrait",
+   "subject": "Sarayu",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-cartographers-daughter/moment-lamplight-on-an-erasure.webp",
+   "kind": "moment",
+   "subject": "Lamplight on an Erasure",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-cartographers-daughter/moment-the-same-shaped-absence.webp",
+   "kind": "moment",
+   "subject": "The Same Shaped Absence",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-cartographers-daughter/moment-the-border-against-the-river.webp",
+   "kind": "moment",
+   "subject": "The Border Against the River",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-cartographers-daughter/moment-first-sight-at-the-end-of-the-erased-river.webp",
+   "kind": "moment",
+   "subject": "First Sight at the End of the Erased River",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-cartographers-daughter/location-the-dry-river-harbour.webp",
+   "kind": "location",
+   "subject": "The dry river harbour",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-cartographers-daughter/detail-the-water-gates.webp",
+   "kind": "detail",
+   "subject": "The water gates",
+   "created": "2026-11-01"
   }
  ],
  "the-city-without-shadows": [
@@ -614,6 +1184,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Illumination Authority crime-scene camera",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-city-without-shadows/portrait-commissioner-hana-weiss.webp",
+   "kind": "portrait",
+   "subject": "Commissioner Hana Weiss",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-city-without-shadows/portrait-old-petter.webp",
+   "kind": "portrait",
+   "subject": "Old Petter",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-city-without-shadows/moment-the-shadow-in-the-tray.webp",
+   "kind": "moment",
+   "subject": "The Shadow in the Tray",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-city-without-shadows/moment-punishment-in-lumens.webp",
+   "kind": "moment",
+   "subject": "Punishment in Lumens",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-city-without-shadows/moment-the-guided-crossing.webp",
+   "kind": "moment",
+   "subject": "The Guided Crossing",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-city-without-shadows/moment-the-doors-at-the-festival.webp",
+   "kind": "moment",
+   "subject": "The Doors at the Festival",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-city-without-shadows/location-the-umbral.webp",
+   "kind": "location",
+   "subject": "The Umbral",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-city-without-shadows/detail-the-impossible-plate.webp",
+   "kind": "detail",
+   "subject": "The impossible photographic plate",
+   "created": "2026-11-01"
   }
  ],
  "the-devils-frequency": [
@@ -682,6 +1300,18 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "KDXL mixing board",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-devils-frequency/moment-the-first-seconds-of-the-1979-tape.webp",
+   "kind": "moment",
+   "subject": "The First Seconds of the 1979 Tape",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-devils-frequency/detail-the-1979-reel-tape.webp",
+   "kind": "detail",
+   "subject": "The kept 1979 reel tape",
+   "created": "2026-11-01"
   }
  ],
  "the-forgotten-astronaut": [
@@ -726,6 +1356,48 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Elias Ward's flight checklist",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-forgotten-astronaut/portrait-director-paul-hennig.webp",
+   "kind": "portrait",
+   "subject": "Director Paul Hennig",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-forgotten-astronaut/portrait-miriam-ward-voice-and-recordings.webp",
+   "kind": "portrait",
+   "subject": "Miriam Ward (voice and recordings)",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-forgotten-astronaut/moment-the-wrong-earth.webp",
+   "kind": "moment",
+   "subject": "The Wrong Earth",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-forgotten-astronaut/moment-miriam-speaks.webp",
+   "kind": "moment",
+   "subject": "Miriam Speaks",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-forgotten-astronaut/moment-the-burn-and-the-log-entry.webp",
+   "kind": "moment",
+   "subject": "The Burn and the Log Entry",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-forgotten-astronaut/location-mission-control-night.webp",
+   "kind": "location",
+   "subject": "Mission Control at Night",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-forgotten-astronaut/detail-pressed-larkspur.webp",
+   "kind": "detail",
+   "subject": "Pressed Larkspur in a Childhood Book",
+   "created": "2026-11-01"
   }
  ],
  "the-girl-who-stole-tomorrow": [
@@ -770,6 +1442,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Future Wren's warning notes",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-girl-who-stole-tomorrow/portrait-future-wren-the-notes.webp",
+   "kind": "portrait",
+   "subject": "Future Wren (the Notes)",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-girl-who-stole-tomorrow/portrait-dario-kim.webp",
+   "kind": "portrait",
+   "subject": "Dario Kim",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-girl-who-stole-tomorrow/moment-three-hours-in-the-corridor.webp",
+   "kind": "moment",
+   "subject": "Three Hours in the Corridor",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-girl-who-stole-tomorrow/moment-the-rules-in-the-cabinet.webp",
+   "kind": "moment",
+   "subject": "The Rules in the Cabinet",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-girl-who-stole-tomorrow/moment-her-own-handwriting.webp",
+   "kind": "moment",
+   "subject": "Her Own Handwriting",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-girl-who-stole-tomorrow/moment-the-gift-forward.webp",
+   "kind": "moment",
+   "subject": "The Gift Forward",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-girl-who-stole-tomorrow/location-the-hospital-corridor.webp",
+   "kind": "location",
+   "subject": "The hospital corridor at night",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-girl-who-stole-tomorrow/detail-wrens-cello.webp",
+   "kind": "detail",
+   "subject": "Wren's cello",
+   "created": "2026-11-01"
   }
  ],
  "the-glass-diver": [
@@ -814,6 +1534,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The log of dives not yet made",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-glass-diver/portrait-dr-halvard-nystrom.webp",
+   "kind": "portrait",
+   "subject": "Dr. Halvard Nyström",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-glass-diver/portrait-marcus-feld.webp",
+   "kind": "portrait",
+   "subject": "Marcus Feld",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-glass-diver/moment-the-lights-along-her-path.webp",
+   "kind": "moment",
+   "subject": "The Lights Along Her Path",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-glass-diver/moment-the-salvage-that-dims-the-gardens.webp",
+   "kind": "moment",
+   "subject": "The Salvage That Dims the Gardens",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-glass-diver/moment-the-report-read-to-a-living-diver.webp",
+   "kind": "moment",
+   "subject": "The Report Read to a Living Diver",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-glass-diver/moment-one-full-exchange.webp",
+   "kind": "moment",
+   "subject": "One Full Exchange",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-glass-diver/location-the-garden-bay.webp",
+   "kind": "location",
+   "subject": "Aegir's garden bay",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-glass-diver/detail-hydrophone-array.webp",
+   "kind": "detail",
+   "subject": "The hydrophone array",
+   "created": "2026-11-01"
   }
  ],
  "the-great-escape-club": [
@@ -858,6 +1626,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The 1968 Cornwall photograph",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-great-escape-club/portrait-arthur-bell.webp",
+   "kind": "portrait",
+   "subject": "Arthur Bell",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-great-escape-club/portrait-priya-shah.webp",
+   "kind": "portrait",
+   "subject": "Priya Shah",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-great-escape-club/moment-the-laundry-room-founding.webp",
+   "kind": "moment",
+   "subject": "The Laundry-Room Founding",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-great-escape-club/moment-the-safe-crackers-rehearsal.webp",
+   "kind": "moment",
+   "subject": "The Safe-Cracker's Rehearsal",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-great-escape-club/moment-the-drill-that-became-real.webp",
+   "kind": "moment",
+   "subject": "The Drill That Became Real",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-great-escape-club/moment-the-dig-at-the-cairn.webp",
+   "kind": "moment",
+   "subject": "The Dig at the Cairn",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-great-escape-club/location-the-cornish-cairn.webp",
+   "kind": "location",
+   "subject": "The Cairn, Cornish Headland",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-great-escape-club/detail-the-medication-safe.webp",
+   "kind": "detail",
+   "subject": "The medication safe",
+   "created": "2026-11-01"
   }
  ],
  "the-house-of-seven-doors": [
@@ -902,6 +1718,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The seven study keys",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-house-of-seven-doors/portrait-theo-hale.webp",
+   "kind": "portrait",
+   "subject": "Theo Hale",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-house-of-seven-doors/portrait-julian-marsh.webp",
+   "kind": "portrait",
+   "subject": "Julian Marsh",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-house-of-seven-doors/moment-the-will-reading.webp",
+   "kind": "moment",
+   "subject": "The Will Reading",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-house-of-seven-doors/moment-the-first-door.webp",
+   "kind": "moment",
+   "subject": "The First Door",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-house-of-seven-doors/moment-theo-reads-aloud.webp",
+   "kind": "moment",
+   "subject": "Theo Reads Aloud",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-house-of-seven-doors/moment-the-hearth-witnessed.webp",
+   "kind": "moment",
+   "subject": "The Hearth, Witnessed",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-house-of-seven-doors/location-the-seven-studies-corridor.webp",
+   "kind": "location",
+   "subject": "The seven studies corridor, Blackmoor House",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-house-of-seven-doors/detail-the-sealed-envelope.webp",
+   "kind": "detail",
+   "subject": "The sealed envelope for the thirtieth day",
+   "created": "2026-11-01"
   }
  ],
  "the-invisible-passenger": [
@@ -946,6 +1810,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Ruth Adler's ticket tally",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-invisible-passenger/portrait-the-passenger-seat-9.webp",
+   "kind": "portrait",
+   "subject": "The Passenger (Seat 9)",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-invisible-passenger/portrait-daniel-adler-in-recordings.webp",
+   "kind": "portrait",
+   "subject": "Daniel Adler (in recordings)",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-invisible-passenger/moment-the-three-counts.webp",
+   "kind": "moment",
+   "subject": "The Three Counts",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-invisible-passenger/moment-the-sealed-test.webp",
+   "kind": "moment",
+   "subject": "The Sealed Test",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-invisible-passenger/moment-what-playback-keeps.webp",
+   "kind": "moment",
+   "subject": "What Playback Keeps",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-invisible-passenger/moment-the-final-count.webp",
+   "kind": "moment",
+   "subject": "The Final Count",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-invisible-passenger/location-conductors-office.webp",
+   "kind": "location",
+   "subject": "The conductor's office",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-invisible-passenger/detail-the-folded-note.webp",
+   "kind": "detail",
+   "subject": "The folded note in seat 9",
+   "created": "2026-11-01"
   }
  ],
  "the-keeper-of-forgotten-things": [
@@ -1020,6 +1932,30 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Mothlight detail",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-keeper-of-forgotten-things/moment-the-rain-of-small-hours.webp",
+   "kind": "moment",
+   "subject": "The Rain of Small Hours",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-keeper-of-forgotten-things/moment-the-doll-wren-rescues.webp",
+   "kind": "moment",
+   "subject": "The Doll Wren Rescues",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-keeper-of-forgotten-things/moment-the-city-of-imaginary-friends.webp",
+   "kind": "moment",
+   "subject": "The City of Imaginary Friends",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-keeper-of-forgotten-things/detail-plant-cuttings-in-jam-jars.webp",
+   "kind": "detail",
+   "subject": "Wren's plant cuttings in jam jars",
+   "created": "2026-11-01"
   }
  ],
  "the-kings-last-cook": [
@@ -1064,6 +2000,48 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Bastien's memory of recipes",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-kings-last-cook/portrait-toinette.webp",
+   "kind": "portrait",
+   "subject": "Toinette",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-kings-last-cook/portrait-the-comte-de-varenne.webp",
+   "kind": "portrait",
+   "subject": "The Comte de Varenne",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-kings-last-cook/moment-the-room-read-by-its-plates.webp",
+   "kind": "moment",
+   "subject": "The Room Read by Its Plates",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-kings-last-cook/moment-the-meal-for-a-name.webp",
+   "kind": "moment",
+   "subject": "The Meal for a Name",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-kings-last-cook/moment-the-banquet-of-demystification.webp",
+   "kind": "moment",
+   "subject": "The Banquet of Demystification",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-kings-last-cook/location-paris-kitchen.webp",
+   "kind": "location",
+   "subject": "Bastien's Paris kitchen",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-kings-last-cook/detail-the-tasting-spoon.webp",
+   "kind": "detail",
+   "subject": "The tasting spoon",
+   "created": "2026-11-01"
   }
  ],
  "the-last-broadcast": [
@@ -1108,6 +2086,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Emergency bulletins",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-last-broadcast/portrait-governors-liaison-mr-ash.webp",
+   "kind": "portrait",
+   "subject": "Governor's Liaison, 'Mr. Ash'",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-broadcast/portrait-marta-ellison-listener.webp",
+   "kind": "portrait",
+   "subject": "Marta Ellison (listener)",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-broadcast/moment-the-night-the-world-went-quiet.webp",
+   "kind": "moment",
+   "subject": "The Night the World Went Quiet",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-broadcast/moment-the-bulletin-that-changed-hands.webp",
+   "kind": "moment",
+   "subject": "The Bulletin That Changed Hands",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-broadcast/moment-the-audit-at-3-a-m.webp",
+   "kind": "moment",
+   "subject": "The Audit at 3 A.M.",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-broadcast/moment-the-bulletin-read-twice.webp",
+   "kind": "moment",
+   "subject": "The Bulletin Read Twice",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-broadcast/location-the-transmitter-hall.webp",
+   "kind": "location",
+   "subject": "The transmitter hall",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-broadcast/detail-frequency-cards.webp",
+   "kind": "detail",
+   "subject": "Hand-copied frequency cards on a farmhouse door",
+   "created": "2026-11-01"
   }
  ],
  "the-last-firekeeper": [
@@ -1152,6 +2178,48 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The seed-flame in its lantern",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-last-firekeeper/portrait-master-corin.webp",
+   "kind": "portrait",
+   "subject": "Master Corin",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-firekeeper/portrait-captain-ilya-brandt.webp",
+   "kind": "portrait",
+   "subject": "Captain Ilya Brandt",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-firekeeper/moment-the-bell-rings-against-her.webp",
+   "kind": "moment",
+   "subject": "The Bell Rings Against Her",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-firekeeper/moment-the-frozen-pass.webp",
+   "kind": "moment",
+   "subject": "The Frozen Pass",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-firekeeper/moment-the-division-at-the-worlds-edge.webp",
+   "kind": "moment",
+   "subject": "The Division at the World's Edge",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-firekeeper/location-the-frozen-river.webp",
+   "kind": "location",
+   "subject": "The frozen river, World's Edge approach",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-firekeeper/detail-measure-tally.webp",
+   "kind": "detail",
+   "subject": "Ash's tally of the twelve measures",
+   "created": "2026-11-01"
   }
  ],
  "the-last-picture-house": [
@@ -1196,6 +2264,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "1950s film cans",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-last-picture-house/portrait-dottie-kaminski.webp",
+   "kind": "portrait",
+   "subject": "Dottie Kaminski",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-picture-house/portrait-rebecca-sloane.webp",
+   "kind": "portrait",
+   "subject": "Rebecca Sloane",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-picture-house/moment-the-booth-wall.webp",
+   "kind": "moment",
+   "subject": "The Booth Wall",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-picture-house/moment-first-light-on-the-reels.webp",
+   "kind": "moment",
+   "subject": "First Light on the Reels",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-picture-house/moment-dottie-at-the-frames-edge.webp",
+   "kind": "moment",
+   "subject": "Dottie at the Frame's Edge",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-picture-house/moment-the-last-screening.webp",
+   "kind": "moment",
+   "subject": "The Last Screening",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-picture-house/location-the-rex-exterior.webp",
+   "kind": "location",
+   "subject": "The Rex exterior at dusk",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-picture-house/detail-the-rex-projector.webp",
+   "kind": "detail",
+   "subject": "The Rex projector",
+   "created": "2026-11-01"
   }
  ],
  "the-last-summer-of-rome": [
@@ -1240,6 +2356,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Imperial courier's dispatch satchel",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-last-summer-of-rome/portrait-odoacer.webp",
+   "kind": "portrait",
+   "subject": "Odoacer",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-summer-of-rome/portrait-bishop-ambrosius-of-mediolanum.webp",
+   "kind": "portrait",
+   "subject": "Bishop Ambrosius of Mediolanum",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-summer-of-rome/moment-the-sealing-and-the-stripping.webp",
+   "kind": "moment",
+   "subject": "The Sealing and the Stripping",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-summer-of-rome/moment-seal-or-blood-at-the-po-ferry.webp",
+   "kind": "moment",
+   "subject": "Seal or Blood at the Po Ferry",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-summer-of-rome/moment-the-parley-of-evidence.webp",
+   "kind": "moment",
+   "subject": "The Parley of Evidence",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-summer-of-rome/moment-the-unsealed-report.webp",
+   "kind": "moment",
+   "subject": "The Unsealed Report",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-summer-of-rome/location-the-po-ferry-crossing.webp",
+   "kind": "location",
+   "subject": "The Po ferry crossing",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-summer-of-rome/detail-bronze-courier-warrant.webp",
+   "kind": "detail",
+   "subject": "Bronze courier warrant",
+   "created": "2026-11-01"
   }
  ],
  "the-last-train-below": [
@@ -1314,6 +2478,18 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Night Line driver cab details",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-last-train-below/moment-reading-the-names.webp",
+   "kind": "moment",
+   "subject": "Reading the Names",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-train-below/detail-sonar-echo.webp",
+   "kind": "detail",
+   "subject": "Sonar scope — the impossible contact",
+   "created": "2026-11-01"
   }
  ],
  "the-memory-auction": [
@@ -1358,6 +2534,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Vesper Exchange memory vial",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-memory-auction/portrait-odette-vesper.webp",
+   "kind": "portrait",
+   "subject": "Odette Vesper",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-memory-auction/portrait-theo-park.webp",
+   "kind": "portrait",
+   "subject": "Theo Park",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-memory-auction/moment-the-grading-of-lot-1147.webp",
+   "kind": "moment",
+   "subject": "The Grading of Lot 1147",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-memory-auction/moment-the-widowers-summers.webp",
+   "kind": "moment",
+   "subject": "The Widower's Summers",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-memory-auction/moment-the-lake-house-replay.webp",
+   "kind": "moment",
+   "subject": "The Lake-House Replay",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-memory-auction/moment-the-emptied-auction-room.webp",
+   "kind": "moment",
+   "subject": "The Emptied Auction Room",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-memory-auction/location-the-lake-house.webp",
+   "kind": "location",
+   "subject": "The Lake House",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-memory-auction/detail-sealed-trust-case.webp",
+   "kind": "detail",
+   "subject": "Sealed trust case",
+   "created": "2026-11-01"
   }
  ],
  "the-night-orchestra": [
@@ -1402,6 +2626,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The conductor's private catalogue",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-night-orchestra/portrait-petr-novak.webp",
+   "kind": "portrait",
+   "subject": "Petr Novák",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-night-orchestra/portrait-inspector-greta-lindqvist.webp",
+   "kind": "portrait",
+   "subject": "Inspector Greta Lindqvist",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-night-orchestra/moment-the-audition-at-3-a-m.webp",
+   "kind": "moment",
+   "subject": "The Audition at 3 A.M.",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-night-orchestra/moment-the-recognition.webp",
+   "kind": "moment",
+   "subject": "The Recognition",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-night-orchestra/moment-two-proofs-one-pattern.webp",
+   "kind": "moment",
+   "subject": "Two Proofs, One Pattern",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-night-orchestra/moment-the-deviation.webp",
+   "kind": "moment",
+   "subject": "The Deviation",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-night-orchestra/location-the-catalogue-archive.webp",
+   "kind": "location",
+   "subject": "The catalogue archive",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-night-orchestra/detail-annotated-violin-part.webp",
+   "kind": "detail",
+   "subject": "The predecessor's annotated violin part",
+   "created": "2026-11-01"
   }
  ],
  "the-ocean-beneath-us": [
@@ -1446,6 +2718,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Calypso Deep sonar display",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-ocean-beneath-us/portrait-dr-yusuf-adeyemi.webp",
+   "kind": "portrait",
+   "subject": "Dr. Yusuf Adeyemi",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-ocean-beneath-us/portrait-claire-voss.webp",
+   "kind": "portrait",
+   "subject": "Claire Voss",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-ocean-beneath-us/moment-geometry-in-the-sonar-room.webp",
+   "kind": "moment",
+   "subject": "Geometry in the Sonar Room",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-ocean-beneath-us/moment-channels-of-warm-water.webp",
+   "kind": "moment",
+   "subject": "Channels of Warm Water",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-ocean-beneath-us/moment-the-sector-that-went-dark.webp",
+   "kind": "moment",
+   "subject": "The Sector That Went Dark",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-ocean-beneath-us/moment-offered-light-deleted-coordinates.webp",
+   "kind": "moment",
+   "subject": "Offered Light, Deleted Coordinates",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-ocean-beneath-us/location-calypso-deep-at-surface.webp",
+   "kind": "location",
+   "subject": "Calypso Deep at surface, storm approaching",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-ocean-beneath-us/detail-worked-stone-channel.webp",
+   "kind": "detail",
+   "subject": "Worked stone channel joint",
+   "created": "2026-11-01"
   }
  ],
  "the-perfect-alibi": [
@@ -1490,6 +2810,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Frankie Doyle's TV memorabilia",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-perfect-alibi/portrait-gloria-doyle.webp",
+   "kind": "portrait",
+   "subject": "Gloria Doyle",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-perfect-alibi/portrait-ben-whitlock.webp",
+   "kind": "portrait",
+   "subject": "Ben Whitlock",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-perfect-alibi/moment-the-showcase-performance.webp",
+   "kind": "moment",
+   "subject": "The Showcase Performance",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-perfect-alibi/moment-the-arrest.webp",
+   "kind": "moment",
+   "subject": "The Arrest",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-perfect-alibi/moment-the-waiting-room.webp",
+   "kind": "moment",
+   "subject": "The Waiting Room",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-perfect-alibi/moment-the-restaged-showcase.webp",
+   "kind": "moment",
+   "subject": "The Restaged Showcase",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-perfect-alibi/location-saltmarsh-yard.webp",
+   "kind": "location",
+   "subject": "Saltmarsh Yard",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-perfect-alibi/detail-the-smashed-watch.webp",
+   "kind": "detail",
+   "subject": "The smashed watch",
+   "created": "2026-11-01"
   }
  ],
  "the-republic-of-tomorrow": [
@@ -1534,6 +2902,48 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Foresight Index citizen card",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-republic-of-tomorrow/portrait-minister-elena-voss.webp",
+   "kind": "portrait",
+   "subject": "Minister Elena Voss",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-republic-of-tomorrow/portrait-old-marek.webp",
+   "kind": "portrait",
+   "subject": "Old Marek",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-republic-of-tomorrow/moment-the-consolidation-certified.webp",
+   "kind": "moment",
+   "subject": "The Consolidation, Certified",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-republic-of-tomorrow/moment-introduced-by-the-state.webp",
+   "kind": "moment",
+   "subject": "Introduced by the State",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-republic-of-tomorrow/moment-vosss-arithmetic.webp",
+   "kind": "moment",
+   "subject": "Voss's Arithmetic",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-republic-of-tomorrow/location-the-kestrel-blind-spot.webp",
+   "kind": "location",
+   "subject": "Kestrel blind-spot district",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-republic-of-tomorrow/detail-mareks-paper-ledger.webp",
+   "kind": "detail",
+   "subject": "Old Marek's handwritten paper ledger",
+   "created": "2026-11-01"
   }
  ],
  "the-retirement-job": [
@@ -1578,6 +2988,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Dot's safecracker tools",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-retirement-job/portrait-miriam-okafor.webp",
+   "kind": "portrait",
+   "subject": "Miriam Okafor",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-retirement-job/portrait-eddie-vance.webp",
+   "kind": "portrait",
+   "subject": "Eddie Vance",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-retirement-job/moment-the-retirement-planning-seminar.webp",
+   "kind": "moment",
+   "subject": "The Retirement Planning Seminar",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-retirement-job/moment-the-getaway-at-twenty-eight-miles-an-hour.webp",
+   "kind": "moment",
+   "subject": "The Getaway at Twenty-Eight Miles an Hour",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-retirement-job/moment-the-hearing-aid-at-the-alarm-panel.webp",
+   "kind": "moment",
+   "subject": "The Hearing Aid at the Alarm Panel",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-retirement-job/moment-four-thermoses-at-the-demolition.webp",
+   "kind": "moment",
+   "subject": "Four Thermoses at the Demolition",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-retirement-job/location-the-vault-interior.webp",
+   "kind": "location",
+   "subject": "The vault interior",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-retirement-job/detail-forgers-calligraphy-kit.webp",
+   "kind": "detail",
+   "subject": "Miriam's calligraphy kit",
+   "created": "2026-11-01"
   }
  ],
  "the-second-moon": [
@@ -1622,6 +3080,48 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Two-moon tide temple carving",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-second-moon/portrait-niko-petrakis.webp",
+   "kind": "portrait",
+   "subject": "Niko Petrakis",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-second-moon/portrait-tomas-irrarazaval-and-elian.webp",
+   "kind": "portrait",
+   "subject": "Tomás Irrarázaval and Elian",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-second-moon/moment-the-first-rising.webp",
+   "kind": "moment",
+   "subject": "The First Rising",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-second-moon/moment-eleven-years-of-moons.webp",
+   "kind": "moment",
+   "subject": "Eleven Years of Moons",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-second-moon/moment-the-held-sea.webp",
+   "kind": "moment",
+   "subject": "The Held Sea",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-second-moon/location-atacama-lighthouse.webp",
+   "kind": "location",
+   "subject": "The Atacama lighthouse",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-second-moon/detail-elians-painting.webp",
+   "kind": "detail",
+   "subject": "Elian's two-moon painting",
+   "created": "2026-11-01"
   }
  ],
  "the-silence-protocol": [
@@ -1666,6 +3166,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Heartbeat pattern in the floor",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-silence-protocol/portrait-dr-ingrid-voss.webp",
+   "kind": "portrait",
+   "subject": "Dr. Ingrid Voss",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-silence-protocol/portrait-amira-haddad.webp",
+   "kind": "portrait",
+   "subject": "Amira Haddad",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-silence-protocol/moment-the-first-answering-tap.webp",
+   "kind": "moment",
+   "subject": "The First Answering Tap",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-silence-protocol/moment-the-synchronisation.webp",
+   "kind": "moment",
+   "subject": "The Synchronisation",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-silence-protocol/moment-sheet-music.webp",
+   "kind": "moment",
+   "subject": "Sheet Music",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-silence-protocol/moment-the-reply-with-a-rest-left-open.webp",
+   "kind": "moment",
+   "subject": "The Reply, With a Rest Left Open",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-silence-protocol/location-hospital-corridor.webp",
+   "kind": "location",
+   "subject": "Hospital corridor at night — the pattern spreads",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-silence-protocol/detail-metronome-and-drum.webp",
+   "kind": "detail",
+   "subject": "Amira's metronome and inlaid hand drum",
+   "created": "2026-11-01"
   }
  ],
  "the-star-collector": [
@@ -1710,6 +3258,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Pip, the First Star",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-star-collector/portrait-pip-the-first-star.webp",
+   "kind": "portrait",
+   "subject": "Pip (the First Star)",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-star-collector/portrait-the-lamplighter.webp",
+   "kind": "portrait",
+   "subject": "The Lamplighter",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-star-collector/moment-the-lamp-trade-round.webp",
+   "kind": "moment",
+   "subject": "The Lamp-Trade Round",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-star-collector/moment-forty-jars-below-a-thinner-sky-above.webp",
+   "kind": "moment",
+   "subject": "Forty Jars Below, a Thinner Sky Above",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-star-collector/moment-the-lamplighters-first-visit.webp",
+   "kind": "moment",
+   "subject": "The Lamplighter's First Visit",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-star-collector/moment-a-conversation-in-a-boat-in-a-storm.webp",
+   "kind": "moment",
+   "subject": "A Conversation in a Boat in a Storm",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-star-collector/location-the-lighthouse-at-dusk.webp",
+   "kind": "location",
+   "subject": "The Lighthouse at Dusk",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-star-collector/detail-hand-ground-lens.webp",
+   "kind": "detail",
+   "subject": "Nia's Hand-Ground Lens",
+   "created": "2026-11-01"
   }
  ],
  "the-witness-list": [
@@ -1754,6 +3350,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Sofia Marchetti's source notebook",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-witness-list/portrait-the-auditor-source-three.webp",
+   "kind": "portrait",
+   "subject": "The Auditor (Source Three)",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-witness-list/portrait-marcus-oyelaran.webp",
+   "kind": "portrait",
+   "subject": "Marcus Oyelaran",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-witness-list/moment-the-check-in-that-does-not-come.webp",
+   "kind": "moment",
+   "subject": "The Check-In That Does Not Come",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-witness-list/moment-tea-with-the-mother-who-has-one-son.webp",
+   "kind": "moment",
+   "subject": "Tea With the Mother Who Has One Son",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-witness-list/moment-lunch-with-helena-brandt.webp",
+   "kind": "moment",
+   "subject": "Lunch With Helena Brandt",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-witness-list/moment-everything-everywhere-at-once.webp",
+   "kind": "moment",
+   "subject": "Everything, Everywhere, at Once",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-witness-list/location-herald-newsroom-at-dawn.webp",
+   "kind": "location",
+   "subject": "Meridian Herald newsroom at dawn",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-witness-list/detail-the-erased-file.webp",
+   "kind": "detail",
+   "subject": "The erased personnel file",
+   "created": "2026-11-01"
   }
  ],
  "the-woman-in-apartment-9": [
@@ -1828,6 +3472,24 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Radio valves disguised as buttons",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/the-woman-in-apartment-9/moment-the-lesson-that-is-not-a-lesson.webp",
+   "kind": "moment",
+   "subject": "The Lesson That Is Not a Lesson",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-woman-in-apartment-9/moment-the-search-of-apartment-9.webp",
+   "kind": "moment",
+   "subject": "The Search of Apartment 9",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-woman-in-apartment-9/detail-felted-practice-keyboard.webp",
+   "kind": "detail",
+   "subject": "David Lenz's felted practice keyboard in the coal cellar",
+   "created": "2026-11-01"
   }
  ],
  "tomorrows-witness": [
@@ -1896,6 +3558,24 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The drive and its timestamp",
    "created": "2026-10-25"
+  },
+  {
+   "file": "artwork/tomorrows-witness/moment-reyes-audits-his-own-murder.webp",
+   "kind": "moment",
+   "subject": "Reyes Audits His Own Murder",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/tomorrows-witness/moment-the-hearing-chidi-answers.webp",
+   "kind": "moment",
+   "subject": "The Hearing: Chidi Answers",
+   "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/tomorrows-witness/detail-the-1147-clock.webp",
+   "kind": "detail",
+   "subject": "The 11:47 clock",
+   "created": "2026-11-01"
   }
  ]
 };
