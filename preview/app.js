@@ -155,16 +155,26 @@ function localizedArrayField(film, field) {
   const v = filmText(film, field);
   return Array.isArray(v) ? v : null;
 }
-function characterProfileHtml(film, c, index) {
+function characterProfileDl(film, c, index) {
   const source = film && Array.isArray(film.characters) ? film.characters[index] : null;
   const profile = (c && c.profile && typeof c.profile === "object") ? c.profile
     : (source && source.profile && typeof source.profile === "object" ? source.profile : null);
   if (!profile) return "";
   if (!PROFILE_KEYS.some((k) => String(profile[k] || "").trim())) return "";
-  return '<details class="char-profile"><summary>' + escapeHtml(t("film4.profileHeading")) + '</summary>' +
+  return '<h4 class="char-profile-heading">' + escapeHtml(t("film4.profileHeading")) + '</h4>' +
     '<dl class="char-profile-list">' + PROFILE_KEYS.map((k) =>
       "<div><dt>" + escapeHtml(t(PROFILE_LABEL_KEYS[k])) + "</dt><dd>" + escapeHtml(profile[k] || "") + "</dd></div>").join("") +
-    "</dl></details>";
+    "</dl>";
+}
+/* V2 WS4: ONE biography expander per character card — the full note text
+   plus the structured profile — so the visible card stays a clamped
+   one-line intro and no character text is lost. */
+function characterBioHtml(film, c, index) {
+  const dl = characterProfileDl(film, c, index);
+  const note = String(c.note || "").trim();
+  if (!note && !dl) return "";
+  return '<details class="char-bio"><summary>' + escapeHtml(t("film3.readBio")) + "</summary>" +
+    (note ? "<p>" + escapeHtml(note) + "</p>" : "") + dl + "</details>";
 }
 function signatureSequencesHtml(film) {
   const seqs = localizedArrayField(film, "signatureSequences");
@@ -180,10 +190,11 @@ function signatureSequencesHtml(film) {
      teaser video, and it scrolls to and plays that teaser. */
   const stills = artworkFor(film.id).filter((a) => ["location", "moment", "detail", "backdrop"].includes(a.kind));
   const hasTeaser = FLAGSHIPS.includes(film.id) && !!TEASERS[film.id];
-  return '<div class="detail-section signature-section" data-fp-section="scenes"><h2>' + escapeHtml(t("filmPage.scenesHeading")) + '</h2>' +
+  return '<div class="detail-section signature-section fp-flow" data-fp-section="scenes"><h2>' + escapeHtml(t("filmPage.scenesHeading")) + '</h2>' +
+    '<p class="concept-note">' + escapeHtml(t("filmV2.conceptNote")) + '</p>' +
     '<div class="signature-grid">' + items.map((s, i) => {
       const st = stills.length ? stills[i % stills.length] : null;
-      const media = st ? '<div class="scene-media"><img src="' + escapeHtml(st.file) + '" loading="lazy" alt="' + escapeHtml(galleryCaption(film, st)) + '">' +
+      const media = st ? '<div class="scene-media"><img src="' + escapeHtml(st.file) + '" width="1200" height="675" loading="lazy" alt="' + escapeHtml(galleryCaption(film, st)) + '">' +
         (hasTeaser ? '<button type="button" class="scene-play" data-action="play-teaser" aria-label="' + escapeHtml(t("filmPage.watchTrailer")) + '"><span aria-hidden="true">▶</span></button>' : "") + "</div>" : "";
       return '<article class="signature-card">' + media + '<div class="scene-body"><h3>' + escapeHtml(s.title || "") + "</h3><p>" + escapeHtml(s.description || "") + "</p></div></article>";
     }).join("") + "</div></div>";
@@ -958,7 +969,7 @@ function galleryHtml(film) {
     '<div class="concept-gallery">' +
     assets.map((a, i) =>
       '<figure><button type="button" class="gallery-item" data-lightbox-film="' + film.id + '" data-lightbox-idx="' + i + '" aria-label="' + escapeHtml(t("gallery.view", { caption: galleryCaption(film, a) })) + '">' +
-      '<img src="' + escapeHtml(a.file) + '" loading="lazy" alt="' + escapeHtml(galleryCaption(film, a)) + '"></button>' +
+      '<img src="' + escapeHtml(a.file) + '" width="' + (a.kind === "portrait" ? 1200 : a.kind === "poster" ? 880 : a.kind === "backdrop" ? 1600 : 1200) + '" height="' + (a.kind === "portrait" ? 1800 : a.kind === "poster" ? 1320 : a.kind === "backdrop" ? 900 : 800) + '" loading="lazy" alt="' + escapeHtml(galleryCaption(film, a)) + '"></button>' +
       "<figcaption>" + escapeHtml(galleryCaption(film, a)) + "</figcaption></figure>").join("") +
     "</div></div>";
 }
@@ -1001,13 +1012,11 @@ function charactersHtml(film) {
   return chars.map((c, idx) => {
     const pt = matchFor(c);
     const note = String(c.note || "");
-    const first = (note.split(/(?<=\.)\s+/)[0] || note);
     const media = pt
       ? '<div class="char-media"><img class="char-portrait" src="' + escapeHtml(pt.file) + '" width="1200" height="1800" loading="lazy" alt="' + escapeHtml(t("artworkKind.portrait") + " — " + c.name) + '"></div>'
       : '<div class="char-media"><div class="char-monogram" style="--hue:' + hue + '" aria-hidden="true"><span>' + escapeHtml(charInitials(c.name)) + "</span></div></div>";
-    return '<div class="char-card">' + media + '<div class="char-body"><h3>' + escapeHtml(c.name) + '</h3><p class="char-role">' + escapeHtml(c.role) + "</p><p>" + escapeHtml(first) + "</p>" +
-      (note && note !== first ? '<details class="char-bio"><summary>' + escapeHtml(t("film3.readBio")) + "</summary><p>" + escapeHtml(note) + "</p></details>" : "") +
-      characterProfileHtml(film, c, idx) + "</div></div>";
+    return '<div class="char-card">' + media + '<div class="char-body"><h3>' + escapeHtml(c.name) + '</h3><p class="char-role">' + escapeHtml(c.role) + '</p><p class="char-intro">' + escapeHtml(note) + "</p>" +
+      characterBioHtml(film, c, idx) + "</div></div>";
   }).join("");
 }
 function progressHtml(film) {
@@ -1044,7 +1053,16 @@ function journalText(entry) {
   return entry;
 }
 /* ---------- Round 4 (Oct 30): film-page building blocks ---------- */
-const FP_TAB_SECTIONS = { overview: null, story: ["story", "devinfo"], characters: ["characters"], gallery: ["gallery", "teaser"], scenes: ["scenes"] };
+/* V2 WS4: Overview is now an explicit curated list — the full story
+   section (synopsis + treatment) is Story-tab only, so Overview reads as
+   a visual-first flow instead of showing everything. The meta list and
+   the vision block each live in ONE node that both the Overview and the
+   Story lists include. */
+const FP_TAB_SECTIONS = {
+  overview: ["ovw-story", "characters", "ovw-world", "scenes", "vision", "producer", "production", "meta"],
+  story: ["story", "devinfo", "vision", "meta"],
+  characters: ["characters"], gallery: ["gallery", "teaser"], scenes: ["scenes"]
+};
 function applyFilmTab() {
   const root = $("#film-detail");
   if (!root) return;
@@ -1080,16 +1098,67 @@ function filmMetaHtml(film) {
     row(t("filmPage.metaLanguage"), "English · Español · Português (Brasil) · Deutsch") +
     "</dl></div>";
 }
-function filmVisionHtml(film) {
+function filmVisionHtml(film, art) {
   /* The mockup's "Director's Vision" box, filled with the film's real
      Creative Vision material (tone / themes / visual identity ship in
-     every catalog record) instead of an invented director quote. */
+     every catalog record) instead of an invented director quote.
+     V2 WS4: rendered as a flowing text block (no box chrome — see the
+     .vision-flow rules) with one accompanying visual beside it. */
   const vision = film.creativeVision || {};
   if (!(vision.tone || vision.themes || vision.visualIdentity)) return "";
-  return '<div class="meta-box vision-box"><h3>' + escapeHtml(t("film2.visionHeading")) + "</h3>" +
+  const fig = art ? '<figure class="vision-media"><img src="' + escapeHtml(art.file) + '" width="1200" height="800" loading="lazy" alt="' + escapeHtml(galleryCaption(film, art)) + '"></figure>' : "";
+  return '<div class="detail-section fp-flow vision-flow" data-fp-section="vision">' + fig +
+    '<div class="vision-text"><h2>' + escapeHtml(t("film2.visionHeading")) + "</h2>" +
     (vision.tone ? "<p><strong>" + escapeHtml(t("film2.visionTone")) + "</strong> " + escapeHtml(vision.tone) + "</p>" : "") +
     (vision.themes ? "<p><strong>" + escapeHtml(t("film2.visionThemes")) + "</strong> " + escapeHtml(vision.themes) + "</p>" : "") +
-    (vision.visualIdentity ? "<p><strong>" + escapeHtml(t("film2.visionVisual")) + "</strong> " + escapeHtml(vision.visualIdentity) + "</p>" : "") + "</div>";
+    (vision.visualIdentity ? "<p><strong>" + escapeHtml(t("film2.visionVisual")) + "</strong> " + escapeHtml(vision.visualIdentity) + "</p>" : "") + "</div></div>";
+}
+/* ---------- V2 WS4: visual-first overview blocks ---------- */
+/* Short intro built ONLY from real text: the logline plus the first 1–2
+   sentences of the synopsis, capped at ~90 words at a sentence boundary. */
+function storyIntroText(film) {
+  const logline = String(filmText(film, "logline") || "").replace(/\s+/g, " ").trim();
+  const syn = String(filmText(film, "synopsis") || "").replace(/\s+/g, " ").trim();
+  const sentences = syn.match(/[^.!?]+[.!?]+["'”’)]?\s*/g) || (syn ? [syn] : []);
+  let out = logline;
+  let added = 0;
+  for (const s of sentences) {
+    if (added >= 2) break;
+    const cand = (out ? out + " " : "") + s.trim();
+    if (cand.split(/\s+/).filter(Boolean).length > 90) break;
+    out = cand; added++;
+  }
+  return out;
+}
+function overviewStoryHtml(film, art) {
+  const fig = art ? '<figure class="ovw-media"><img src="' + escapeHtml(art.file) + '" width="1200" height="675" loading="lazy" alt="' + escapeHtml(galleryCaption(film, art)) + '"></figure>' : "";
+  return '<div class="detail-section fp-flow ovw-story" data-fp-section="ovw-story"><h2>' + escapeHtml(t("filmV2.discoverStory")) + "</h2>" +
+    fig + '<p class="ovw-intro">' + escapeHtml(storyIntroText(film)) + "</p>" +
+    '<p class="ovw-read"><button type="button" class="btn btn-ghost" data-action="film-tab" data-tab="story">' + escapeHtml(t("filmPage.readFullStory")) + ' <span aria-hidden="true">›</span></button></p></div>';
+}
+function exploreWorldHtml(film) {
+  const locs = artworkFor(film.id).filter((a) => a.kind === "location");
+  if (!locs.length) return "";
+  return '<div class="detail-section fp-flow ovw-world" data-fp-section="ovw-world"><h2>' + escapeHtml(t("filmV2.exploreWorld")) + '</h2>' +
+    '<div class="world-grid">' + locs.map((a) =>
+      '<figure class="world-card"><img src="' + escapeHtml(a.file) + '" width="1200" height="675" loading="lazy" alt="' + escapeHtml(galleryCaption(film, a)) + '"><figcaption>' + escapeHtml(a.subject || "") + "</figcaption></figure>").join("") +
+    "</div></div>";
+}
+/* Producer Experience (H): built ONLY from platform-truthful material —
+   this film's real financing note, what a visitor can actually do today
+   (pledge interest / follow / save, plus the real funding facts), and ONE
+   generic "planned" platform statement. No per-film benefits, credits or
+   agreements are promised anywhere in this block. */
+function producerExperienceHtml(film) {
+  return '<div class="detail-section fp-flow producer-exp" data-fp-section="producer"><h2>' + escapeHtml(t("filmV2.producerHeading")) + "</h2>" +
+    (film.financingNote ? '<h3 class="producer-sub">' + escapeHtml(t("filmV2.producerFinancingLabel")) + '</h3><p>' + escapeHtml(film.financingNote) + "</p>" : "") +
+    '<h3 class="producer-sub producer-confirmed-label">' + escapeHtml(t("filmV2.confirmedLabel")) + '</h3>' +
+    '<ul class="producer-list">' +
+    '<li>' + escapeHtml(t("filmV2.producerConfirmedPledge")) + ' <a href="#support-panel">' + escapeHtml(t("filmPage.pledgeHeading")) + "</a></li>" +
+    "<li>" + escapeHtml(t("filmV2.producerConfirmedFollow")) + "</li></ul>" +
+    fundingFactsHtml(film) +
+    '<h3 class="producer-sub producer-planned-label">' + escapeHtml(t("filmV2.plannedLabel")) + '</h3>' +
+    '<p class="producer-planned">' + escapeHtml(t("filmV2.plannedNote")) + ' <a href="#/professionals">' + escapeHtml(t("nav.professionals")) + "</a></p></div>";
 }
 
 function renderFilmDetail(id) {
@@ -1141,7 +1210,12 @@ function renderFilmDetail(id) {
   if (filmTabState.id !== film.id) filmTabState = { id: film.id, tab: "overview" };
   const genreChips = String(film.genre || "").split(/\s+/).filter(Boolean).slice(0, 3)
     .map((g) => '<span class="genre-chip">' + escapeHtml(g) + "</span>").join("");
-  const visionHtml = filmVisionHtml(film);
+  /* V2 WS4: overview visuals — Discover-the-Story takes the first
+     location (else first moment); Creative Vision takes a detail-kind
+     piece, else a moment the story block did not use. */
+  const ovwArt = assets.find((a) => a.kind === "location") || assets.find((a) => a.kind === "moment") || null;
+  const visionArt = assets.find((a) => a.kind === "detail") || assets.find((a) => a.kind === "moment" && (!ovwArt || a.file !== ovwArt.file)) || null;
+  const visionHtml = filmVisionHtml(film, visionArt);
   el.innerHTML =
     '<div class="fp-hero">' +
     '<div class="fp-hero-media">' + heroArt + '<div class="detail-hero-shade"></div>' +
@@ -1165,22 +1239,26 @@ function renderFilmDetail(id) {
     "</div></div>" +
     filmTabsHtml(film) +
     '<div class="fp-main">' +
+    overviewStoryHtml(film, ovwArt) +
     '<div class="detail-section" data-fp-section="story"><h2>' + escapeHtml(t("filmPage.storyOverview")) + '</h2>' +
     '<p class="logline">' + escapeHtml(filmText(film, "logline")) + "</p>" +
     synopsisHtml +
     (treatmentHtmlValue ? '<details class="detail-details treatment-wrap"><summary>' + escapeHtml(t("filmPage.readFullStory")) + ' <span aria-hidden="true">›</span></summary><p class="fineprint">' + escapeHtml(t("film.treatmentNote")) + '</p><div class="treatment">' + treatmentHtmlValue + "</div></details>" : "") +
     "</div>" +
-    '<div class="fp-meta-row' + (visionHtml ? "" : " fp-meta-row--single") + '" data-fp-section="meta">' + filmMetaHtml(film) + visionHtml + "</div>" +
-    '<div class="detail-section" data-fp-section="characters"><h2>' + escapeHtml(sectionLabel("mainCharacters", t("film.characters"))) + '</h2><div class="char-grid">' + charactersHtml(film) + "</div></div>" +
+    '<div class="detail-section fp-flow" data-fp-section="characters"><h2>' + escapeHtml(sectionLabel("mainCharacters", t("film.characters"))) + '</h2><div class="char-grid">' + charactersHtml(film) + "</div></div>" +
+    exploreWorldHtml(film) +
     signatureSequencesHtml(film) +
+    visionHtml +
     galleryHtml(film) +
     teaserHtml +
-    '<div class="detail-section" data-fp-section="production"><h2>' + escapeHtml(t("film3.productionFinancing")) + '</h2>' +
+    producerExperienceHtml(film) +
+    '<div class="detail-section fp-flow" data-fp-section="production"><h2>' + escapeHtml(t("film3.productionFinancing")) + '</h2>' +
     "<p><strong>" + escapeHtml(film.productionType) + ".</strong> " + escapeHtml(film.productionApproach || film.productionNote) + "</p>" +
     fundingFactsHtml(film) +
     "<p><strong>" + escapeHtml(t("funding.budgetLabel")) + ":</strong> " + fmtMoney(film.budget) + " — " + escapeHtml(film.budgetNote) + "</p>" +
     (film.audiencePositioning ? "<p><strong>" + escapeHtml(t("film2.audienceLabel")) + "</strong> " + escapeHtml(film.audiencePositioning) + "</p>" : "") +
     (film.financingNote ? "<p>" + escapeHtml(film.financingNote) + "</p>" : "") + "</div>" +
+    '<div class="fp-meta-row fp-flow" data-fp-section="meta">' + filmMetaHtml(film) + "</div>" +
     '<div class="detail-section" data-fp-section="devinfo"><h2>' + escapeHtml(t("film3.developmentInfo")) + "</h2>" +
     '<details class="detail-details"><summary>' + escapeHtml(sectionLabel("developmentRoadmap", t("film.roadmap"))) + "</summary>" + roadmapInner + "</details>" +
     (journalInner ? '<details class="detail-details"><summary>' + escapeHtml(t("film2.journalHeading")) + "</summary>" + journalInner + "</details>" : "") +
@@ -1604,6 +1682,62 @@ function renderAbout() {
     "</ul>" +
     "<p>" + tt("about6.memberNote") + '</p><p><a class="btn" href="#/membership">' + tt("nav.membership") + "</a></p></div>";
 }
+/* ---------- investors (V2 WS6) ---------- */
+function renderInvestors() {
+  const el = $("#investors-body"); if (!el) return;
+  const tt = (k, vars) => escapeHtml(t(k, vars));
+  const notice = '<p class="inv-notice">' + tt("support7.securitiesNotice") + "</p>";
+  const item = (tk, xk) => '<div class="inv-item"><h4>' + tt(tk) + "</h4><p>" + tt(xk) + "</p></div>";
+  const posterIds = ["the-last-train-below", "the-woman-in-apartment-9", "dead-freight", "the-second-moon", "the-keeper-of-forgotten-things", "tomorrows-witness"];
+  const posters = posterIds.map(filmById).filter(Boolean).map((f) =>
+    '<figure class="card inv-poster"><div class="poster-wrap"><a class="poster-link" href="#/film/' + f.id + '" aria-label="' + escapeHtml(f.title) + '">' +
+    '<div class="poster"><img src="posters/' + f.id + '.webp" width="880" height="1320" loading="lazy" alt="' + escapeHtml(f.title) + '"></div></a></div>' +
+    "<figcaption><h4>" + escapeHtml(f.title) + "</h4><p>" + escapeHtml(f.genre || "") + "</p></figcaption></figure>").join("");
+  const modelItems = [
+    ["investors.modelTagProposed", "investors.model1T", "investors.model1X"],
+    ["investors.modelTagPlanned", "investors.model2T", "investors.model2X"],
+    ["investors.modelTagPlanned", "investors.model3T", "investors.model3X"],
+    ["investors.modelTagProposed", "investors.model4T", "investors.model4X"],
+    ["investors.modelTagPlanned", "investors.model5T", "investors.model5X"]
+  ];
+  el.innerHTML =
+    '<section class="inv-hero" data-inv-section="hero">' +
+    '<p class="eyebrow">' + tt("investors.eyebrow") + "</p>" +
+    "<h2 tabindex='-1' class='inv-title'>" + tt("investors.title") + "</h2>" +
+    '<p class="inv-pitch">' + tt("investors.pitch") + "</p>" + notice + "</section>" +
+    '<section class="inv-section" data-inv-section="problem"><h3 class="tick-title">' + tt("investors.problemHeading") + "</h3>" +
+    '<p class="inv-lead">' + tt("investors.problemIntro") + '</p><div class="inv-grid">' +
+    item("investors.problem1T", "investors.problem1X") + item("investors.problem2T", "investors.problem2X") + item("investors.problem3T", "investors.problem3X") + "</div></section>" +
+    '<section class="inv-section" data-inv-section="solution"><h3 class="tick-title">' + tt("investors.solutionHeading") + "</h3>" +
+    '<p class="inv-lead">' + tt("investors.solutionIntro") + '</p><div class="inv-grid">' +
+    item("investors.solution1T", "investors.solution1X") + item("investors.solution2T", "investors.solution2X") + item("investors.solution3T", "investors.solution3X") + item("investors.solution4T", "investors.solution4X") + "</div></section>" +
+    '<section class="inv-section" data-inv-section="product"><h3 class="tick-title">' + tt("investors.productHeading") + "</h3>" +
+    '<p class="inv-lead">' + tt("investors.productIntro") + "</p>" +
+    '<div class="inv-media"><figure class="inv-shot inv-shot-wide"><img src="assets/site/investors-film-desktop.webp" width="1200" height="958" loading="lazy" alt="' + tt("investors.productImg1Alt") + '"></figure>' +
+    '<figure class="inv-shot"><img src="assets/site/investors-film-mobile.webp" width="585" height="1170" loading="lazy" alt="' + tt("investors.productImg2Alt") + '"></figure>' +
+    '<figure class="inv-shot"><img src="assets/site/investors-watch.webp" width="712" height="738" loading="lazy" alt="' + tt("investors.productImg3Alt") + '"></figure></div>' +
+    '<ul class="check-list inv-facts">' + [1, 2, 3, 4].map((n) => "<li>" + tt("investors.productFact" + n) + "</li>").join("") + "</ul>" +
+    '<h4 class="inv-sub">' + tt("investors.catalogHeading") + '</h4><p class="inv-lead">' + tt("investors.catalogIntro") + '</p>' +
+    '<div class="inv-posters">' + posters + "</div></section>" +
+    '<section class="inv-section" data-inv-section="model"><h3 class="tick-title">' + tt("investors.modelHeading") + "</h3>" +
+    '<p class="inv-lead">' + tt("investors.modelIntro") + '</p><div class="inv-model">' +
+    modelItems.map(([tag, tk, xk]) => '<div class="inv-model-item"><p class="inv-tag">' + tt(tag) + "</p><h4>" + tt(tk) + "</h4><p>" + tt(xk) + "</p></div>").join("") +
+    '</div><p class="inv-status">' + tt("investors.modelStatus") + "</p></section>" +
+    '<section class="inv-section" data-inv-section="opportunity"><h3 class="tick-title">' + tt("investors.oppHeading") + "</h3>" +
+    '<p class="inv-lead">' + tt("investors.oppIntro") + '</p><ul class="inv-stats">' +
+    [1, 2, 3].map((n) => "<li>" + tt("investors.oppStat" + n) + "</li>").join("") + "</ul>" +
+    '<p class="inv-lead">' + tt("investors.oppFranchise") + "</p></section>" +
+    '<section class="inv-section" data-inv-section="roadmap"><h3 class="tick-title">' + tt("investors.roadmapHeading") + '</h3><div class="inv-roadmap">' +
+    '<div class="inv-road-live"><h4 class="producer-confirmed-label">' + tt("investors.liveHeading") + '</h4><ul class="check-list">' + [1, 2, 3, 4, 5, 6].map((n) => "<li>" + tt("investors.live" + n) + "</li>").join("") + "</ul></div>" +
+    '<div class="inv-road-planned"><h4 class="producer-planned-label">' + tt("investors.plannedHeading") + '</h4><ul class="inv-planned-list">' + [1, 2, 3, 4, 5].map((n) => "<li>" + tt("investors.planned" + n) + "</li>").join("") + "</ul></div>" +
+    '</div><p class="inv-note-text">' + tt("investors.roadmapNote") + "</p></section>" +
+    '<section class="inv-section" data-inv-section="team"><h3 class="tick-title">' + tt("investors.teamHeading") + "</h3>" +
+    '<h4 class="inv-team-name">' + tt("investors.teamName") + '</h4><p class="inv-lead">' + tt("investors.teamText") + "</p></section>" +
+    '<section class="inv-section" data-inv-section="inquiries"><h3 class="tick-title">' + tt("investors.inquiriesHeading") + "</h3>" +
+    '<p class="inv-lead">' + tt("investors.inquiriesText") + "</p>" +
+    '<p class="inv-actions"><a class="btn btn-primary" href="#/support">' + tt("investors.inquiriesCta") + '</a> <a class="btn btn-ghost" href="mailto:team@greenlitx.com">team@greenlitx.com</a></p>' +
+    notice + "</section>";
+}
 /* Admin review surface (Stage 2c): rendered ONLY when is_admin() is true for
    the signed-in user. The allowlist (public.admin_users) is empty until the
    owner adds himself in the Supabase dashboard — RLS enforces everything. */
@@ -1772,6 +1906,7 @@ function updateMeta(r) {
   if (r.view === "about") { title = t("meta.aboutTitle"); }
   if (r.view === "account") { title = t("account.heading") + " — GreenlitX"; }
   if (r.view === "support") { title = t("support7.supTitle") + " — GreenlitX"; }
+  if (r.view === "investors") { title = t("investors.metaTitle"); }
   if (r.view === "film") {
     const f = filmById(r.id);
     if (f) { title = t("meta.filmTitle", { title: f.title }); desc = filmText(f, "logline"); img = "posters/" + f.id + ".webp"; }
@@ -1794,7 +1929,7 @@ function applyStaticI18n() {
 }
 
 /* ---------- routing ---------- */
-const VIEWS = ["home", "discover", "film", "watch", "watchdetail", "professionals", "submit", "account", "legal", "legaldoc", "funding", "membership", "about", "support"];
+const VIEWS = ["home", "discover", "film", "watch", "watchdetail", "professionals", "submit", "account", "legal", "legaldoc", "funding", "membership", "about", "support", "investors"];
 /* Round 8 (Oct 31): static pre-rendered pages live at real paths
    (/membership/, /film/<slug>/, /watch/, …) and boot this same app.
    When no hash route is present, map the pathname to the equivalent
@@ -1808,7 +1943,7 @@ function routeFromPathname() {
   if (!parts.length) return null;
   if (parts[0] === "film" && parts[1]) return { view: "film", id: parts[1] };
   if (parts[0] === "legal" && parts[1]) return { view: "legaldoc", id: parts[1] };
-  const simple = { discover: "discover", watch: "watch", professionals: "professionals", submit: "submit", legal: "legal", membership: "membership", about: "about", support: "support" };
+  const simple = { discover: "discover", watch: "watch", professionals: "professionals", submit: "submit", legal: "legal", membership: "membership", about: "about", support: "support", investors: "investors" };
   return simple[parts[0]] ? { view: simple[parts[0]] } : null;
 }
 function parseRoute() {
@@ -1865,6 +2000,7 @@ function render() {
   if (r.view === "membership") renderMembership();
   if (r.view === "about") renderAbout();
   if (r.view === "support") renderSupport();
+  if (r.view === "investors") renderInvestors();
   updateMeta(r);
   window.scrollTo(0, 0);
   const focusEl = $("#view-" + r.view + " h1, #view-" + r.view + " h2");
