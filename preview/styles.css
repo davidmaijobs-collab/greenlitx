@@ -1709,3 +1709,116 @@ body.modal-open { overflow: hidden; }
   .fp-hero-v2 .fp-proc, .fp-hero-v2 .pledge-panel { margin-left: 0.7rem; margin-right: 0.7rem; }
   .fp-hero-v2 .fp-hero-actions-wrap { padding-left: 0.7rem; padding-right: 0.7rem; }
 }
+
+/* === Film Detail Redesign v2c — CORRECTION ROUND 2 (Nov 2026) ===
+   David's verdict #2 on the live v2b build, from his own phone captures
+   of The Woman in Apartment 9: the pages still read as a web page, not
+   a platform. Governing criterion (David, Nov 2): on every device the
+   page must read as a PLATFORM — media-first, app-like, immersive —
+   never as an article with a photo on top. CSS-only round (app.js is
+   the payments build's staged file and is NOT touched):
+   (1) Mobile (<=1100px): the page becomes ONE flex column. The hero
+       and .fp-main turn display:contents so their children interleave
+       in the redesign prompt's §3 mobile order — media, title block,
+       actions, PROCESS, story, characters+themes, scenes, locations,
+       gallery, vision, production, Producer Experience, SUPPORT PANEL
+       (moved here from the hero, beside the Producer Experience tier
+       that links to it), development, closing, related. The tabs row
+       leaves the mobile flow (applyFilmTab never hides sections; the
+       tabs are anchors only, so nothing is lost).
+   (2) Mobile hero: ~40vh cinematic crop (cover, face-safe position,
+       Ken Burns off) and the title block BLEEDS over the image's lower
+       edge on a fade-to-background gradient, so title, genre line and
+       tagline are composed WITH the media — as on David's reference
+       sheet — instead of starting a text page under a photo.
+   (3) Mobile rails/panels sized like the sheet: character cards ~44%
+       wide with portrait media, scene cards ~70% with 16:10 media,
+       locations two-across, Key Themes restored to designed panel
+       rows, the story media leads its section with the story text as
+       a compact panel under it, and the Process panel is tightened
+       toward the sheet's compact status bar.
+   (4) All widths: the .scene-play overlay is removed from scene cards
+       entirely — a still is a still. Play lives only in the story
+       teaser player and the Watch Trailer action. */
+
+/* (4) Scene cards never carry a play overlay (any width) */
+.scene-play { display: none !important; }
+
+/* Key Themes, desktop: the flat rows gain the reference's designed
+   accent (a green marker; per-theme icons have no data source) */
+@media (min-width: 1101px) {
+  .theme-card { position: relative; padding-left: 1.7rem; }
+  .theme-card::before { content: ""; position: absolute; left: 0.1rem; top: 1.02rem; width: 0.55rem; height: 0.55rem; border-radius: 2px; background: var(--accent); }
+}
+
+@media (max-width: 1100px) {
+  /* (1) One platform column in the prompt's §3 order */
+  #film-detail { display: flex; flex-direction: column; padding-top: var(--header-h); }
+  #film-detail[hidden] { display: none !important; }
+  .fp-hero-v2, .fp-main { display: contents; }
+  .film-tabs { display: none; }
+  .fp-hero-v2 .fp-hero-media { order: 1; }
+  .fp-hero-v2 .fp-hero-text { order: 2; }
+  .fp-hero-v2 .fp-hero-actions-wrap { order: 3; }
+  .fp-hero-v2 .fp-proc { order: 4; }
+  .fp-main > #fp-story { order: 5; }
+  .fp-main > #fp-characters { order: 6; }
+  .fp-main > #fp-scenes { order: 7; }
+  .fp-main > .ovw-world { order: 8; }
+  .fp-main > #fp-gallery { order: 9; }
+  .fp-main > .vision-flow { order: 10; }
+  .fp-main > [data-fp-section="production"] { order: 11; }
+  .fp-main > .producer-exp { order: 12; }
+  .fp-hero-v2 .pledge-panel { order: 13; }
+  .fp-main > #fp-development { order: 14; }
+  .fp-main > .fp-closing { order: 15; }
+  .fp-related { order: 16; }
+  /* Sections keep the content inset .fp-main used to give them */
+  .fp-main > .detail-section, .fp-main > #fp-development { padding-left: 1.1rem; padding-right: 1.1rem; }
+  .fp-related { padding-left: 1.1rem; padding-right: 1.1rem; }
+  .fp-main > .fp-closing { margin-left: 0; margin-right: 0; }
+  .fp-main > #fp-story { margin-top: 1.2rem; }
+
+  /* (2) Cinematic mobile hero; title composed with the media */
+  .fp-hero-v2 .fp-hero-media { height: 40vh; min-height: 260px; max-height: 400px; }
+  .fp-hero-v2 .fp-hero-media img.backdrop { object-position: 50% 30%; animation: none; }
+  .fp-hero-v2 .fp-hero-media img.backdrop[src*="the-woman-in-apartment-9"] { object-position: 78% 30%; }
+  .fp-hero-v2 .fp-hero-text { position: relative; z-index: 2; margin-top: -10rem; padding-top: 0.6rem; background: linear-gradient(180deg, rgba(5, 7, 10, 0) 0, rgba(5, 7, 10, 0) 5rem, var(--bg) 10rem); }
+  .fp-hero-v2 .fp-hero-text h1, .fp-hero-v2 .fp-hero-text .tagline, .fp-hero-v2 .fp-hero-text .fp-hero-syn, .fp-hero-v2 .fp-hero-text .fp-status { text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9); }
+
+  /* Process reads as the sheet's compact status bar */
+  .fp-hero-v2 .fp-proc { padding: 0.85rem 1rem; }
+
+  /* (3) Story text becomes a compact panel beside/under its media */
+  .story-text { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.05rem; }
+
+  /* Key Themes: designed panel rows again (accent + hierarchy) */
+  .theme-cards { gap: 0.8rem; }
+  .theme-card { background: var(--panel); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 10px; padding: 0.9rem 1rem; }
+  .theme-card + .theme-card { border-top: 1px solid var(--border); }
+
+  /* Locations: two across, as on the sheet */
+  .world-grid { grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+  .world-grid .world-card:only-child { grid-column: 1 / -1; }
+}
+
+@media (max-width: 860px) {
+  /* Story stacks media-first at phone widths: player/image, then text */
+  .story-layout { display: flex; flex-direction: column; gap: 1.1rem; }
+  .story-layout .story-teaser, .story-layout .ovw-media { order: -1; }
+}
+
+@media (max-width: 760px) {
+  /* Scene rail: ~70% cards with 16:10 media (title + text beneath) */
+  .signature-grid .signature-card { flex-basis: 70%; }
+  .scene-media { aspect-ratio: 16 / 10; }
+}
+
+@media (max-width: 640px) {
+  /* Insets tighten with the rest of the page */
+  .fp-main > .detail-section, .fp-main > #fp-development { padding-left: 0.7rem; padding-right: 0.7rem; }
+  .fp-related { padding-left: 0.7rem; padding-right: 0.7rem; }
+  /* Character rail: compact portrait cards, two visible + peek */
+  .char-grid.char-primary .char-card { flex-basis: 44%; }
+  .char-grid.char-primary .char-media { aspect-ratio: 3 / 4; }
+}
