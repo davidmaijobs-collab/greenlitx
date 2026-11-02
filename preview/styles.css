@@ -1642,3 +1642,70 @@ body.modal-open { overflow: hidden; }
    their containers are wide, no spill was measured there, and their
    verified layout is unchanged. */
 .process-block.compact .process-labels { flex-wrap: wrap; row-gap: 0.12rem; }
+
+/* === Film Detail Redesign v2b — HERO RECOMPOSITION (Nov 2026) ===
+   David's verdict on live v2: the sections were right, the COMPOSITION
+   was not — the hero read as a boxed grid (rounded backdrop card in a
+   left cell, panels as flat boxes in a separate column on the page
+   background) instead of his reference's single cinematic composition.
+   This block changes only composition; DOM, content and behaviour are
+   untouched (the support panel is still the same single DOM node).
+   Desktop >=1101px: the backdrop becomes an absolute layer spanning the
+   whole hero (which itself now spans the full page width, square
+   corners); text + actions overlay its lower-left over the shade
+   gradient, inset to the 1320px content column; the Process and Pledge
+   panels float over the image's right side as ONE visual card
+   (translucent panel + backdrop blur, merged borders, no gap). The grid
+   placement of every child is unchanged — the panels keep their column
+   and rows, the media simply spans behind everything.
+   Mobile <=1100px: the hero image goes edge-to-edge (no side insets, no
+   rounding) and the title block adopts the reference sheet's order —
+   title, then the genre chips restyled as a plain caps line, then
+   tagline — via flex order on the existing nodes. Panels return to
+   full-width page blocks with the standard content insets.
+   Also: Key Themes flatten to the reference's borderless list, the
+   Story columns rebalance to ~38/62, and the closing banner spans the
+   content width edge-to-edge (negative margins = .fp-main padding). */
+.fp-hero-v2 { position: relative; max-width: none; margin-left: 0; margin-right: 0; padding-left: 0; padding-right: 0; --v2b-inset: max(1.1rem, calc((100vw - var(--maxw)) / 2 + 1.1rem)); }
+.fp-hero-v2 .detail-hero-shade { background: linear-gradient(90deg, rgba(5, 7, 10, 0.88) 0%, rgba(5, 7, 10, 0.40) 52%, rgba(5, 7, 10, 0.10) 85%), linear-gradient(0deg, var(--bg) 0%, rgba(5, 7, 10, 0.45) 30%, rgba(5, 7, 10, 0) 60%); }
+/* Key Themes: borderless list rows with dividers (reference treatment) */
+.theme-card { background: transparent; border: 0; border-radius: 0; padding: 0.75rem 0; }
+.theme-cards { gap: 0; }
+.theme-card + .theme-card { border-top: 1px solid var(--border); }
+/* Closing banner: content-width edge-to-edge, square corners */
+.fp-closing { border-radius: 0; margin-left: -1.1rem; margin-right: -1.1rem; }
+@media (max-width: 640px) { .fp-closing { margin-left: -0.7rem; margin-right: -0.7rem; } }
+/* Story: reference column balance (~38% text / ~62% media) */
+@media (min-width: 861px) { .story-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr); } }
+
+@media (min-width: 1101px) {
+  .fp-hero-v2 { grid-template-columns: minmax(0, 1fr) calc(400px + var(--v2b-inset)); row-gap: 0; min-height: 600px; padding-top: calc(var(--header-h) + 1.4rem); padding-bottom: 1.9rem; }
+  .fp-hero-v2 .fp-hero-media { position: absolute; inset: 0; min-height: 0; border-radius: 0; z-index: 0; }
+  .fp-hero-v2 .fp-hero-text { padding-left: var(--v2b-inset); }
+  .fp-hero-v2 .fp-hero-actions-wrap { padding-left: var(--v2b-inset); }
+  .fp-hero-v2 h1 { font-size: clamp(3.4rem, 6.8vw, 5.9rem); }
+  .fp-hero-v2 .fp-proc, .fp-hero-v2 .pledge-panel { position: relative; z-index: 2; margin-right: var(--v2b-inset); background: rgba(9, 13, 17, 0.87); -webkit-backdrop-filter: blur(14px) saturate(1.15); backdrop-filter: blur(14px) saturate(1.15); border: 1px solid rgba(255, 255, 255, 0.14); box-shadow: 0 22px 55px rgba(0, 0, 0, 0.5); }
+  .fp-hero-v2 .fp-proc { border-bottom: 0; border-radius: var(--radius) var(--radius) 0 0; padding-bottom: 0.35rem; }
+  .fp-hero-v2 .pledge-panel { border-top: 0; border-radius: 0 0 var(--radius) var(--radius); padding-top: 0.35rem; }
+}
+
+@media (max-width: 1100px) {
+  .fp-hero-v2 { padding-top: var(--header-h); }
+  .fp-hero-v2 .fp-hero-media { border-radius: 0; height: 50vh; max-height: 460px; }
+  .fp-hero-v2 .fp-hero-text { display: flex; flex-direction: column; padding: 1.05rem 1.1rem 0; }
+  .fp-hero-v2 .fp-hero-text h1 { order: 1; }
+  .fp-hero-v2 .fp-hero-text .fp-chips { order: 2; margin: 0.1rem 0 0.55rem; }
+  .fp-hero-v2 .fp-hero-text .tagline { order: 3; }
+  .fp-hero-v2 .fp-hero-text .fp-hero-syn { order: 4; }
+  .fp-hero-v2 .fp-hero-text .fp-status { order: 5; }
+  .fp-hero-v2 .fp-chips .genre-chip { border: 0; background: none; padding: 0; color: #c9d2d9; }
+  .fp-hero-v2 .fp-chips .genre-chip:not(:last-child)::after { content: " ·"; }
+  .fp-hero-v2 .fp-proc { margin-left: 1.1rem; margin-right: 1.1rem; }
+  .fp-hero-v2 .fp-hero-actions-wrap { padding-left: 1.1rem; padding-right: 1.1rem; }
+  .fp-hero-v2 .pledge-panel { margin-left: 1.1rem; margin-right: 1.1rem; }
+}
+@media (max-width: 640px) {
+  .fp-hero-v2 .fp-hero-text { padding-left: 0.7rem; padding-right: 0.7rem; }
+  .fp-hero-v2 .fp-proc, .fp-hero-v2 .pledge-panel { margin-left: 0.7rem; margin-right: 0.7rem; }
+  .fp-hero-v2 .fp-hero-actions-wrap { padding-left: 0.7rem; padding-right: 0.7rem; }
+}
