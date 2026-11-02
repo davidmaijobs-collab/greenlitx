@@ -248,6 +248,38 @@ try {
     })
     .catch(() => {});
 } catch (e) {}
+/* ---------- Film Detail Redesign v2 (Nov 2026): curation + key themes ----
+   curation-data.js (loaded before app.js) carries the artwork audit's
+   per-film selection: hero, primary-3 portraits, scene-row stills (with
+   the verifiable pairing), locations row, curated gallery of 6, story
+   image and closing-banner asset — every entry verified against the
+   registry by the generator. The page consumes curation first and falls
+   back to the pre-v2 behaviour for anything unspecified, so a missing
+   entry can never break a film page. film-themes.json carries the Key
+   Themes (3 per film x 4 languages), condensed strictly from each film's
+   own creative-vision material; it loads async like short-synopses.json
+   and the page re-renders on arrival. */
+const CURATION = window.GLX_CURATION || {};
+const curationFor = (id) => CURATION[id] || null;
+const assetByFile = (film, file) => (artworkFor(film.id).find((a) => a.file === file) || null);
+let FILM_THEMES = {};
+function filmThemesFor(film) {
+  const rec = FILM_THEMES[film.id];
+  if (!rec) return null;
+  return rec[lang] || rec.en || null;
+}
+try {
+  fetch("film-themes.json")
+    .then((r) => (r && r.ok ? r.json() : null))
+    .then((j) => {
+      if (j && typeof j === "object") {
+        FILM_THEMES = j;
+        const r = parseRoute();
+        if (r.view === "film") refreshDynamic();
+      }
+    })
+    .catch(() => {});
+} catch (e) {}
 function slugifyName(v) { return String(v || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""); }
 function translatedCharacters(film) {
   const rec = I18N.films && I18N.films[film.id];
@@ -342,16 +374,42 @@ function signatureSequencesHtml(film) {
      the data supports the pairing, the film's other concept stills in
      gallery order otherwise. The play overlay is honest: it appears
      ONLY on the five flagship films that have a real teaser video, and
-     it scrolls to and plays that teaser. */
+     it scrolls to and plays that teaser.
+     Film Detail Redesign v2: the row is driven by the curation plan —
+     the audit's 3–4 sequences in audit order, each with its verified
+     paired still (or, for an unpaired sequence, the same honest
+     unlabeled fallback still pairSceneStills has always used — the
+     card never captions the still as depicting the sequence; the alt
+     text names the artwork itself). Long descriptions are expandable.
+     Without curation data the row falls back to all sequences. */
   const stills = pairSceneStills(film, items);
   const hasTeaser = FLAGSHIPS.includes(film.id) && !!TEASERS[film.id];
+  const cur = curationFor(film.id);
+  let row = items.map((s, i) => ({ s, st: stills[i] }));
+  if (cur && Array.isArray(cur.scenes) && cur.scenes.length) {
+    const mapped = [];
+    for (const e of cur.scenes) {
+      const s = items[e.seq];
+      if (!s) continue;
+      const st = e.file ? (assetByFile(film, e.file) || stills[e.seq]) : stills[e.seq];
+      mapped.push({ s, st });
+    }
+    if (mapped.length) row = mapped;
+  }
+  const descHtml = (s) => {
+    const desc = String(s.description || "");
+    if (desc.length <= 190) return "<p>" + escapeHtml(desc) + "</p>";
+    let cut = desc.slice(0, 178);
+    const boundary = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("! "), cut.lastIndexOf("? "));
+    if (boundary > 80) cut = cut.slice(0, boundary + 1);
+    return '<p class="scene-short">' + escapeHtml(cut) + '</p><details class="scene-more"><summary>' + escapeHtml(t("filmV3.sceneDetails")) + ' <span aria-hidden="true">›</span></summary><p>' + escapeHtml(desc) + "</p></details>";
+  };
   return '<div class="detail-section signature-section fp-flow" id="fp-scenes" data-fp-section="scenes"><h2>' + escapeHtml(t("filmPage.scenesHeading")) + '</h2>' +
     '<p class="concept-note">' + escapeHtml(t("filmV2.conceptNote")) + '</p>' +
-    '<div class="signature-grid">' + items.map((s, i) => {
-      const st = stills[i];
+    '<div class="signature-grid">' + row.map(({ s, st }) => {
       const media = st ? '<div class="scene-media"><img src="' + escapeHtml(st.file) + '" width="1200" height="675" loading="lazy" alt="' + escapeHtml(galleryCaption(film, st)) + '">' +
         (hasTeaser ? '<button type="button" class="scene-play" data-action="play-teaser" aria-label="' + escapeHtml(t("filmPage.watchTrailer")) + '"><span aria-hidden="true">▶</span></button>' : "") + "</div>" : "";
-      return '<article class="signature-card">' + media + '<div class="scene-body"><h3>' + escapeHtml(s.title || "") + "</h3><p>" + escapeHtml(s.description || "") + "</p></div></article>";
+      return '<article class="signature-card">' + media + '<div class="scene-body"><h3>' + escapeHtml(s.title || "") + "</h3>" + descHtml(s) + "</div></article>";
     }).join("") + "</div></div>";
 }
 const PREF_CATS = [
@@ -466,6 +524,10 @@ const fmtCents = (c) => "$" + (Number(c || 0) / 100).toLocaleString("en-US", { m
 /* Supporter interest = real recorded pledge-interest rows (Supabase pledge_totals). */
 const supporterCount = (film) => Number((server.pledgeTotals[film.id] || {}).backers || 0);
 const supporterTotal = (film) => Number((server.pledgeTotals[film.id] || {}).pledged_cents || 0);
+/* Retained, currently uncalled: since the Film Detail Redesign v2 the
+   four funding facts render inside the support panel (interestSummaryHtml)
+   and the Production Information block instead. Kept for the account /
+   funding surfaces that may reuse the combined dl. */
 function fundingFactsHtml(film) {
   const n = supporterCount(film), tot = supporterTotal(film);
   return '<dl class="funding-facts">' +
@@ -575,10 +637,14 @@ const GENRE_HUES = [
   [/sci-fi|science|space|dystopian|apocalyptic|technology/i, 200], [/drama/i, 160]
 ];
 function genreHue(film) { for (const [re, h] of GENRE_HUES) if (re.test(film.genre)) return h; return 210; }
-function posterHtml(film) {
-  /* Poster-first (Final2 Wave 2): no production-type badge on the poster. */
+function posterHtml(film, eager) {
+  /* Poster-first (Final2 Wave 2): no production-type badge on the poster.
+     Fix pass (Nov 2026): optional eager loading — used ONLY by the film
+     page's "You Might Also Like" row, whose posters sit at the very end
+     of a long page and otherwise stay unloaded (black .poster boxes)
+     until scrolled to. Everywhere else posters stay lazy. */
   if (POSTER_READY[film.id]) {
-    return '<img src="posters/' + film.id + '.webp" width="880" height="1320" loading="lazy" alt="' + escapeHtml(t("card.posterAlt", { title: film.title })) + '">';
+    return '<img src="posters/' + film.id + '.webp" width="880" height="1320" loading="' + (eager ? "eager" : "lazy") + '" alt="' + escapeHtml(t("card.posterAlt", { title: film.title })) + '">';
   }
   return '<div class="poster-typo" style="--hue:' + genreHue(film) + '">' +
     '<div class="typo-tag">' + escapeHtml(film.tagline) + '</div>' +
@@ -590,11 +656,14 @@ function bookmarkBtnHtml(action, id, on, labelKey, title) {
   return '<button type="button" class="bookmark-btn" data-action="' + action + '" data-id="' + id + '" aria-pressed="' + on + '"' +
     ' aria-label="' + escapeHtml(t(labelKey, { title })) + '" title="' + escapeHtml(t(on ? "follow.saved" : "follow.save")) + '">' + BOOKMARK_SVG + "</button>";
 }
-function cardHtml(film) {
+function cardHtml(film, opts) {
   const saved = savedFilms.has(film.id);
+  /* opts is an explicit options object ({ eager: true }); .map(cardHtml)
+     call sites pass (film, index, array) — a numeric opts is ignored. */
+  const eagerPoster = !!(opts && typeof opts === "object" && opts.eager);
   return '<figure class="card">' +
     '<div class="poster-wrap"><a class="poster-link" href="#/film/' + film.id + '" aria-label="' + escapeHtml(t("card.viewProject", { title: film.title })) + '">' +
-    '<div class="poster">' + posterHtml(film) + "</div></a>" +
+    '<div class="poster">' + posterHtml(film, eagerPoster) + "</div></a>" +
     bookmarkBtnHtml("save", film.id, saved, saved ? "follow.savedFilm" : "follow.saveFilm", film.title) + "</div>" +
     '<figcaption>' + processBarHtml("compact") + "</figcaption></figure>";
 }
@@ -1034,9 +1103,16 @@ function myPledgeFor(filmId) { return server.myPledges.find((p) => p.film_id ===
 function interestSummaryHtml(film) {
   const n = supporterCount(film), tot = supporterTotal(film);
   const row = (label, value) => "<div><dt>" + escapeHtml(label) + "</dt><dd>" + escapeHtml(value) + "</dd></div>";
+  /* Film Detail Redesign v2: the support panel states the funding target
+     as "Goal pending" (funding.goalPending) — no per-film target is
+     configured in the backend, and the catalog budget is shown as what
+     it is, an ESTIMATED PRODUCTION BUDGET (funding.budgetLabel), never
+     as the target. The other surfaces keep their funding.targetTBD
+     wording; this panel is the one the redesign brief specifies. */
   return '<dl class="funding-facts interest-facts">' +
-    row(t("funding.targetLabel"), t("funding.targetTBD")) +
+    row(t("funding.targetLabel"), t("funding.goalPending")) +
     row(t("funding.supporterInterestLabel"), n ? t(n === 1 ? "funding.supporterLineOne" : "funding.supporterLineMany", { count: n, amount: fmtCents(tot) }) : t("funding.noSupporterInterest")) +
+    row(t("funding.budgetLabel"), fmtMoney(film.budget)) +
     row(t("funding.collectedLabel"), t("funding.collectedValue")) +
     "</dl>";
 }
@@ -1135,48 +1211,81 @@ function galleryCaption(film, a) {
   return t("artworkKind." + a.kind) + " — " + a.subject;
 }
 /* Phase 4: curated gallery (prompt §9.5) — category filters over the
-   film's registry assets: All / Characters (portraits) / Locations /
-   Signature Scenes (moments). The registry is already duplicate-free, so
+   film's registry assets. The registry is already duplicate-free, so
    each asset renders exactly once, under All and under its one category.
-   The lightbox steps through the currently visible (filtered) set. */
-let galleryFilterState = { id: null, filter: "all" };
+   The lightbox steps through the currently visible (filtered) set.
+   Film Detail Redesign v2: the gallery now opens on the audit's curated
+   selection of 6 (curation order first in the grid), the category set
+   gains Concept Artwork — the registry's "detail" kind — and a "View
+   complete collection" toggle expands the All view from the curated 6
+   to the film's complete artwork set. Category chips always filter the
+   complete set for that kind. */
+let galleryFilterState = { id: null, filter: "all", complete: false };
 const GALLERY_CATEGORIES = [
   ["all", () => t("filter.all")],
   ["portrait", () => t("filmPage.tabCharacters")],
   ["location", () => t("filmPage.galleryLocations")],
-  ["moment", () => t("filmPage.scenesHeading")]
+  ["moment", () => t("filmPage.scenesHeading")],
+  ["detail", () => t("filmV3.conceptArtwork")]
 ];
-function galleryVisibleAssets(film) {
+function galleryDisplayAssets(film) {
   const assets = artworkFor(film.id);
-  if (galleryFilterState.id !== film.id || galleryFilterState.filter === "all") return assets;
-  return assets.filter((a) => a.kind === galleryFilterState.filter);
+  const cur = curationFor(film.id);
+  if (!cur || !Array.isArray(cur.gallery) || !cur.gallery.length) return assets;
+  const byFile = new Map(assets.map((a) => [a.file, a]));
+  const first = cur.gallery.map((f) => byFile.get(f)).filter(Boolean);
+  const rest = assets.filter((a) => !cur.gallery.includes(a.file));
+  return first.concat(rest);
+}
+function galleryAssetVisible(film, a) {
+  const f = galleryFilterState.filter;
+  if (f !== "all") return a.kind === f;
+  if (galleryFilterState.complete) return true;
+  const cur = curationFor(film.id);
+  return cur && Array.isArray(cur.gallery) && cur.gallery.length ? cur.gallery.includes(a.file) : true;
+}
+function galleryVisibleAssets(film) {
+  return galleryDisplayAssets(film).filter((a) => galleryAssetVisible(film, a));
 }
 function applyGalleryFilter() {
   const root = $("#film-detail");
   if (!root) return;
+  const film = filmById(galleryFilterState.id);
+  if (!film) return;
   const f = galleryFilterState.filter;
   $$(".concept-gallery figure[data-kind]", root).forEach((fig) => {
-    fig.hidden = !(f === "all" || fig.dataset.kind === f);
+    const a = assetByFile(film, fig.dataset.file);
+    fig.hidden = !(a && galleryAssetVisible(film, a));
   });
   $$("[data-action='gallery-filter']", root).forEach((b) =>
     b.setAttribute("aria-pressed", String(b.dataset.filter === f)));
+  const toggle = $("[data-action='gallery-complete']", root);
+  if (toggle) {
+    toggle.textContent = t(galleryFilterState.complete ? "filmV3.showCurated" : "filmV3.viewComplete");
+    toggle.setAttribute("aria-pressed", String(galleryFilterState.complete));
+  }
+  const label = $(".gallery-label", root);
+  if (label) label.textContent = t(f === "all" && !galleryFilterState.complete ? "filmV3.curatedNote" : "film2.artworkHeading");
 }
 function galleryHtml(film) {
   const assets = artworkFor(film.id);
-  if (galleryFilterState.id !== film.id) galleryFilterState = { id: film.id, filter: "all" };
+  if (galleryFilterState.id !== film.id) galleryFilterState = { id: film.id, filter: "all", complete: false };
+  const display = galleryDisplayAssets(film);
+  const cur = curationFor(film.id);
   const chips = GALLERY_CATEGORIES
     .filter(([kind]) => kind === "all" || assets.some((a) => a.kind === kind))
     .map(([kind, label]) =>
       '<button type="button" class="chip" data-action="gallery-filter" data-filter="' + kind + '" aria-pressed="' + (galleryFilterState.filter === kind) + '">' + escapeHtml(label()) + "</button>").join("");
   return '<div class="detail-section" id="fp-gallery" data-fp-section="gallery"><h2>' + escapeHtml(t("film3.galleryHeading")) + '</h2>' +
-    '<p class="fineprint gallery-label">' + escapeHtml(t("film2.artworkHeading")) + "</p>" +
+    '<p class="fineprint gallery-label">' + escapeHtml(t(galleryFilterState.filter === "all" && !galleryFilterState.complete && cur ? "filmV3.curatedNote" : "film2.artworkHeading")) + "</p>" +
     '<div class="chip-row gallery-filters" role="group">' + chips + "</div>" +
     '<div class="concept-gallery">' +
-    assets.map((a, i) =>
-      '<figure data-kind="' + escapeHtml(a.kind) + '"><button type="button" class="gallery-item" data-lightbox-film="' + film.id + '" data-lightbox-idx="' + i + '" data-file="' + escapeHtml(a.file) + '" aria-label="' + escapeHtml(t("gallery.view", { caption: galleryCaption(film, a) })) + '">' +
+    display.map((a, i) =>
+      '<figure data-kind="' + escapeHtml(a.kind) + '" data-file="' + escapeHtml(a.file) + '"' + (galleryAssetVisible(film, a) ? "" : " hidden") + '><button type="button" class="gallery-item" data-lightbox-film="' + film.id + '" data-lightbox-idx="' + i + '" data-file="' + escapeHtml(a.file) + '" aria-label="' + escapeHtml(t("gallery.view", { caption: galleryCaption(film, a) })) + '">' +
       '<img src="' + escapeHtml(a.file) + '" width="' + (a.kind === "portrait" ? 1200 : a.kind === "poster" ? 880 : a.kind === "backdrop" ? 1600 : 1200) + '" height="' + (a.kind === "portrait" ? 1800 : a.kind === "poster" ? 1320 : a.kind === "backdrop" ? 900 : 800) + '" loading="lazy" alt="' + escapeHtml(galleryCaption(film, a)) + '"></button>' +
       "<figcaption>" + escapeHtml(galleryCaption(film, a)) + "</figcaption></figure>").join("") +
-    "</div></div>";
+    "</div>" +
+    '<div class="gallery-complete-row"><button type="button" class="btn btn-ghost btn-small" data-action="gallery-complete" aria-pressed="' + galleryFilterState.complete + '">' + escapeHtml(t(galleryFilterState.complete ? "filmV3.showCurated" : "filmV3.viewComplete")) + "</button></div></div>";
 }
 /* Portrait matching (QC Oct 26): a portrait may be shown ONLY for the
    character it actually depicts — matched on the artwork subject name,
@@ -1192,37 +1301,82 @@ function charInitials(name) {
   if (!toks.length) return "?";
   return (toks[0][0] + (toks.length > 1 ? toks[toks.length - 1][0] : "")).toUpperCase();
 }
+/* Round 4 media-top card for ONE character with an explicitly assigned
+   portrait (or null). The portrait rule (QC Oct 26) is unchanged: an
+   image appears ONLY when the artwork subject names this character.
+   Unmatched characters get a styled monogram card (initials on the
+   film's genre hue) — never a borrowed face. */
+function charCardHtml(film, c, idx, pt) {
+  const hue = genreHue(film);
+  const note = String(c.note || "");
+  const media = pt
+    ? '<div class="char-media"><img class="char-portrait" src="' + escapeHtml(pt.file) + '" width="1200" height="1800" loading="lazy" alt="' + escapeHtml(t("artworkKind.portrait") + " — " + c.name) + '"></div>'
+    : '<div class="char-media"><div class="char-monogram" style="--hue:' + hue + '" aria-hidden="true"><span>' + escapeHtml(charInitials(c.name)) + "</span></div></div>";
+  return '<div class="char-card">' + media + '<div class="char-body"><h3>' + escapeHtml(c.name) + '</h3><p class="char-role">' + escapeHtml(c.role) + '</p><p class="char-intro">' + escapeHtml(note) + "</p>" +
+    characterBioHtml(film, c, idx) + "</div></div>";
+}
+function charPortraitMatch(c, pt) {
+  const ct = charNameTokens(c.name);
+  const st = charNameTokens(pt.subject);
+  if (!ct.length || !st.length) return false;
+  const subset = (a, b) => a.every((x) => b.includes(x));
+  return subset(ct, st) || subset(st, ct);
+}
 function charactersHtml(film) {
   const chars = translatedCharacters(film);
   const portraits = artworkFor(film.id).filter((a) => a.kind === "portrait");
   const used = new Set();
   const matchFor = (c) => {
-    const ct = charNameTokens(c.name);
-    if (!ct.length) return null;
-    const hit = portraits.find((pt) => {
-      if (used.has(pt.file)) return false;
-      const st = charNameTokens(pt.subject);
-      if (!st.length) return false;
-      const subset = (a, b) => a.every((x) => b.includes(x));
-      return subset(ct, st) || subset(st, ct);
-    });
+    const hit = portraits.find((pt) => !used.has(pt.file) && charPortraitMatch(c, pt));
     if (hit) used.add(hit.file);
     return hit || null;
   };
-  /* Round 4 (Oct 30): mockup media-top cards. The portrait rule above is
-     unchanged (QC Oct 26): an image appears ONLY when the artwork subject
-     names this character. Unmatched characters get a styled monogram card
-     (initials on the film's genre hue) — never a borrowed face. */
-  const hue = genreHue(film);
-  return chars.map((c, idx) => {
-    const pt = matchFor(c);
-    const note = String(c.note || "");
-    const media = pt
-      ? '<div class="char-media"><img class="char-portrait" src="' + escapeHtml(pt.file) + '" width="1200" height="1800" loading="lazy" alt="' + escapeHtml(t("artworkKind.portrait") + " — " + c.name) + '"></div>'
-      : '<div class="char-media"><div class="char-monogram" style="--hue:' + hue + '" aria-hidden="true"><span>' + escapeHtml(charInitials(c.name)) + "</span></div></div>";
-    return '<div class="char-card">' + media + '<div class="char-body"><h3>' + escapeHtml(c.name) + '</h3><p class="char-role">' + escapeHtml(c.role) + '</p><p class="char-intro">' + escapeHtml(note) + "</p>" +
-      characterBioHtml(film, c, idx) + "</div></div>";
-  }).join("");
+  return chars.map((c, idx) => charCardHtml(film, c, idx, matchFor(c))).join("");
+}
+/* Film Detail Redesign v2: the characters section leads with the audit's
+   THREE primary characters (curation portraits, in curation display
+   order, each mapped to its character by the same subject-token rule);
+   the remaining characters sit behind a "View all characters" expander
+   in the same card style. Beside the row (desktop) sits the Key Themes
+   column — 3 themes per film from film-themes.json, condensed strictly
+   from the film's own creative-vision material. Without curation data
+   the section falls back to the full character grid, unchanged. */
+function charactersSectionHtml(film) {
+  const chars = translatedCharacters(film);
+  const cur = curationFor(film.id);
+  const themes = filmThemesFor(film);
+  const themesHtml = themes && themes.length ?
+    '<aside class="fp-themes"><h2 class="themes-heading">' + escapeHtml(t("filmV3.keyThemes")) + '</h2><div class="theme-cards">' +
+    themes.map((th) => '<div class="theme-card"><h3>' + escapeHtml(th.title) + "</h3><p>" + escapeHtml(th.text) + "</p></div>").join("") +
+    "</div></aside>" : "";
+  let mainHtml;
+  if (!cur || !Array.isArray(cur.portraits) || !cur.portraits.length || !chars.length) {
+    mainHtml = '<div class="char-grid">' + charactersHtml(film) + "</div>";
+  } else {
+    const usedChars = new Set();
+    const usedPortraits = new Set();
+    const primary = [];
+    for (const file of cur.portraits) {
+      const pt = assetByFile(film, file);
+      if (!pt) continue;
+      const idx = chars.findIndex((c, ix) => !usedChars.has(ix) && charPortraitMatch(c, pt));
+      if (idx < 0) continue;
+      usedChars.add(idx); usedPortraits.add(pt.file);
+      primary.push(charCardHtml(film, chars[idx], idx, pt));
+    }
+    const portraits = artworkFor(film.id).filter((a) => a.kind === "portrait");
+    const rest = [];
+    chars.forEach((c, idx) => {
+      if (usedChars.has(idx)) return;
+      const pt = portraits.find((p) => !usedPortraits.has(p.file) && charPortraitMatch(c, p)) || null;
+      if (pt) usedPortraits.add(pt.file);
+      rest.push(charCardHtml(film, c, idx, pt));
+    });
+    mainHtml = '<div class="char-grid char-primary">' + primary.join("") + "</div>" +
+      (rest.length ? '<details class="char-more"><summary>' + escapeHtml(t("filmV3.viewAllCharacters", { count: rest.length })) + ' <span aria-hidden="true">›</span></summary><div class="char-grid char-rest">' + rest.join("") + "</div></details>" : "");
+  }
+  return '<div class="detail-section fp-flow" id="fp-characters" data-fp-section="characters">' +
+    '<div class="fp-char-themes' + (themesHtml ? "" : " no-themes") + '"><div class="fp-char-main"><h2>' + escapeHtml(sectionLabel("mainCharacters", t("film.characters"))) + "</h2>" + mainHtml + "</div>" + themesHtml + "</div></div>";
 }
 /* Phase 4 (reconciliation design §4.4): the milestone checklist is
    retired as a separate vocabulary — it no longer renders as its own
@@ -1295,6 +1449,8 @@ function filmTabsHtml(film) {
     '<button type="button" class="film-tab" data-action="film-tab" data-tab="' + key + '" aria-selected="' + (filmTabState.tab === key) + '">' + escapeHtml(label) + "</button>").join("") + "</nav>";
 }
 const FORMAT_LABELS = { "LIVE ACTION": "Live Action", "AI FILM": "AI Film", "HYBRID": "Hybrid", "ANIMATION": "Animation" };
+/* Retained, currently uncalled: the meta row moved into the v2
+   Production Information block (productionInfoHtml). */
 function filmMetaHtml(film) {
   /* Real fields only (owner rule): genre and production type from the
      catalog record, the platform's actual status string, and the four
@@ -1347,8 +1503,12 @@ function storyIntroText(film) {
    "Read Full Story" reveals the complete preserved text — the logline,
    the full long synopsis, and the full treatment — nothing is shortened
    away or rewritten. */
-function storySectionHtml(film, art, synopsisHtml, treatmentHtmlValue) {
-  const fig = art ? '<figure class="ovw-media"><img src="' + escapeHtml(art.file) + '" width="1200" height="675" loading="lazy" alt="' + escapeHtml(galleryCaption(film, art)) + '"></figure>' : "";
+function storySectionHtml(film, mediaHtml, synopsisHtml, treatmentHtmlValue) {
+  /* Film Detail Redesign v2: the right column is the film's real trailer
+     player when a teaser exists, otherwise ONE distinctive story image
+     (the curation story asset, captioned with the artwork's own subject
+     — no fake play control, no duration badge). The caller builds the
+     media block; the text column is unchanged from Phase 4. */
   const shortText = shortSynopsisFor(film) || storyIntroText(film);
   const fullStory =
     '<p class="logline">' + escapeHtml(filmText(film, "logline")) + "</p>" + synopsisHtml +
@@ -1357,31 +1517,89 @@ function storySectionHtml(film, art, synopsisHtml, treatmentHtmlValue) {
     '<div class="story-layout"><div class="story-text">' +
     '<p class="ovw-intro">' + escapeHtml(shortText) + "</p>" +
     '<details class="detail-details treatment-wrap"><summary>' + escapeHtml(t("filmPage.readFullStory")) + ' <span aria-hidden="true">›</span></summary>' + fullStory + "</details>" +
-    "</div>" + fig + "</div></div>";
+    "</div>" + (mediaHtml || "") + "</div></div>";
 }
 function exploreWorldHtml(film) {
-  const locs = artworkFor(film.id).filter((a) => a.kind === "location");
+  /* Film Detail Redesign v2: the locations row follows the audit's
+     curation order (including the documented lead swaps), runs on a
+     single location where the other was promoted to the hero or demoted
+     for composition echo, and — for Letters from the Sun — carries the
+     garden moment as its second worldbuilding image. Fallback: all of
+     the film's locations in registry order. */
+  const cur = curationFor(film.id);
+  let locs = [];
+  if (cur && Array.isArray(cur.locations) && cur.locations.length) {
+    locs = cur.locations.map((f) => assetByFile(film, f)).filter(Boolean);
+  }
+  if (!locs.length) locs = artworkFor(film.id).filter((a) => a.kind === "location");
   if (!locs.length) return "";
   return '<div class="detail-section fp-flow ovw-world" data-fp-section="ovw-world"><h2>' + escapeHtml(t("filmV2.exploreWorld")) + '</h2>' +
     '<div class="world-grid">' + locs.map((a) =>
       '<figure class="world-card"><img src="' + escapeHtml(a.file) + '" width="1200" height="675" loading="lazy" alt="' + escapeHtml(galleryCaption(film, a)) + '"><figcaption>' + escapeHtml(a.subject || "") + "</figcaption></figure>").join("") +
     "</div></div>";
 }
-/* Producer Experience (H): built ONLY from platform-truthful material —
-   this film's real financing note, what a visitor can actually do today
-   (pledge interest / follow / save, plus the real funding facts), and ONE
-   generic "planned" platform statement. No per-film benefits, credits or
-   agreements are promised anywhere in this block. */
+/* Producer Experience: built ONLY from platform-truthful material.
+   Film Detail Redesign v2 restructures it into the three participation
+   levels the platform actually offers, clearly distinguished:
+   (1) Follow — free; (2) Pledge interest — nonbinding, no charge;
+   (3) Membership / producer experiences — presented on the Membership
+   page; NO purchase UI and no implication that anything is purchasable
+   here (membership checkout does not exist). The film's real financing
+   note stays as the intro, and the generic "planned" statement stays at
+   the end. No per-film benefits, credits or agreements are promised. */
 function producerExperienceHtml(film) {
+  const tier = (title, body) => '<div class="producer-tier"><h3>' + escapeHtml(title) + "</h3><p>" + body + "</p></div>";
   return '<div class="detail-section fp-flow producer-exp" data-fp-section="producer"><h2>' + escapeHtml(t("filmV2.producerHeading")) + "</h2>" +
     (film.financingNote ? '<h3 class="producer-sub">' + escapeHtml(t("filmV2.producerFinancingLabel")) + '</h3><p>' + escapeHtml(film.financingNote) + "</p>" : "") +
-    '<h3 class="producer-sub producer-confirmed-label">' + escapeHtml(t("filmV2.confirmedLabel")) + '</h3>' +
-    '<ul class="producer-list">' +
-    '<li>' + escapeHtml(t("filmV2.producerConfirmedPledge")) + ' <a href="#support-panel">' + escapeHtml(t("filmPage.pledgeHeading")) + "</a></li>" +
-    "<li>" + escapeHtml(t("filmV2.producerConfirmedFollow")) + "</li></ul>" +
-    fundingFactsHtml(film) +
+    '<div class="producer-tiers">' +
+    tier(t("follow.follow"), escapeHtml(t("filmV2.producerConfirmedFollow"))) +
+    tier(t("filmPage.pledgeHeading"), escapeHtml(t("filmV2.producerConfirmedPledge")) + ' <a href="#support-panel">' + escapeHtml(t("filmPage.pledgeHeading")) + "</a>") +
+    tier(t("membership.heading"), escapeHtml(t("filmV3.tierMemberText")) + ' <a href="#/membership">' + escapeHtml(t("membership.heading")) + "</a>") +
+    "</div>" +
     '<h3 class="producer-sub producer-planned-label">' + escapeHtml(t("filmV2.plannedLabel")) + '</h3>' +
     '<p class="producer-planned">' + escapeHtml(t("filmV2.plannedNote")) + ' <a href="#/professionals">' + escapeHtml(t("nav.professionals")) + "</a></p></div>";
+}
+/* Film Detail Redesign v2: Production Information — a structured block
+   of ONLY verified catalog fields (project stage, estimated production
+   budget, format, runtime, genre, published languages), plus the film's
+   own production approach, budget note, audience positioning and
+   financing note. No invented dates or values. This block absorbs the
+   Production & Financing paragraphs and the meta row that Phase 4 kept
+   inside the Development section. The status argument is the shared
+   stage string (t("film.statusInDevelopment") — the same value the hero
+   line and the Process panel show; micro-fix pass 2, Nov 2026), NOT the
+   roadmap stage name, so this block cannot contradict them. */
+function productionInfoHtml(film, statusText) {
+  const fmt = FORMAT_LABELS[film.productionType] || film.productionType || "";
+  const row = (label, value) => "<div><dt>" + escapeHtml(label) + "</dt><dd>" + escapeHtml(value) + "</dd></div>";
+  return '<div class="detail-section fp-flow" data-fp-section="production"><h2>' + escapeHtml(t("filmV3.productionInfo")) + '</h2>' +
+    "<p><strong>" + escapeHtml(film.productionType) + ".</strong> " + escapeHtml(film.productionApproach || film.productionNote) + "</p>" +
+    '<div class="meta-box"><dl>' +
+    row(t("filmPage.metaStatus"), statusText) +
+    row(t("funding.budgetLabel"), fmtMoney(film.budget)) +
+    row(t("filmPage.metaFormat"), fmt) +
+    (film.runtime ? row(t("filmV3.metaRuntime"), film.runtime) : "") +
+    row(t("filmPage.metaGenre"), film.genre) +
+    row(t("filmPage.metaLanguage"), "English · Español · Português (Brasil) · Deutsch") +
+    "</dl></div>" +
+    (film.budgetNote ? '<p class="fineprint">' + escapeHtml(film.budgetNote) + "</p>" : "") +
+    (film.audiencePositioning ? "<p><strong>" + escapeHtml(t("film2.audienceLabel")) + "</strong> " + escapeHtml(film.audiencePositioning) + "</p>" : "") +
+    (film.financingNote ? "<p>" + escapeHtml(film.financingNote) + "</p>" : "") + "</div>";
+}
+/* Film Detail Redesign v2: the closing call to action — a film-specific
+   cinematic banner on the curation closing asset (never the hero image),
+   with the page's real Follow and Pledge actions. */
+function closingCtaHtml(film) {
+  const cur = curationFor(film.id);
+  const bg = cur && cur.closing ? cur.closing : "backdrops/" + film.id + ".webp";
+  const followed = state.follows.has(film.id);
+  return '<div class="fp-closing"><img class="fp-closing-bg" src="' + escapeHtml(bg) + '" width="1600" height="900" loading="lazy" alt="" aria-hidden="true">' +
+    '<div class="fp-closing-shade"></div>' +
+    '<div class="fp-closing-body"><h2>' + escapeHtml(t("filmV3.closingHeading", { title: film.title })) + '</h2>' +
+    '<div class="fp-hero-actions">' +
+    '<button type="button" class="btn btn-primary" data-scroll="support-panel">' + escapeHtml(t("filmPage.pledgeHeading")) + "</button>" +
+    '<button type="button" class="btn btn-ghost" data-action="follow" data-id="' + film.id + '" aria-pressed="' + followed + '">' + (followed ? escapeHtml(t("follow.following")) : escapeHtml(t("follow.follow"))) + "</button>" +
+    "</div></div></div>";
 }
 
 function renderFilmDetail(id) {
@@ -1405,6 +1623,18 @@ function renderFilmDetail(id) {
      Interest Gathering — instead of the catalog's legacy "Concept
      Development" wording. The step list below keeps roadmap.1..6. */
   const statusText = (rd.currentStatus === "Concept Development") ? t("roadmap.stageName") : (rd.currentStatus || t("roadmap.stageName"));
+  /* Fix pass (Nov 2026): the HERO status line speaks with the Process
+     panel's voice — it reads the SAME source processBarHtml uses for its
+     "Current stage" line, t("film.statusInDevelopment"), so the two can
+     never contradict each other on the same page ("Status: Audience
+     Interest Gathering" beside "Current stage: In Development").
+     Micro-fix pass 2 (Nov 2026): Production Information now reads from
+     this same value too (see the productionInfoHtml call below), so the
+     whole film page names the stage once, one way. statusText (the
+     roadmap stage name) now feeds ONLY the Development roadmap block,
+     exactly as before; pledge logic, pipeline fill, cards and the
+     dashboard are untouched. */
+  const heroStatusText = t("film.statusInDevelopment");
   const roadmapInner =
     '<p class="roadmap-status"><strong>' + escapeHtml(t("film2.statusLabel", { status: statusText })) + '</strong> — ' + escapeHtml(t("film.roadmapNote")) + "</p>" +
     (rd.completedMilestones && rd.completedMilestones.length ? "<h3>" + escapeHtml(t("film2.completedHeading")) + "</h3><ul>" + rd.completedMilestones.map((m) => "<li>" + escapeHtml(m) + "</li>").join("") + "</ul>" : "") +
@@ -1431,39 +1661,82 @@ function renderFilmDetail(id) {
      folded in, journal), You Might Also Like. Honesty adaptations
      unchanged: no Updates/Discussion features, no PDF rows, no invented
      quotes, no percentage on the Process bar, and NO percentage or
-     target on the interest panel — no per-film funding target exists. */
+     target on the interest panel — no per-film funding target exists.
+     Film Detail Redesign v2 (Nov 2026) restructures the same flow to
+     David's reference layout: flat hero grid (curation hero artwork,
+     short synopsis + status line in the hero text, process + support
+     panels in the desktop right rail, single-column prompt order on
+     mobile), the teaser player inside the Story column, primary-3
+     characters + Key Themes with a View-all expander, curation-driven
+     scene/location rows, the curated-6 gallery with a Concept Artwork
+     filter and complete-collection toggle, Creative Vision, a verified-
+     fields Production Information block, the three-tier Producer
+     Experience, Development (roadmap/journal), and a film-specific
+     closing CTA banner. */
   const hasTeaser = isFlagship && !!TEASERS[film.id];
-  const teaserHtml = hasTeaser ?
-    '<div class="detail-section" id="film-teaser" data-fp-section="teaser"><h2>' + (lang === "en" ? "Concept Teaser" : escapeHtml(t("film2.teaserHeading"))) + '</h2>' +
-    '<div class="trailer-frame"><video controls preload="none" playsinline loading="lazy" poster="backdrops/' + film.id + '.webp" aria-label="' + escapeHtml(t("film2.teaserAria", { title: film.title })) + '"><source src="' + TEASERS[film.id] + '" type="video/mp4"></video></div>' +
+  /* Film Detail Redesign v2: the teaser player moves INTO the Story
+     section's media column (it was a standalone section below the
+     gallery). The wrapper keeps id="film-teaser" so the play-teaser
+     action (hero button + scene-card overlays) finds and plays it
+     exactly as before. */
+  const teaserMediaHtml = hasTeaser ?
+    '<div class="story-teaser" id="film-teaser"><div class="trailer-frame"><video controls preload="none" playsinline loading="lazy" poster="backdrops/' + film.id + '.webp" aria-label="' + escapeHtml(t("film2.teaserAria", { title: film.title })) + '"><source src="' + TEASERS[film.id] + '" type="video/mp4"></video></div>' +
     '<p class="fineprint">' + escapeHtml(t("film2.teaserNote")) + "</p></div>" : "";
-  const heroArt = BACKDROPS[film.id]
-    ? '<img class="backdrop" src="backdrops/' + film.id + '.webp" width="1600" height="900" alt="" aria-hidden="true">'
+  /* Hero artwork: the curation pick (the backdrop for 37 films; a
+     substituted 16:9 location for the 3 audit films whose backdrops are
+     weak or triplicate the poster). Fallback: the backdrop map. */
+  const cur = curationFor(film.id);
+  const heroFile = cur && cur.hero ? cur.hero : (BACKDROPS[film.id] ? "backdrops/" + film.id + ".webp" : null);
+  const heroArt = heroFile
+    ? '<img class="backdrop" src="' + escapeHtml(heroFile) + '" width="1600" height="900" alt="" aria-hidden="true">'
     : '<div class="backdrop-gradient" style="--hue:' + genreHue(film) + '"></div>';
   const assets = artworkFor(film.id);
   const related = relatedFilms(film).slice(0, 4);
-  const hookText = filmText(film, "hook");
-  const hookHtml = (typeof hookText === "string" && hookText.trim()) ? '<p class="film-hook">' + escapeHtml(hookText) + "</p>" : "";
+  /* v2: the catalog hook is NOT rendered in the hero anymore — David's
+     hero composition is chips / title / tagline / short synopsis /
+     status, and for many films the hook repeats the synopsis opening
+     nearly word for word, which read as a duplicated paragraph. */
   const synopsisHtml = String(filmText(film, "synopsis") || "").split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)
     .map((p) => '<p class="story-paragraph">' + escapeHtml(p) + "</p>").join("");
   const treatmentHtmlValue = filmText(film, "treatmentHtml");
   if (filmTabState.id !== film.id) filmTabState = { id: film.id, tab: "overview" };
   const genreChips = String(film.genre || "").split(/\s+/).filter(Boolean).slice(0, 3)
     .map((g) => '<span class="genre-chip">' + escapeHtml(g) + "</span>").join("");
-  /* V2 WS4: overview visuals — Discover-the-Story takes the first
-     location (else first moment); Creative Vision takes a detail-kind
-     piece, else a moment the story block did not use. */
-  const ovwArt = assets.find((a) => a.kind === "location") || assets.find((a) => a.kind === "moment") || null;
-  const visionArt = assets.find((a) => a.kind === "detail") || assets.find((a) => a.kind === "moment" && (!ovwArt || a.file !== ovwArt.file)) || null;
+  /* Film Detail Redesign v2: story + vision artwork from the curation
+     plan. The story column shows the teaser when one exists, else the
+     curation story image (never a scene still, never the hero);
+     Creative Vision keeps a detail-kind piece that the story block did
+     not use. Fallbacks preserve the V2 WS4 picks. */
+  const ovwArt = (cur && cur.story ? assetByFile(film, cur.story) : null) ||
+    assets.find((a) => a.kind === "location") || assets.find((a) => a.kind === "moment") || null;
+  const visionArt = assets.find((a) => a.kind === "detail" && (!ovwArt || a.file !== ovwArt.file)) ||
+    assets.find((a) => a.kind === "moment" && (!ovwArt || a.file !== ovwArt.file)) || null;
   const visionHtml = filmVisionHtml(film, visionArt);
+  const storyMediaHtml = hasTeaser ? teaserMediaHtml :
+    (ovwArt ? '<figure class="ovw-media"><img src="' + escapeHtml(ovwArt.file) + '" width="1200" height="675" loading="lazy" alt="' + escapeHtml(galleryCaption(film, ovwArt)) + '"><figcaption>' + escapeHtml(ovwArt.subject || "") + "</figcaption></figure>" : "");
+  const heroSynText = shortSynopsisFor(film);
+  const heroSynHtml = heroSynText ? '<p class="fp-hero-syn">' + escapeHtml(heroSynText) + "</p>" : "";
+  /* Film Detail Redesign v2 hero: FLAT grid children in mobile order —
+     media, text (chips/title/tagline/hook/short synopsis/status),
+     process panel, actions, support panel. Desktop CSS places the text
+     and actions over the media's lower edge and the two panels in the
+     right rail; at <=1100px the grid collapses to one column and the
+     DOM order IS the prompt's mobile order (hero -> title block ->
+     process bar -> actions -> support panel). The support panel is a
+     SINGLE DOM node (the pledge panel, id="support-panel") in both
+     layouts — no duplication, one binding for the pledge logic. */
   el.innerHTML =
-    '<div class="fp-hero">' +
-    '<div class="fp-hero-media">' + heroArt + '<div class="detail-hero-shade"></div>' +
+    '<div class="fp-hero fp-hero-v2">' +
+    '<div class="fp-hero-media">' + heroArt + '<div class="detail-hero-shade"></div></div>' +
     '<div class="fp-hero-text">' +
     '<div class="fp-chips">' + genreChips + (isFlagship ? '<span class="genre-chip featured-chip">' + escapeHtml(t("film2.featuredBadge")) + "</span>" : "") + "</div>" +
     '<h1 tabindex="-1">' + escapeHtml(film.title) + "</h1>" +
     '<p class="tagline">' + escapeHtml(filmText(film, "tagline")) + "</p>" +
-    hookHtml +
+    heroSynHtml +
+    '<p class="fp-status"><span class="fp-status-dot" aria-hidden="true"></span>' + escapeHtml(t("film2.statusLabel", { status: heroStatusText })) + "</p>" +
+    "</div>" +
+    '<div class="action-panel process-panel fp-proc">' + processBarHtml() + "</div>" +
+    '<div class="fp-hero-actions-wrap">' +
     '<div class="fp-hero-actions">' +
     '<button type="button" class="btn btn-primary" data-scroll="support-panel">' + escapeHtml(t("filmPage.pledgeHeading")) + "</button>" +
     (hasTeaser ? '<button type="button" class="btn btn-ghost" data-action="play-teaser"><span aria-hidden="true">▶</span> ' + escapeHtml(t("filmPage.watchTrailer")) + "</button>" : "") +
@@ -1473,37 +1746,32 @@ function renderFilmDetail(id) {
     '<button type="button" class="btn btn-ghost" data-action="follow" data-id="' + film.id + '" aria-pressed="' + followed + '">' + (followed ? escapeHtml(t("follow.following")) : escapeHtml(t("follow.follow"))) + "</button>" +
     '<button type="button" class="btn btn-ghost" data-action="save" data-id="' + film.id + '" aria-pressed="' + isSaved + '">' + (isSaved ? escapeHtml(t("follow.saved")) : escapeHtml(t("follow.save"))) + "</button>" +
     "</div>" +
-    "</div></div>" +
-    '<div class="fp-rail">' +
-    '<div class="action-panel process-panel">' + processBarHtml() + "</div>" +
+    "</div>" +
     pledgePanelHtml(film) +
-    "</div></div>" +
+    "</div>" +
     filmTabsHtml(film) +
     '<div class="fp-main">' +
-    storySectionHtml(film, ovwArt, synopsisHtml, treatmentHtmlValue) +
-    '<div class="detail-section fp-flow" id="fp-characters" data-fp-section="characters"><h2>' + escapeHtml(sectionLabel("mainCharacters", t("film.characters"))) + '</h2><div class="char-grid">' + charactersHtml(film) + "</div></div>" +
+    storySectionHtml(film, storyMediaHtml, synopsisHtml, treatmentHtmlValue) +
+    charactersSectionHtml(film) +
     signatureSequencesHtml(film) +
     exploreWorldHtml(film) +
     galleryHtml(film) +
-    teaserHtml +
     visionHtml +
+    productionInfoHtml(film, heroStatusText) +
     producerExperienceHtml(film) +
     '<div id="fp-development">' +
-    '<div class="detail-section fp-flow" data-fp-section="production"><h2>' + escapeHtml(t("film3.productionFinancing")) + '</h2>' +
-    "<p><strong>" + escapeHtml(film.productionType) + ".</strong> " + escapeHtml(film.productionApproach || film.productionNote) + "</p>" +
-    fundingFactsHtml(film) +
-    "<p><strong>" + escapeHtml(t("funding.budgetLabel")) + ":</strong> " + fmtMoney(film.budget) + " — " + escapeHtml(film.budgetNote) + "</p>" +
-    (film.audiencePositioning ? "<p><strong>" + escapeHtml(t("film2.audienceLabel")) + "</strong> " + escapeHtml(film.audiencePositioning) + "</p>" : "") +
-    (film.financingNote ? "<p>" + escapeHtml(film.financingNote) + "</p>" : "") + "</div>" +
-    '<div class="fp-meta-row fp-flow" data-fp-section="meta">' + filmMetaHtml(film) + "</div>" +
     '<div class="detail-section" data-fp-section="devinfo"><h2>' + escapeHtml(t("film3.developmentInfo")) + "</h2>" +
     '<details class="detail-details"><summary>' + escapeHtml(sectionLabel("developmentRoadmap", t("film.roadmap"))) + "</summary>" + roadmapInner + "</details>" +
     (journalInner ? '<details class="detail-details"><summary>' + escapeHtml(t("film2.journalHeading")) + "</summary>" + journalInner + "</details>" : "") +
     "</div>" +
     "</div>" +
+    closingCtaHtml(film) +
     "</div>" +
     '<section class="row-section fp-related" aria-label="' + escapeHtml(t("filmPage.alsoLike")) + '"><div class="section-head"><h2>' + escapeHtml(t("filmPage.alsoLike")) + '</h2><a class="section-link" href="#/discover">' + escapeHtml(t("home.viewAll")) + '</a></div>' +
-    '<div class="poster-row">' + related.map(cardHtml).join("") + "</div></section>";
+    /* Fix pass: related posters load eager (see posterHtml) — the row is
+       the last thing on a very long page, so lazy posters rendered as
+       black boxes in full-page captures and late in real visits. */
+    '<div class="poster-row">' + related.map((f) => cardHtml(f, { eager: true })).join("") + "</div></section>";
   applyFilmTab();
 }
 
@@ -2355,6 +2623,12 @@ document.addEventListener("click", (e) => {
     if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
   } else if (btn.dataset.action === "gallery-filter") {
     galleryFilterState.filter = btn.dataset.filter || "all";
+    applyGalleryFilter();
+  } else if (btn.dataset.action === "gallery-complete") {
+    /* Film Detail Redesign v2: expand the All view from the curated 6 to
+       the film's complete artwork collection (and back). */
+    galleryFilterState.complete = !galleryFilterState.complete;
+    if (galleryFilterState.complete) galleryFilterState.filter = "all";
     applyGalleryFilter();
   } else if (btn.dataset.action === "open-gallery") {
     const f = filmById(id);

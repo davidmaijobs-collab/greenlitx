@@ -1520,3 +1520,125 @@ body.modal-open { overflow: hidden; }
   .chip { min-height: 38px; }
   .fp-follow-actions .btn { min-height: 38px; }
 }
+
+/* === Film Detail Redesign v2 (Nov 2026) ===
+   The film page hero becomes a FLAT grid (media / text / process panel /
+   actions / support panel as siblings). Desktop >=1101px: media spans the
+   left column's full height, text + actions overlay its lower edge, and
+   the two panels stack in the 400px right rail. At <=1100px the grid is
+   one column and the DOM order is the mobile reading order: hero ->
+   title block -> process bar -> actions -> support panel. The support
+   panel is a single DOM node at every width. */
+.fp-hero-v2 { grid-template-columns: minmax(0, 1fr) 400px; grid-template-rows: auto auto minmax(0, 1fr) auto; }
+.fp-hero-v2 .fp-hero-media { grid-column: 1; grid-row: 1 / -1; min-height: 540px; display: block; }
+.fp-hero-v2 .fp-hero-text { grid-column: 1; grid-row: 3; align-self: end; padding: 1.6rem 1.6rem 0.3rem; }
+.fp-hero-v2 .fp-proc { grid-column: 2; grid-row: 1; align-self: start; margin-bottom: 0; }
+.fp-hero-v2 .pledge-panel { grid-column: 2; grid-row: 2 / -1; align-self: start; margin-bottom: 0; }
+.fp-hero-v2 .fp-hero-actions-wrap { grid-column: 1; grid-row: 4; align-self: end; position: relative; z-index: 2; padding: 0.2rem 1.6rem 1.6rem; }
+.fp-hero-v2 .fp-hero-actions-wrap .fp-hero-actions:first-child { margin-top: 0; }
+.fp-hero-syn { color: #dfe6ec; font-size: 1rem; line-height: 1.55; max-width: 62ch; margin: 0 0 0.9rem; text-shadow: 0 2px 12px rgba(0, 0, 0, 0.85); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.fp-status { display: flex; align-items: center; gap: 0.5rem; color: #e8ecef; font-weight: 700; font-size: 0.92rem; margin: 0; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8); }
+.fp-status-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); flex: none; }
+@media (max-width: 1100px) {
+  .fp-hero-v2 { grid-template-columns: 1fr; grid-template-rows: none; }
+  .fp-hero-v2 .fp-hero-media { grid-column: 1; grid-row: auto; min-height: 300px; height: 46vh; max-height: 430px; }
+  .fp-hero-v2 .fp-hero-text { grid-column: 1; grid-row: auto; align-self: auto; padding: 1.05rem 0.2rem 0; }
+  .fp-hero-v2 .fp-proc { grid-column: 1; grid-row: auto; }
+  .fp-hero-v2 .fp-hero-actions-wrap { grid-column: 1; grid-row: auto; align-self: auto; padding: 0; }
+  .fp-hero-v2 .pledge-panel { grid-column: 1; grid-row: auto; }
+  .fp-hero-v2 h1, .fp-hero-v2 .tagline, .fp-hero-v2 .film-hook, .fp-hero-v2 .fp-hero-syn, .fp-hero-v2 .fp-status { text-shadow: none; }
+  .fp-hero-v2 .fp-hero-syn { -webkit-line-clamp: 5; }
+}
+/* Story column media: real trailer player or one captioned story image */
+.story-teaser .trailer-frame { max-width: none; margin: 0; }
+.ovw-media figcaption { color: var(--muted); font-size: 0.85rem; margin-top: 0.4rem; }
+/* Main characters + Key Themes */
+.fp-char-themes { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 1.6rem; align-items: start; }
+.fp-char-themes.no-themes { grid-template-columns: minmax(0, 1fr); }
+.char-grid.char-primary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.theme-cards { display: grid; gap: 0.8rem; }
+.theme-card { background: var(--panel); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 10px; padding: 0.9rem 1rem; }
+.theme-card h3 { margin: 0 0 0.3rem; font-size: 1rem; }
+.theme-card p { margin: 0; color: #c9d2d9; font-size: 0.92rem; line-height: 1.5; }
+.char-more { margin-top: 1rem; }
+.char-more > summary { cursor: pointer; font-weight: 700; color: var(--accent); min-height: 38px; display: flex; align-items: center; }
+.char-grid.char-rest { margin-top: 0.8rem; }
+@media (max-width: 1100px) { .fp-char-themes { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 640px) {
+  .char-grid.char-primary { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 0.7rem; padding-bottom: 0.4rem; }
+  .char-grid.char-primary .char-card { flex: 0 0 76%; scroll-snap-align: start; }
+}
+/* Signature scenes: expandable long descriptions (the base .scene-body p
+   clamp must not clip the expanded full text) */
+.scene-more > summary { cursor: pointer; color: var(--accent); font-weight: 700; font-size: 0.9rem; min-height: 38px; display: flex; align-items: center; }
+.scene-body .scene-more p { display: block; -webkit-line-clamp: none; overflow: visible; }
+/* Curated gallery: complete-collection toggle row */
+.gallery-complete-row { margin-top: 1rem; text-align: center; }
+/* Production information: verified-fields definition list in 3 columns */
+[data-fp-section="production"] .meta-box dl { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+@media (max-width: 760px) { [data-fp-section="production"] .meta-box dl { grid-template-columns: 1fr 1fr; } }
+/* Producer experience: the three participation tiers side by side */
+.producer-tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.9rem; margin: 1rem 0 0.4rem; }
+.producer-tier { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.1rem; }
+.producer-tier h3 { margin: 0 0 0.4rem; font-size: 1.02rem; }
+.producer-tier p { margin: 0; color: #c9d2d9; font-size: 0.94rem; line-height: 1.55; }
+@media (max-width: 900px) { .producer-tiers { grid-template-columns: 1fr; } }
+/* Closing call to action banner */
+.fp-closing { position: relative; overflow: hidden; border-radius: 14px; margin-top: 2.2rem; min-height: 320px; display: flex; align-items: flex-end; background: #000; }
+.fp-closing-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.fp-closing-shade { position: absolute; inset: 0; background: linear-gradient(200deg, rgba(5, 7, 10, 0.05) 30%, rgba(5, 7, 10, 0.88) 78%); }
+.fp-closing-body { position: relative; z-index: 2; padding: 1.8rem; width: 100%; }
+.fp-closing-body h2 { font-family: "Archivo", "Inter", "Helvetica Neue", "Segoe UI", Roboto, "Liberation Sans", Arial, sans-serif; font-size: clamp(1.7rem, 3.6vw, 2.6rem); font-weight: 900; letter-spacing: -0.01em; line-height: 1.05; text-transform: uppercase; margin: 0 0 0.6rem; text-shadow: 0 4px 24px rgba(0, 0, 0, 0.7); overflow-wrap: break-word; }
+@media (max-width: 640px) { .fp-closing { min-height: 260px; } .fp-closing-body { padding: 1.2rem; } }
+
+/* === Film Detail Redesign v2 — FIX PASS (Nov 2026) ===
+   1) Signature Scenes on desktop/tablet: the Phase 4 carousel rule turned
+      the row into a scroll strip of fixed 400px cards at EVERY width, so
+      on desktop the 4th card sat clipped at the strip's edge, its text
+      cut mid-word, with no fade/snap affordance to excuse it (measured:
+      strip clientWidth 1285 vs scrollWidth 1643 at 1440px). At >=761px
+      the row is now a grid whose tracks share the content width, so all
+      curated scenes (3–4) fit fully inside it. The <=760px swipe rail
+      (scroll-snap, one card + peek) is unchanged.
+   2) "You Might Also Like" cards: the compact process labels are a
+      ~210px nowrap row inside a 176px card. The Phase 7 wrap fix only
+      applied at <=760px viewports, so on desktop the labels spilled past
+      the card edge and ran into the neighbouring card's labels as
+      overlapping garble (measured: last label ends ~33px beyond the
+      card). Scoped to the film page's related row (.fp-related), the
+      labels now wrap inside the card at every width — same treatment
+      Phase 7 gave small screens. */
+@media (min-width: 761px) {
+  .signature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); overflow: visible; scroll-snap-type: none; padding-bottom: 0; }
+  .signature-grid .signature-card { scroll-snap-align: none; }
+}
+.fp-related .process-labels { flex-wrap: wrap; row-gap: 0.12rem; }
+/* Fix pass, scenes (cont.): the base .scene-body p line-clamp (3 lines)
+   also cut PLAIN short descriptions (<=190 chars) that have no "Scene
+   details" expander — at the grid's narrower card widths that silently
+   truncated 47 cards across the catalog. Plain short descriptions now
+   render in full; the expander path's .scene-short preview keeps its
+   clamp by design (full text is one click away). */
+.scene-body > p:not(.scene-short) { display: block; -webkit-line-clamp: none; overflow: visible; }
+
+/* === Film Detail Redesign v2 — MICRO-FIX PASS 2 (Nov 2026) ===
+   The fix pass's Finding 2 flag, resolved: the compact process labels
+   are a ~210px nowrap row, and the compact card is only 176px wide on
+   Home poster rows (195–202px on Discover) at EVERY viewport width —
+   but the wrap treatment only existed at <=760px viewports (Phase 7)
+   and, at all widths, only inside the film page's related row (fix
+   pass). Measured before this change: 164/164 compact cards on Home
+   and 40/40 on Discover at 1440px and 1280px had label spans extending
+   past their own card's right edge (up to ~33px on Home — the last
+   labels ran into the neighbouring card's label row); 0 at 390px,
+   where the Phase 7 wrap already applied. The compact process block is
+   emitted by exactly one renderer — cardHtml (app.js) — which is the
+   shared card markup for Home shelves, Discover, account/saved lists
+   and the film page's related row, so the wrap now attaches to the
+   compact block itself and holds at every width on every one of those
+   surfaces. The .fp-related rule above stays (now redundant, kept so
+   the fix-pass block is untouched). Full-size process bars (featured
+   cards, the film-page process panel) are deliberately NOT matched:
+   their containers are wide, no spill was measured there, and their
+   verified layout is unchanged. */
+.process-block.compact .process-labels { flex-wrap: wrap; row-gap: 0.12rem; }
