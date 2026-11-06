@@ -171,7 +171,55 @@ window.GLX_ARTWORK = {
    "subject": "The dispatcher's own log page, 1989",
    "created": "2026-11-01"
   }
- ],
+ ,
+  {
+   "file": "artwork/blackwater-county/moment-raising-the-car.webp",
+   "kind": "moment",
+   "subject": "Raising the Car",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/blackwater-county/moment-the-empty-box.webp",
+   "kind": "moment",
+   "subject": "The Empty Box",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/blackwater-county/moment-the-drought-line.webp",
+   "kind": "moment",
+   "subject": "The Drought Line",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/blackwater-county/moment-the-church-social-1989.webp",
+   "kind": "moment",
+   "subject": "The Church Social, 1989",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/blackwater-county/location-the-delaney-bank.webp",
+   "kind": "location",
+   "subject": "The Delaney bank",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/blackwater-county/location-the-family-burial-ground.webp",
+   "kind": "location",
+   "subject": "The family burial ground",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/blackwater-county/detail-the-coffee-tin.webp",
+   "kind": "detail",
+   "subject": "Ruth Ann's coffee tin",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/blackwater-county/moment-the-record-filed.webp",
+   "kind": "moment",
+   "subject": "The Record, Filed",
+   "created": "2026-11-06"
+  }],
  "children-of-the-storm": [
   {
    "file": "posters/children-of-the-storm.webp",
@@ -2675,7 +2723,55 @@ window.GLX_ARTWORK = {
    "subject": "The predecessor's annotated violin part",
    "created": "2026-11-01"
   }
- ],
+ ,
+  {
+   "file": "artwork/the-night-orchestra/moment-the-orchestra-at-3-a-m.webp",
+   "kind": "moment",
+   "subject": "The Orchestra at 3 A.M.",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-night-orchestra/moment-the-wedding-ballroom.webp",
+   "kind": "moment",
+   "subject": "The Wedding Ballroom",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-night-orchestra/moment-the-finale-deviation.webp",
+   "kind": "moment",
+   "subject": "The Finale Deviation",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-night-orchestra/moment-the-confession.webp",
+   "kind": "moment",
+   "subject": "The Confession",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-night-orchestra/location-the-catalogue-stacks.webp",
+   "kind": "location",
+   "subject": "Inside the catalogue archive",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-night-orchestra/location-vienna-at-3-a-m.webp",
+   "kind": "location",
+   "subject": "Vienna at 3 a.m.",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-night-orchestra/detail-the-dedication-page.webp",
+   "kind": "detail",
+   "subject": "The dedication page",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-night-orchestra/moment-vane-on-the-podium.webp",
+   "kind": "moment",
+   "subject": "Vane on the Podium",
+   "created": "2026-11-06"
+  }],
  "the-ocean-beneath-us": [
   {
    "file": "posters/the-ocean-beneath-us.webp",
@@ -3307,7 +3403,55 @@ window.GLX_ARTWORK = {
    "subject": "Nia's Hand-Ground Lens",
    "created": "2026-11-01"
   }
- ],
+ ,
+  {
+   "file": "artwork/the-star-collector/moment-the-star-convoy.webp",
+   "kind": "moment",
+   "subject": "The Star Convoy",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-star-collector/moment-the-lens-cracks.webp",
+   "kind": "moment",
+   "subject": "The Lens Cracks",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-star-collector/moment-the-star-that-would-not-rise.webp",
+   "kind": "moment",
+   "subject": "The Star That Would Not Rise",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-star-collector/moment-loading-the-boat.webp",
+   "kind": "moment",
+   "subject": "Loading the Boat",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-star-collector/location-the-jar-cellar.webp",
+   "kind": "location",
+   "subject": "The lighthouse cellar",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-star-collector/location-the-harbour-in-winter.webp",
+   "kind": "location",
+   "subject": "The Harbour in Winter",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-star-collector/detail-chalk-sky-account.webp",
+   "kind": "detail",
+   "subject": "The chalk sky-account",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-star-collector/moment-the-lamplighter-descends.webp",
+   "kind": "moment",
+   "subject": "The Lamplighter Descends",
+   "created": "2026-11-06"
+  }],
  "the-witness-list": [
   {
    "file": "posters/the-witness-list.webp",
