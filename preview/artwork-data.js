@@ -304,6 +304,60 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The lighthouse radio",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/children-of-the-storm/moment-the-chain-holds.webp",
+   "kind": "moment",
+   "subject": "The Chain Holds",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/children-of-the-storm/moment-the-staircase-road.webp",
+   "kind": "moment",
+   "subject": "The Staircase Road",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/children-of-the-storm/moment-the-log-at-the-shelter.webp",
+   "kind": "moment",
+   "subject": "The Log at the Shelter",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/children-of-the-storm/moment-night-two-the-boats-lee.webp",
+   "kind": "moment",
+   "subject": "Night Two, the Boat's Lee",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/children-of-the-storm/location-the-ridge-footpath.webp",
+   "kind": "location",
+   "subject": "The Ridge Footpath",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/children-of-the-storm/location-the-island-cut-in-two.webp",
+   "kind": "location",
+   "subject": "The Island Cut in Two",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/children-of-the-storm/detail-the-ruled-through-column.webp",
+   "kind": "detail",
+   "subject": "The Ruled-Through Column",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/children-of-the-storm/moment-the-light-answers.webp",
+   "kind": "moment",
+   "subject": "The Light Answers",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/children-of-the-storm/moment-bimas-water.webp",
+   "kind": "moment",
+   "subject": "Bima's Water",
+   "created": "2026-11-06"
   }
  ],
  "dead-freight": [
@@ -1188,6 +1242,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The water gates",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-cartographers-daughter/moment-the-burning-of-the-fair-copy.webp",
+   "kind": "moment",
+   "subject": "The Burning of the Fair Copy",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-cartographers-daughter/moment-the-courteous-warning.webp",
+   "kind": "moment",
+   "subject": "The Courteous Warning",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-cartographers-daughter/moment-reseating-the-western-gates.webp",
+   "kind": "moment",
+   "subject": "Reseating the Western Gates",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-cartographers-daughter/moment-the-portage.webp",
+   "kind": "moment",
+   "subject": "The Portage",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-cartographers-daughter/location-the-last-ascent.webp",
+   "kind": "location",
+   "subject": "The Last Ascent",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-cartographers-daughter/location-colonial-lima-street.webp",
+   "kind": "location",
+   "subject": "Colonial Lima Street",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-cartographers-daughter/detail-the-keepers-sluice-key.webp",
+   "kind": "detail",
+   "subject": "The Keeper's Sluice Key",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-cartographers-daughter/moment-the-keepers-letter.webp",
+   "kind": "moment",
+   "subject": "The Keeper's Letter",
+   "created": "2026-11-06"
   }
  ],
  "the-city-without-shadows": [
@@ -2014,6 +2116,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The folded note in seat 9",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-invisible-passenger/moment-the-root-cut.webp",
+   "kind": "moment",
+   "subject": "The Root Cut",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-invisible-passenger/moment-the-copy-at-home.webp",
+   "kind": "moment",
+   "subject": "The Copy at Home",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-invisible-passenger/moment-the-decode.webp",
+   "kind": "moment",
+   "subject": "The Decode",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-invisible-passenger/moment-the-kind-management.webp",
+   "kind": "moment",
+   "subject": "The Kind Management",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-invisible-passenger/location-the-depot-platform.webp",
+   "kind": "location",
+   "subject": "The Depot Platform",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-invisible-passenger/location-legacy-equipment-bay.webp",
+   "kind": "location",
+   "subject": "Legacy Equipment Bay",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-invisible-passenger/detail-the-copied-log.webp",
+   "kind": "detail",
+   "subject": "The Copied Log",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-invisible-passenger/moment-the-hand-delivery-at-dawn.webp",
+   "kind": "moment",
+   "subject": "The Hand-Delivery at Dawn",
+   "created": "2026-11-06"
   }
  ],
  "the-keeper-of-forgotten-things": [
@@ -2736,6 +2886,60 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Sonar scope — the impossible contact",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-train-below/moment-wedged-in-the-deep-cut.webp",
+   "kind": "moment",
+   "subject": "Wedged in the Deep Cut",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-train-below/moment-ines-opens-the-sluices.webp",
+   "kind": "moment",
+   "subject": "Ines Opens the Sluices",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-train-below/moment-the-last-platform.webp",
+   "kind": "moment",
+   "subject": "The Last Platform",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-train-below/moment-crew-drill.webp",
+   "kind": "moment",
+   "subject": "Crew Drill",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-train-below/location-the-deep-cut-and-shaft.webp",
+   "kind": "location",
+   "subject": "The Deep Cut and Shaft",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-train-below/location-crown-relief-sluices.webp",
+   "kind": "location",
+   "subject": "Crown Relief Sluices",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-train-below/detail-doyles-cab-key.webp",
+   "kind": "detail",
+   "subject": "Doyle's Cab Key",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-train-below/moment-the-shaft-climb.webp",
+   "kind": "moment",
+   "subject": "The Shaft Climb",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-train-below/moment-first-run-radio-open.webp",
+   "kind": "moment",
+   "subject": "First Run, Radio Open",
+   "created": "2026-11-06"
   }
  ],
  "the-memory-auction": [
@@ -2828,6 +3032,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Sealed trust case",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-memory-auction/moment-holding-the-vault.webp",
+   "kind": "moment",
+   "subject": "Holding the Vault",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-memory-auction/moment-hiring-the-eraser.webp",
+   "kind": "moment",
+   "subject": "Hiring the Eraser",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-memory-auction/moment-the-locked-door.webp",
+   "kind": "moment",
+   "subject": "The Locked Door",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-memory-auction/moment-the-trust-revealed.webp",
+   "kind": "moment",
+   "subject": "The Trust Revealed",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-memory-auction/location-the-rival-house.webp",
+   "kind": "location",
+   "subject": "The Rival House",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-memory-auction/location-the-extraction-clinic.webp",
+   "kind": "location",
+   "subject": "The Extraction Clinic",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-memory-auction/detail-the-provenance-deed.webp",
+   "kind": "detail",
+   "subject": "The Provenance Deed",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-memory-auction/moment-the-claimant.webp",
+   "kind": "moment",
+   "subject": "The Claimant",
+   "created": "2026-11-06"
   }
  ],
  "the-night-orchestra": [
@@ -3152,6 +3404,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The smashed watch",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-perfect-alibi/moment-the-real-arrest.webp",
+   "kind": "moment",
+   "subject": "The Real Arrest",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-perfect-alibi/moment-custody-interview.webp",
+   "kind": "moment",
+   "subject": "Custody Interview",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-perfect-alibi/moment-bens-confession.webp",
+   "kind": "moment",
+   "subject": "Ben's Confession",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-perfect-alibi/moment-the-amateur-legal-team.webp",
+   "kind": "moment",
+   "subject": "The Amateur Legal Team",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-perfect-alibi/location-glorias-storage-unit-archive.webp",
+   "kind": "location",
+   "subject": "Gloria's Storage-Unit Archive",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-perfect-alibi/location-saltmarsh-site-office-at-night.webp",
+   "kind": "location",
+   "subject": "Saltmarsh Site Office at Night",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-perfect-alibi/detail-the-pigeonhole.webp",
+   "kind": "detail",
+   "subject": "The Pigeonhole",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-perfect-alibi/moment-coda-unrecorded.webp",
+   "kind": "moment",
+   "subject": "Coda, Unrecorded",
+   "created": "2026-11-06"
   }
  ],
  "the-republic-of-tomorrow": [
