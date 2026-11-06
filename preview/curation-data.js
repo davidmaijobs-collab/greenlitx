@@ -882,7 +882,7 @@ window.GLX_CURATION = {
    "artwork/blackwater-county/detail-case-file-1989.webp",
    "artwork/blackwater-county/detail-the-dispatch-log-page.webp",
    "artwork/blackwater-county/moment-archive-room.webp",
-   "artwork/blackwater-county/location-drained-reservoir.webp"
+   "artwork/blackwater-county/location-sheriffs-office.webp"
   ],
   "story": "artwork/blackwater-county/moment-archive-room.webp",
   "closing": "artwork/blackwater-county/location-sheriffs-office.webp"

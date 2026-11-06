@@ -1228,14 +1228,27 @@ const GALLERY_CATEGORIES = [
   ["moment", () => t("filmPage.scenesHeading")],
   ["detail", () => t("filmV3.conceptArtwork")]
 ];
+const GALLERY_KIND_ORDER = { poster: 0, moment: 1, portrait: 2, location: 3, detail: 4, backdrop: 5 };
 function galleryDisplayAssets(film) {
   const assets = artworkFor(film.id);
   const cur = curationFor(film.id);
-  if (!cur || !Array.isArray(cur.gallery) || !cur.gallery.length) return assets;
-  const byFile = new Map(assets.map((a) => [a.file, a]));
-  const first = cur.gallery.map((f) => byFile.get(f)).filter(Boolean);
-  const rest = assets.filter((a) => !cur.gallery.includes(a.file));
-  return first.concat(rest);
+  let ordered = assets;
+  if (cur && Array.isArray(cur.gallery) && cur.gallery.length) {
+    const byFile = new Map(assets.map((a) => [a.file, a]));
+    const first = cur.gallery.map((f) => byFile.get(f)).filter(Boolean);
+    const rest = assets.filter((a) => !cur.gallery.includes(a.file));
+    ordered = first.concat(rest);
+  }
+  /* Owner gallery rule (Nov 6): the poster and the backdrop are two crops
+     of the same key visual — never show both in the gallery. The poster
+     stays as the key visual; the backdrop already serves as the hero. */
+  if (ordered.some((a) => a.kind === "poster")) ordered = ordered.filter((a) => a.kind !== "backdrop");
+  /* Deliberate order: key visual, then story moments, characters, world,
+     details. Stable within each kind, so curation order is preserved. */
+  return ordered
+    .map((a, i) => [a, i])
+    .sort((x, y) => ((GALLERY_KIND_ORDER[x[0].kind] ?? 9) - (GALLERY_KIND_ORDER[y[0].kind] ?? 9)) || (x[1] - y[1]))
+    .map((pair) => pair[0]);
 }
 function galleryAssetVisible(film, a) {
   const f = galleryFilterState.filter;
@@ -1282,8 +1295,7 @@ function galleryHtml(film) {
     '<div class="concept-gallery">' +
     display.map((a, i) =>
       '<figure data-kind="' + escapeHtml(a.kind) + '" data-file="' + escapeHtml(a.file) + '"' + (galleryAssetVisible(film, a) ? "" : " hidden") + '><button type="button" class="gallery-item" data-lightbox-film="' + film.id + '" data-lightbox-idx="' + i + '" data-file="' + escapeHtml(a.file) + '" aria-label="' + escapeHtml(t("gallery.view", { caption: galleryCaption(film, a) })) + '">' +
-      '<img src="' + escapeHtml(a.file) + '" width="' + (a.kind === "portrait" ? 1200 : a.kind === "poster" ? 880 : a.kind === "backdrop" ? 1600 : 1200) + '" height="' + (a.kind === "portrait" ? 1800 : a.kind === "poster" ? 1320 : a.kind === "backdrop" ? 900 : 800) + '" loading="lazy" alt="' + escapeHtml(galleryCaption(film, a)) + '"></button>' +
-      "<figcaption>" + escapeHtml(galleryCaption(film, a)) + "</figcaption></figure>").join("") +
+      '<img src="' + escapeHtml(a.file) + '" width="' + (a.kind === "portrait" ? 1200 : a.kind === "poster" ? 880 : a.kind === "backdrop" ? 1600 : 1200) + '" height="' + (a.kind === "portrait" ? 1800 : a.kind === "poster" ? 1320 : a.kind === "backdrop" ? 900 : 800) + '" loading="lazy" alt="' + escapeHtml(galleryCaption(film, a)) + '"></button></figure>').join("") +
     "</div>" +
     '<div class="gallery-complete-row"><button type="button" class="btn btn-ghost btn-small" data-action="gallery-complete" aria-pressed="' + galleryFilterState.complete + '">' + escapeHtml(t(galleryFilterState.complete ? "filmV3.showCurated" : "filmV3.viewComplete")) + "</button></div></div>";
 }
