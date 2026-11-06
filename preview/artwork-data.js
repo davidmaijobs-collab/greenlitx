@@ -1360,6 +1360,66 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The kept 1979 reel tape",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-devils-frequency/moment-one-lit-window.webp",
+   "kind": "moment",
+   "subject": "One Lit Window",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-devils-frequency/moment-the-recognition.webp",
+   "kind": "moment",
+   "subject": "The Recognition",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-devils-frequency/moment-the-message-delivered.webp",
+   "kind": "moment",
+   "subject": "The Message Delivered",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-devils-frequency/moment-the-final-night.webp",
+   "kind": "moment",
+   "subject": "The Final Night",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-devils-frequency/location-the-diner-below.webp",
+   "kind": "location",
+   "subject": "The Diner Below",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-devils-frequency/location-the-transmitter-field.webp",
+   "kind": "location",
+   "subject": "The Transmitter Field",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-devils-frequency/detail-the-modification.webp",
+   "kind": "detail",
+   "subject": "The Modification",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-devils-frequency/moment-dawn-after.webp",
+   "kind": "moment",
+   "subject": "Dawn, After",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-devils-frequency/moment-the-porch.webp",
+   "kind": "moment",
+   "subject": "The Porch",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-devils-frequency/moment-measured.webp",
+   "kind": "moment",
+   "subject": "Measured",
+   "created": "2026-11-06"
   }
  ],
  "the-forgotten-astronaut": [
@@ -1630,6 +1690,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The hydrophone array",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-glass-diver/moment-the-suit-against-the-black.webp",
+   "kind": "moment",
+   "subject": "The Suit Against the Black",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-glass-diver/moment-the-sick-bay.webp",
+   "kind": "moment",
+   "subject": "The Sick Bay",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-glass-diver/moment-the-ascent.webp",
+   "kind": "moment",
+   "subject": "The Ascent",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-glass-diver/moment-the-control-van.webp",
+   "kind": "moment",
+   "subject": "The Control Van",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-glass-diver/location-the-sealed-laboratory.webp",
+   "kind": "location",
+   "subject": "The Sealed Laboratory",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-glass-diver/location-the-docking-collar.webp",
+   "kind": "location",
+   "subject": "The Docking Collar",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-glass-diver/detail-the-evidence-canister.webp",
+   "kind": "detail",
+   "subject": "The Evidence Canister",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-glass-diver/moment-three-hundred-metres.webp",
+   "kind": "moment",
+   "subject": "Three Hundred Metres",
+   "created": "2026-11-06"
   }
  ],
  "the-great-escape-club": [
@@ -2004,6 +2112,48 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Wren's plant cuttings in jam jars",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-keeper-of-forgotten-things/moment-the-last-night-at-home.webp",
+   "kind": "moment",
+   "subject": "The Last Night at Home",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-keeper-of-forgotten-things/moment-the-battlefield-of-lost-arguments.webp",
+   "kind": "moment",
+   "subject": "The Battlefield of Lost Arguments",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-keeper-of-forgotten-things/moment-pell-turns-the-key.webp",
+   "kind": "moment",
+   "subject": "Pell Turns the Key",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-keeper-of-forgotten-things/moment-the-umbrella-herons.webp",
+   "kind": "moment",
+   "subject": "The Umbrella Herons",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-keeper-of-forgotten-things/location-the-coast-of-left-behinds.webp",
+   "kind": "location",
+   "subject": "The Coast of Left-Behinds",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-keeper-of-forgotten-things/location-the-threshold-country.webp",
+   "kind": "location",
+   "subject": "The Threshold Country",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-keeper-of-forgotten-things/detail-the-ribbon-loosely-tied.webp",
+   "kind": "detail",
+   "subject": "The Ribbon, Loosely Tied",
+   "created": "2026-11-06"
   }
  ],
  "the-kings-last-cook": [
@@ -2360,6 +2510,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The Rex projector",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-picture-house/moment-the-letters-come-down.webp",
+   "kind": "moment",
+   "subject": "The Letters Come Down",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-picture-house/moment-the-bench-examination.webp",
+   "kind": "moment",
+   "subject": "The Bench Examination",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-picture-house/moment-the-closed-door.webp",
+   "kind": "moment",
+   "subject": "The Closed Door",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-picture-house/moment-the-town-in-the-lobby.webp",
+   "kind": "moment",
+   "subject": "The Town in the Lobby",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-picture-house/location-the-projection-booth.webp",
+   "kind": "location",
+   "subject": "The Projection Booth",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-picture-house/location-dotties-apartment.webp",
+   "kind": "location",
+   "subject": "Dottie's Apartment",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-picture-house/detail-one-letter-crated.webp",
+   "kind": "detail",
+   "subject": "One Letter, Crated",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-picture-house/moment-the-booth-window.webp",
+   "kind": "moment",
+   "subject": "The Booth Window",
+   "created": "2026-11-06"
   }
  ],
  "the-last-summer-of-rome": [
@@ -3040,6 +3238,60 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Old Marek's handwritten paper ledger",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-republic-of-tomorrow/moment-the-plaza-doing-nothing.webp",
+   "kind": "moment",
+   "subject": "The Plaza, Doing Nothing",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-republic-of-tomorrow/moment-into-the-blind-spots.webp",
+   "kind": "moment",
+   "subject": "Into the Blind Spots",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-republic-of-tomorrow/moment-tuesday.webp",
+   "kind": "moment",
+   "subject": "Tuesday",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-republic-of-tomorrow/moment-the-underground-at-paper.webp",
+   "kind": "moment",
+   "subject": "The Underground at Paper",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-republic-of-tomorrow/location-the-records-annex-plaza.webp",
+   "kind": "location",
+   "subject": "The Records Annex Plaza",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-republic-of-tomorrow/location-a-ministry-flat.webp",
+   "kind": "location",
+   "subject": "A Ministry Flat",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-republic-of-tomorrow/detail-the-annex-in-her-hands.webp",
+   "kind": "detail",
+   "subject": "The Annex in Her Hands",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-republic-of-tomorrow/moment-the-corridor.webp",
+   "kind": "moment",
+   "subject": "The Corridor",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-republic-of-tomorrow/moment-the-appeal-window.webp",
+   "kind": "moment",
+   "subject": "The Appeal Window",
+   "created": "2026-11-06"
   }
  ],
  "the-retirement-job": [
@@ -3634,6 +3886,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "David Lenz's felted practice keyboard in the coal cellar",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-woman-in-apartment-9/moment-the-fitting-as-interrogation.webp",
+   "kind": "moment",
+   "subject": "The Fitting as Interrogation",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-woman-in-apartment-9/moment-the-shop-in-wilmersdorf.webp",
+   "kind": "moment",
+   "subject": "The Shop in Wilmersdorf",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-woman-in-apartment-9/moment-taken-at-dawn.webp",
+   "kind": "moment",
+   "subject": "Taken at Dawn",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-woman-in-apartment-9/moment-the-house-at-supper.webp",
+   "kind": "moment",
+   "subject": "The House at Supper",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-woman-in-apartment-9/location-the-coal-cellar.webp",
+   "kind": "location",
+   "subject": "The Coal Cellar",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-woman-in-apartment-9/location-charlottenburg-street-blackout.webp",
+   "kind": "location",
+   "subject": "Charlottenburg Street, Blackout",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-woman-in-apartment-9/detail-the-blue-cloth.webp",
+   "kind": "detail",
+   "subject": "The Blue Cloth",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-woman-in-apartment-9/moment-the-landing-at-night.webp",
+   "kind": "moment",
+   "subject": "The Landing at Night",
+   "created": "2026-11-06"
   }
  ],
  "tomorrows-witness": [
