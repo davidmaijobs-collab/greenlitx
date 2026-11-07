@@ -38,10 +38,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/before-the-city-wakes/detail-margin-notes-book.webp",
+   "file": "artwork/before-the-city-wakes/detail-walking-back-in-daylight.webp",
    "kind": "detail",
-   "subject": "Book with margin notes",
-   "created": "2026-10-25"
+   "subject": "Walking back in daylight",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/before-the-city-wakes/portrait-mrs-ogawa.webp",
@@ -150,8 +150,8 @@ window.GLX_ARTWORK = {
   {
    "file": "backdrops/blackwater-county.webp",
    "kind": "backdrop",
-   "subject": "Backdrop artwork",
-   "created": "2026-10-24"
+   "subject": "Pearl and Caleb at Ruth Ann's headstone, dawn",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/blackwater-county/portrait-caleb-delaney.webp",
@@ -166,10 +166,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/blackwater-county/location-drained-reservoir.webp",
+   "file": "artwork/blackwater-county/location-the-boat-ramp.webp",
    "kind": "location",
-   "subject": "Blackwater County reservoir",
-   "created": "2026-10-25"
+   "subject": "The reservoir boat ramp, cracked mud",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/blackwater-county/moment-archive-room.webp",
@@ -196,10 +196,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-01"
   },
   {
-   "file": "artwork/blackwater-county/moment-the-car-out-of-the-mud.webp",
+   "file": "artwork/blackwater-county/moment-the-porch-interview.webp",
    "kind": "moment",
-   "subject": "The Car Out of the Mud",
-   "created": "2026-11-01"
+   "subject": "The porch interview with Sheriff Brandt",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/blackwater-county/moment-the-inventory-of-an-absence.webp",
@@ -233,10 +233,10 @@ window.GLX_ARTWORK = {
   }
  ,
   {
-   "file": "artwork/blackwater-county/moment-raising-the-car.webp",
+   "file": "artwork/blackwater-county/moment-the-inventory-reading.webp",
    "kind": "moment",
-   "subject": "Raising the Car",
-   "created": "2026-11-06"
+   "subject": "The commission-room inventory reading",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/blackwater-county/moment-the-empty-box.webp",
@@ -275,10 +275,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-06"
   },
   {
-   "file": "artwork/blackwater-county/moment-the-record-filed.webp",
+   "file": "artwork/blackwater-county/moment-the-evidence-tag.webp",
    "kind": "moment",
-   "subject": "The Record, Filed",
-   "created": "2026-11-06"
+   "subject": "Dana tags the folded dress into evidence",
+   "created": "2026-11-07"
   }],
  "children-of-the-storm": [
   {
@@ -312,10 +312,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/children-of-the-storm/moment-river-crossing.webp",
+   "file": "artwork/children-of-the-storm/moment-the-ridge-path-at-first-light.webp",
    "kind": "moment",
-   "subject": "Nobody crosses water alone",
-   "created": "2026-10-25"
+   "subject": "The ridge path at first light",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/children-of-the-storm/detail-insulin-cooler.webp",
@@ -354,10 +354,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-01"
   },
   {
-   "file": "artwork/children-of-the-storm/location-the-lighthouse-headland.webp",
+   "file": "artwork/children-of-the-storm/location-the-flooded-village-street.webp",
    "kind": "location",
-   "subject": "The lighthouse on the far headland",
-   "created": "2026-11-01"
+   "subject": "Flooded village main street at dawn",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/children-of-the-storm/detail-the-lighthouse-radio.webp",
@@ -366,10 +366,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-01"
   },
   {
-   "file": "artwork/children-of-the-storm/moment-the-chain-holds.webp",
+   "file": "artwork/children-of-the-storm/moment-the-insulin-dose.webp",
    "kind": "moment",
-   "subject": "The Chain Holds",
-   "created": "2026-11-06"
+   "subject": "The insulin dose at the shelter",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/children-of-the-storm/moment-the-staircase-road.webp",
@@ -446,16 +446,16 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/dead-freight/location-meridian-star-rotterdam.webp",
+   "file": "artwork/dead-freight/location-the-terminal-fence.webp",
    "kind": "location",
-   "subject": "Meridian Star in Rotterdam",
-   "created": "2026-10-25"
+   "subject": "The terminal fence at dawn",
+   "created": "2026-11-07"
   },
   {
-   "file": "artwork/dead-freight/moment-welded-hold.webp",
+   "file": "artwork/dead-freight/moment-the-filing.webp",
    "kind": "moment",
-   "subject": "Opening the welded hold",
-   "created": "2026-10-25"
+   "subject": "The Filing: Sarah's notice of suspicion",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/dead-freight/detail-century-manifest.webp",
@@ -652,10 +652,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-01"
   },
   {
-   "file": "artwork/exit-47/moment-the-final-night-at-the-desk.webp",
+   "file": "artwork/exit-47/moment-ray-locks-up.webp",
    "kind": "moment",
-   "subject": "The Final Night at the Desk",
-   "created": "2026-11-06"
+   "subject": "Ray locks the motel office",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/exit-47/moment-vince-keeps-the-ledger.webp",
@@ -726,10 +726,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/letters-from-the-sun/location-sunward-capsule.webp",
+   "file": "artwork/letters-from-the-sun/location-the-transmitter-room.webp",
    "kind": "location",
-   "subject": "The Sunward capsule",
-   "created": "2026-10-25"
+   "subject": "The station's transmitter room",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/letters-from-the-sun/moment-first-letter.webp",
@@ -834,10 +834,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-06"
   },
   {
-   "file": "artwork/letters-from-the-sun/moment-elias-at-the-window.webp",
+   "file": "artwork/letters-from-the-sun/moment-elias-in-the-garden-bay.webp",
    "kind": "moment",
-   "subject": "Elias at the Window",
-   "created": "2026-11-06"
+   "subject": "Elias tending the garden bay",
+   "created": "2026-11-07"
   }
  ],
  "no-signal-in-paradise": [
@@ -1018,10 +1018,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/one-hundred-winters/detail-hearth-letters.webp",
+   "file": "artwork/one-hundred-winters/detail-the-doorframe-tally.webp",
    "kind": "detail",
-   "subject": "The hearth-wall letters",
-   "created": "2026-10-25"
+   "subject": "The lodge doorframe's winter tally",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/one-hundred-winters/portrait-clara-wiesner.webp",
@@ -1146,10 +1146,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/red-desert-rising/location-wadi-khem-crossing.webp",
+   "file": "artwork/red-desert-rising/location-the-night-camp.webp",
    "kind": "location",
-   "subject": "Wadi Khem crossing",
-   "created": "2026-10-25"
+   "subject": "The convoy's night camp at the walled compound",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/red-desert-rising/moment-into-the-storm.webp",
@@ -1292,10 +1292,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/room-for-one-more/moment-twelfth-room.webp",
+   "file": "artwork/room-for-one-more/moment-emile-on-the-staircase.webp",
    "kind": "moment",
-   "subject": "The twelfth room appears",
-   "created": "2026-10-25"
+   "subject": "Emile on the great staircase at midnight",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/room-for-one-more/detail-birthday-table.webp",
@@ -1370,10 +1370,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-06"
   },
   {
-   "file": "artwork/room-for-one-more/location-the-hospital-corridor-empty.webp",
+   "file": "artwork/room-for-one-more/location-the-frozen-lake.webp",
    "kind": "location",
-   "subject": "The Hospital Corridor, Empty",
-   "created": "2026-11-06"
+   "subject": "The frozen lake at dawn",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/room-for-one-more/location-the-boiler-room.webp",
@@ -1462,10 +1462,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-01"
   },
   {
-   "file": "artwork/seven-minutes-to-midnight/moment-verification-in-procedure.webp",
+   "file": "artwork/seven-minutes-to-midnight/moment-tommy-at-the-archive-systems.webp",
    "kind": "moment",
-   "subject": "Verification in Procedure",
-   "created": "2026-11-01"
+   "subject": "Tommy at the archive systems",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/seven-minutes-to-midnight/moment-the-fragments-become-a-timetable.webp",
@@ -1486,10 +1486,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-01"
   },
   {
-   "file": "artwork/seven-minutes-to-midnight/detail-headset-and-logbook.webp",
+   "file": "artwork/seven-minutes-to-midnight/detail-the-transcript-printout.webp",
    "kind": "detail",
-   "subject": "Dispatcher's headset and logbook",
-   "created": "2026-11-01"
+   "subject": "The transcript printout, 23:53 to midnight",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/seven-minutes-to-midnight/moment-the-dictated-report.webp",
@@ -1736,10 +1736,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-01"
   },
   {
-   "file": "artwork/the-cartographers-daughter/moment-lamplight-on-an-erasure.webp",
+   "file": "artwork/the-cartographers-daughter/moment-rolling-the-fair-copy.webp",
    "kind": "moment",
-   "subject": "Lamplight on an Erasure",
-   "created": "2026-11-01"
+   "subject": "Rolling the fair copy at dawn",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-cartographers-daughter/moment-the-same-shaped-absence.webp",
@@ -1754,10 +1754,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-01"
   },
   {
-   "file": "artwork/the-cartographers-daughter/moment-first-sight-at-the-end-of-the-erased-river.webp",
+   "file": "artwork/the-cartographers-daughter/moment-face-to-face-in-the-erased-city.webp",
    "kind": "moment",
-   "subject": "First Sight at the End of the Erased River",
-   "created": "2026-11-01"
+   "subject": "Face to face in the erased city",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-cartographers-daughter/location-the-dry-river-harbour.webp",
@@ -1970,8 +1970,8 @@ window.GLX_ARTWORK = {
   {
    "file": "backdrops/the-devils-frequency.webp",
    "kind": "backdrop",
-   "subject": "Backdrop artwork",
-   "created": "2026-10-24"
+   "subject": "The diner below at 3 a.m.: listeners at the counter radio",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-devils-frequency/portrait-denise-okafor-pryce.webp",
@@ -2040,10 +2040,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-01"
   },
   {
-   "file": "artwork/the-devils-frequency/moment-one-lit-window.webp",
+   "file": "artwork/the-devils-frequency/moment-denise-at-the-microfilm-reader.webp",
    "kind": "moment",
-   "subject": "One Lit Window",
-   "created": "2026-11-06"
+   "subject": "Denise at the microfilm reader",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-devils-frequency/moment-the-recognition.webp",
@@ -2120,10 +2120,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/the-forgotten-astronaut/portrait-elias-ward.webp",
+   "file": "artwork/the-forgotten-astronaut/portrait-elias-ward-at-the-console.webp",
    "kind": "portrait",
    "subject": "Elias Ward",
-   "created": "2026-10-25"
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-forgotten-astronaut/location-station-meridian.webp",
@@ -2132,16 +2132,16 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/the-forgotten-astronaut/moment-first-contact.webp",
+   "file": "artwork/the-forgotten-astronaut/moment-the-fragment.webp",
    "kind": "moment",
-   "subject": "Elias Ward",
-   "created": "2026-10-25"
+   "subject": "The Fragment: a waveform on Ana's console",
+   "created": "2026-11-07"
   },
   {
-   "file": "artwork/the-forgotten-astronaut/detail-flight-checklist.webp",
+   "file": "artwork/the-forgotten-astronaut/detail-the-sealed-hatch.webp",
    "kind": "detail",
-   "subject": "Elias Ward's flight checklist",
-   "created": "2026-10-25"
+   "subject": "The sealed hatch",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-forgotten-astronaut/portrait-director-paul-hennig.webp",
@@ -2156,10 +2156,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-01"
   },
   {
-   "file": "artwork/the-forgotten-astronaut/moment-the-wrong-earth.webp",
+   "file": "artwork/the-forgotten-astronaut/moment-the-observatory-sighting.webp",
    "kind": "moment",
-   "subject": "The Wrong Earth",
-   "created": "2026-11-01"
+   "subject": "The observatory sighting",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-forgotten-astronaut/moment-miriam-speaks.webp",
@@ -2390,8 +2390,8 @@ window.GLX_ARTWORK = {
   {
    "file": "backdrops/the-glass-diver.webp",
    "kind": "backdrop",
-   "subject": "Backdrop artwork",
-   "created": "2026-10-24"
+   "subject": "The support ship's deck in a storm swell",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-glass-diver/portrait-anouk-berg.webp",
@@ -2406,10 +2406,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/the-glass-diver/location-aegir-station.webp",
+   "file": "artwork/the-glass-diver/location-aegir-flooded-atrium.webp",
    "kind": "location",
-   "subject": "Aegir Station at 300 metres",
-   "created": "2026-10-25"
+   "subject": "Inside Aegir: the flooded central atrium",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-glass-diver/moment-lit-station-approach.webp",
@@ -2576,10 +2576,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-01"
   },
   {
-   "file": "artwork/the-great-escape-club/moment-the-laundry-room-founding.webp",
+   "file": "artwork/the-great-escape-club/moment-cornwall-1968-the-pact.webp",
    "kind": "moment",
-   "subject": "The Laundry-Room Founding",
-   "created": "2026-11-01"
+   "subject": "Cornwall, 1968: The Pact",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-great-escape-club/moment-the-safe-crackers-rehearsal.webp",
@@ -2746,10 +2746,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-01"
   },
   {
-   "file": "artwork/the-house-of-seven-doors/detail-the-sealed-envelope.webp",
+   "file": "artwork/the-house-of-seven-doors/detail-the-study-door-handle.webp",
    "kind": "detail",
-   "subject": "The sealed envelope for the thirtieth day",
-   "created": "2026-11-01"
+   "subject": "The study door's brass handle",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-house-of-seven-doors/moment-seven-doors-open-at-dusk.webp",
@@ -2764,16 +2764,16 @@ window.GLX_ARTWORK = {
    "created": "2026-11-06"
   },
   {
-   "file": "artwork/the-house-of-seven-doors/moment-the-election.webp",
+   "file": "artwork/the-house-of-seven-doors/moment-eleanor-at-her-fathers-desk.webp",
    "kind": "moment",
-   "subject": "The Election",
-   "created": "2026-11-06"
+   "subject": "Eleanor at her father's desk",
+   "created": "2026-11-07"
   },
   {
-   "file": "artwork/the-house-of-seven-doors/moment-the-deliberation-table.webp",
+   "file": "artwork/the-house-of-seven-doors/moment-tea-in-crowes-parlour.webp",
    "kind": "moment",
-   "subject": "The Deliberation Table",
-   "created": "2026-11-06"
+   "subject": "Tea in Crowe's parlour",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-house-of-seven-doors/location-a-study-interior.webp",
@@ -2826,10 +2826,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/the-invisible-passenger/location-coach-four.webp",
+   "file": "artwork/the-invisible-passenger/location-the-couchette-compartment.webp",
    "kind": "location",
-   "subject": "Coach four, Vienna–Venice night train",
-   "created": "2026-10-25"
+   "subject": "Coach four couchette compartment at night",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-invisible-passenger/moment-seat-nine.webp",
@@ -3074,10 +3074,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-06"
   },
   {
-   "file": "artwork/the-keeper-of-forgotten-things/detail-the-ribbon-loosely-tied.webp",
+   "file": "artwork/the-keeper-of-forgotten-things/detail-mitten-and-paper-crane.webp",
    "kind": "detail",
-   "subject": "The Ribbon, Loosely Tied",
-   "created": "2026-11-06"
+   "subject": "A red mitten cradling a paper crane",
+   "created": "2026-11-07"
   }
  ],
  "the-kings-last-cook": [
@@ -3234,10 +3234,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-24"
   },
   {
-   "file": "artwork/the-last-broadcast/portrait-dana-reyes.webp",
+   "file": "artwork/the-last-broadcast/portrait-dana-reyes-at-her-desk.webp",
    "kind": "portrait",
    "subject": "Dana Reyes",
-   "created": "2026-10-25"
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-last-broadcast/portrait-eli-navarro.webp",
@@ -3282,10 +3282,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-01"
   },
   {
-   "file": "artwork/the-last-broadcast/moment-the-bulletin-that-changed-hands.webp",
+   "file": "artwork/the-last-broadcast/moment-the-school-hall-chorus.webp",
    "kind": "moment",
-   "subject": "The Bulletin That Changed Hands",
-   "created": "2026-11-01"
+   "subject": "The school hall listener chorus",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-last-broadcast/moment-the-audit-at-3-a-m.webp",
@@ -3374,10 +3374,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-24"
   },
   {
-   "file": "artwork/the-last-firekeeper/portrait-ash.webp",
+   "file": "artwork/the-last-firekeeper/portrait-ash-on-the-ice-floes.webp",
    "kind": "portrait",
    "subject": "Ash",
-   "created": "2026-10-25"
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-last-firekeeper/portrait-queen-sefira.webp",
@@ -3398,10 +3398,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/the-last-firekeeper/detail-lantern-flame.webp",
+   "file": "artwork/the-last-firekeeper/detail-the-great-bells-rim.webp",
    "kind": "detail",
-   "subject": "The seed-flame in its lantern",
-   "created": "2026-10-25"
+   "subject": "The great bell's bronze rim and rope",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-last-firekeeper/portrait-master-corin.webp",
@@ -3510,8 +3510,8 @@ window.GLX_ARTWORK = {
   {
    "file": "backdrops/the-last-picture-house.webp",
    "kind": "backdrop",
-   "subject": "Backdrop artwork",
-   "created": "2026-10-24"
+   "subject": "The Rex on premiere night, 1956",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-last-picture-house/portrait-claire-fenn.webp",
@@ -3556,10 +3556,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-01"
   },
   {
-   "file": "artwork/the-last-picture-house/moment-the-booth-wall.webp",
+   "file": "artwork/the-last-picture-house/moment-the-buyers-offer.webp",
    "kind": "moment",
-   "subject": "The Booth Wall",
-   "created": "2026-11-01"
+   "subject": "The buyer's offer across the desk",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-last-picture-house/moment-first-light-on-the-reels.webp",
@@ -3768,10 +3768,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-06"
   },
   {
-   "file": "artwork/the-last-summer-of-rome/detail-the-seal-matrix.webp",
+   "file": "artwork/the-last-summer-of-rome/detail-the-ferry-rope-and-bell.webp",
    "kind": "detail",
-   "subject": "The Seal Matrix",
-   "created": "2026-11-06"
+   "subject": "The Po ferry's rope coil and bell",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-last-summer-of-rome/moment-on-foot-walking-pace.webp",
@@ -3940,10 +3940,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/the-memory-auction/portrait-june-park.webp",
+   "file": "artwork/the-memory-auction/portrait-june-park-in-the-auction-room.webp",
    "kind": "portrait",
    "subject": "June Park",
-   "created": "2026-10-25"
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-memory-auction/location-vesper-exchange.webp",
@@ -3958,10 +3958,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/the-memory-auction/detail-memory-vial.webp",
+   "file": "artwork/the-memory-auction/detail-the-forty-one-lot-ledger.webp",
    "kind": "detail",
-   "subject": "Vesper Exchange memory vial",
-   "created": "2026-10-25"
+   "subject": "The Forty-One Lot Ledger",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-memory-auction/portrait-odette-vesper.webp",
@@ -4086,10 +4086,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/the-night-orchestra/location-aurelia-hall-3am.webp",
+   "file": "artwork/the-night-orchestra/location-aurelia-exterior-at-3am.webp",
    "kind": "location",
-   "subject": "Aurelia hall at 3 a.m.",
-   "created": "2026-10-25"
+   "subject": "The Aurelia's exterior at 3 a.m.",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-night-orchestra/moment-annotated-parts.webp",
@@ -4165,10 +4165,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-06"
   },
   {
-   "file": "artwork/the-night-orchestra/moment-the-finale-deviation.webp",
+   "file": "artwork/the-night-orchestra/moment-lindqvists-investigation-wall.webp",
    "kind": "moment",
-   "subject": "The Finale Deviation",
-   "created": "2026-11-06"
+   "subject": "Lindqvist's investigation wall",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-night-orchestra/moment-the-confession.webp",
@@ -4195,10 +4195,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-06"
   },
   {
-   "file": "artwork/the-night-orchestra/moment-vane-on-the-podium.webp",
+   "file": "artwork/the-night-orchestra/moment-vane-in-the-stalls-at-dawn.webp",
    "kind": "moment",
-   "subject": "Vane on the Podium",
-   "created": "2026-11-06"
+   "subject": "Vane in the stalls at dawn",
+   "created": "2026-11-07"
   }],
  "the-ocean-beneath-us": [
   {
@@ -4226,10 +4226,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/the-ocean-beneath-us/location-trench-channels.webp",
+   "file": "artwork/the-ocean-beneath-us/location-voss-alone.webp",
    "kind": "location",
-   "subject": "South Pacific trench channels",
-   "created": "2026-10-25"
+   "subject": "Voss alone: the paused hand",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-ocean-beneath-us/moment-lights-answering.webp",
@@ -4262,16 +4262,16 @@ window.GLX_ARTWORK = {
    "created": "2026-11-01"
   },
   {
-   "file": "artwork/the-ocean-beneath-us/moment-channels-of-warm-water.webp",
+   "file": "artwork/the-ocean-beneath-us/moment-coda-the-recording-varies.webp",
    "kind": "moment",
-   "subject": "Channels of Warm Water",
-   "created": "2026-11-01"
+   "subject": "Coda: the recording varies",
+   "created": "2026-11-07"
   },
   {
-   "file": "artwork/the-ocean-beneath-us/moment-the-sector-that-went-dark.webp",
+   "file": "artwork/the-ocean-beneath-us/moment-the-bridge-in-the-storm.webp",
    "kind": "moment",
-   "subject": "The Sector That Went Dark",
-   "created": "2026-11-01"
+   "subject": "The bridge in the storm",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-ocean-beneath-us/moment-offered-light-deleted-coordinates.webp",
@@ -4554,10 +4554,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-01"
   },
   {
-   "file": "artwork/the-republic-of-tomorrow/location-the-kestrel-blind-spot.webp",
+   "file": "artwork/the-republic-of-tomorrow/location-the-closed-polling-station.webp",
    "kind": "location",
-   "subject": "Kestrel blind-spot district",
-   "created": "2026-11-01"
+   "subject": "A quietly closed Kestrel polling station",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-republic-of-tomorrow/detail-mareks-paper-ledger.webp",
@@ -4634,10 +4634,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-24"
   },
   {
-   "file": "artwork/the-retirement-job/portrait-dot-kowalczyk.webp",
+   "file": "artwork/the-retirement-job/portrait-dot-kowalczyk-parish-hall.webp",
    "kind": "portrait",
    "subject": "Dot Kowalczyk",
-   "created": "2026-10-25"
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-retirement-job/portrait-sal-benedetti.webp",
@@ -4676,10 +4676,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-01"
   },
   {
-   "file": "artwork/the-retirement-job/moment-the-retirement-planning-seminar.webp",
+   "file": "artwork/the-retirement-job/moment-miriam-reletters-the-diagram.webp",
    "kind": "moment",
-   "subject": "The Retirement Planning Seminar",
-   "created": "2026-11-01"
+   "subject": "Miriam re-letters the vault diagram",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-retirement-job/moment-the-getaway-at-twenty-eight-miles-an-hour.webp",
@@ -4786,10 +4786,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/the-second-moon/location-two-moons-skyline.webp",
+   "file": "artwork/the-second-moon/location-the-hearing-she-loses.webp",
    "kind": "location",
-   "subject": "Two moons over a city skyline",
-   "created": "2026-10-25"
+   "subject": "The hearing she loses",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-second-moon/moment-bronze-mechanism.webp",
@@ -5034,10 +5034,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-06"
   },
   {
-   "file": "artwork/the-silence-protocol/moment-noor-on-the-floor.webp",
+   "file": "artwork/the-silence-protocol/moment-amira-teaches-the-rhythm.webp",
    "kind": "moment",
-   "subject": "Noor on the Floor",
-   "created": "2026-11-06"
+   "subject": "Amira teaches Noor the rhythm",
+   "created": "2026-11-07"
   }
  ],
  "the-star-collector": [
@@ -5102,10 +5102,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-01"
   },
   {
-   "file": "artwork/the-star-collector/moment-forty-jars-below-a-thinner-sky-above.webp",
+   "file": "artwork/the-star-collector/moment-fitting-the-lamp-lens.webp",
    "kind": "moment",
-   "subject": "Forty Jars Below, a Thinner Sky Above",
-   "created": "2026-11-01"
+   "subject": "Fitting the new lamp lens",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-star-collector/moment-the-lamplighters-first-visit.webp",
@@ -5133,10 +5133,10 @@ window.GLX_ARTWORK = {
   }
  ,
   {
-   "file": "artwork/the-star-collector/moment-the-star-convoy.webp",
+   "file": "artwork/the-star-collector/moment-the-fleet-turns-for-home.webp",
    "kind": "moment",
-   "subject": "The Star Convoy",
-   "created": "2026-11-06"
+   "subject": "The lantern fleet turns for home",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-star-collector/moment-the-lens-cracks.webp",
@@ -5175,10 +5175,10 @@ window.GLX_ARTWORK = {
    "created": "2026-11-06"
   },
   {
-   "file": "artwork/the-star-collector/moment-the-lamplighter-descends.webp",
+   "file": "artwork/the-star-collector/moment-the-lamplighter-walks-the-harbour-wall.webp",
    "kind": "moment",
-   "subject": "The Lamplighter Descends",
-   "created": "2026-11-06"
+   "subject": "The Lamplighter walks the harbour wall",
+   "created": "2026-11-07"
   }],
  "the-witness-list": [
   {
@@ -5330,8 +5330,8 @@ window.GLX_ARTWORK = {
   {
    "file": "backdrops/the-woman-in-apartment-9.webp",
    "kind": "backdrop",
-   "subject": "Backdrop artwork",
-   "created": "2026-10-24"
+   "subject": "Lenz's room: piano, parcels, blackout curtains",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-woman-in-apartment-9/portrait-anna-weiss.webp",
@@ -5340,10 +5340,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/the-woman-in-apartment-9/portrait-david-lenz.webp",
+   "file": "artwork/the-woman-in-apartment-9/portrait-david-lenz-at-the-window.webp",
    "kind": "portrait",
    "subject": "David Lenz",
-   "created": "2026-11-01"
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-woman-in-apartment-9/portrait-keller.webp",
@@ -5364,10 +5364,10 @@ window.GLX_ARTWORK = {
    "created": "2026-10-25"
   },
   {
-   "file": "artwork/the-woman-in-apartment-9/location-sewing-room.webp",
+   "file": "artwork/the-woman-in-apartment-9/location-the-ration-queue.webp",
    "kind": "location",
-   "subject": "Anna's sewing room",
-   "created": "2026-10-25"
+   "subject": "Ration queue outside the shuttered grocery",
+   "created": "2026-11-07"
   },
   {
    "file": "artwork/the-woman-in-apartment-9/moment-apartment-9-transmission.webp",
