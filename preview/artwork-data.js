@@ -450,6 +450,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The welded seam of Hold Four",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/dead-freight/moment-the-unloading-in-full-view.webp",
+   "kind": "moment",
+   "subject": "The Unloading, in Full View",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/dead-freight/moment-the-empty-cabinet.webp",
+   "kind": "moment",
+   "subject": "The Empty Cabinet",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/dead-freight/moment-the-parted-line.webp",
+   "kind": "moment",
+   "subject": "The Parted Line",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/dead-freight/moment-a-half-second-late.webp",
+   "kind": "moment",
+   "subject": "A Half Second Late",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/dead-freight/location-inside-hold-four.webp",
+   "kind": "location",
+   "subject": "Inside Hold Four",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/dead-freight/location-the-bridge-at-dawn.webp",
+   "kind": "location",
+   "subject": "The Bridge at Dawn",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/dead-freight/detail-the-deed-boxes-1911.webp",
+   "kind": "detail",
+   "subject": "The Deed Boxes, 1911",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/dead-freight/moment-the-master-at-dawn.webp",
+   "kind": "moment",
+   "subject": "The Master, at Dawn",
+   "created": "2026-11-06"
   }
  ],
  "exit-47": [
@@ -962,6 +1010,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The loose hearth stone",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/one-hundred-winters/moment-the-hundredth-winter.webp",
+   "kind": "moment",
+   "subject": "The Hundredth Winter",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/one-hundred-winters/moment-the-reply-1946.webp",
+   "kind": "moment",
+   "subject": "The Reply, 1946",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/one-hundred-winters/moment-the-audit-at-bolzano.webp",
+   "kind": "moment",
+   "subject": "The Audit at Bolzano",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/one-hundred-winters/moment-christmas-1918.webp",
+   "kind": "moment",
+   "subject": "Christmas 1918",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/one-hundred-winters/location-the-village-schoolroom.webp",
+   "kind": "location",
+   "subject": "The Village Schoolroom",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/one-hundred-winters/location-the-snow-shed-and-the-bridge.webp",
+   "kind": "location",
+   "subject": "The Snow Shed and the Bridge",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/one-hundred-winters/detail-the-engineers-instruments.webp",
+   "kind": "detail",
+   "subject": "The Engineer's Instruments",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/one-hundred-winters/moment-the-spring-journey.webp",
+   "kind": "moment",
+   "subject": "The Spring Journey",
+   "created": "2026-11-06"
   }
  ],
  "red-desert-rising": [
@@ -1042,6 +1138,66 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Amara's failed temperature logger",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/red-desert-rising/moment-green-end-to-end.webp",
+   "kind": "moment",
+   "subject": "Green End to End",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/red-desert-rising/moment-the-shade-order.webp",
+   "kind": "moment",
+   "subject": "The Shade Order",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/red-desert-rising/moment-the-refusal.webp",
+   "kind": "moment",
+   "subject": "The Refusal",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/red-desert-rising/moment-six-trucks-eleven-soldiers.webp",
+   "kind": "moment",
+   "subject": "Six Trucks, Eleven Soldiers",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/red-desert-rising/location-the-hospital-compound.webp",
+   "kind": "location",
+   "subject": "The Hospital Compound",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/red-desert-rising/location-the-high-ground.webp",
+   "kind": "location",
+   "subject": "The High Ground",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/red-desert-rising/detail-the-decision-in-her-hand.webp",
+   "kind": "detail",
+   "subject": "The Decision in Her Hand",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/red-desert-rising/moment-the-queue-moves-forward.webp",
+   "kind": "moment",
+   "subject": "The Queue Moves Forward",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/red-desert-rising/moment-carried-to-her-tent.webp",
+   "kind": "moment",
+   "subject": "Carried to Her Tent",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/red-desert-rising/moment-ashes-of-the-ledger.webp",
+   "kind": "moment",
+   "subject": "Ashes of the Ledger",
+   "created": "2026-11-06"
   }
  ],
  "room-for-one-more": [
@@ -1274,6 +1430,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Dispatcher's headset and logbook",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/seven-minutes-to-midnight/moment-the-dictated-report.webp",
+   "kind": "moment",
+   "subject": "The Dictated Report",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/seven-minutes-to-midnight/moment-the-sealed-entry.webp",
+   "kind": "moment",
+   "subject": "The Sealed Entry",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/seven-minutes-to-midnight/moment-the-dead-desk.webp",
+   "kind": "moment",
+   "subject": "The Dead Desk",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/seven-minutes-to-midnight/moment-the-room-that-listens.webp",
+   "kind": "moment",
+   "subject": "The Room That Listens",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/seven-minutes-to-midnight/location-the-atlantic-after-the-storm.webp",
+   "kind": "location",
+   "subject": "The Atlantic, After the Storm",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/seven-minutes-to-midnight/location-maras-apartment.webp",
+   "kind": "location",
+   "subject": "Mara's Apartment",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/seven-minutes-to-midnight/detail-the-ring-beside-the-photograph.webp",
+   "kind": "detail",
+   "subject": "The Ring Beside the Photograph",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/seven-minutes-to-midnight/moment-daylight-at-last.webp",
+   "kind": "moment",
+   "subject": "Daylight, At Last",
+   "created": "2026-11-06"
   }
  ],
  "the-blue-orchard": [
@@ -1958,6 +2162,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Wren's cello",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-girl-who-stole-tomorrow/moment-the-balance-checked.webp",
+   "kind": "moment",
+   "subject": "The Balance Checked",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-girl-who-stole-tomorrow/moment-the-audition.webp",
+   "kind": "moment",
+   "subject": "The Audition",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-girl-who-stole-tomorrow/moment-grey-at-the-temples.webp",
+   "kind": "moment",
+   "subject": "Grey at the Temples",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-girl-who-stole-tomorrow/moment-the-house-at-supper.webp",
+   "kind": "moment",
+   "subject": "The House at Supper",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-girl-who-stole-tomorrow/location-the-desert-edge-at-dusk.webp",
+   "kind": "location",
+   "subject": "The Desert Edge at Dusk",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-girl-who-stole-tomorrow/location-the-rehearsal-room.webp",
+   "kind": "location",
+   "subject": "The Rehearsal Room",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-girl-who-stole-tomorrow/detail-the-ledger.webp",
+   "kind": "detail",
+   "subject": "The Ledger",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-girl-who-stole-tomorrow/moment-as-long-as-it-takes.webp",
+   "kind": "moment",
+   "subject": "As Long As It Takes",
+   "created": "2026-11-06"
   }
  ],
  "the-glass-diver": [
@@ -2696,6 +2948,60 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The tasting spoon",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-kings-last-cook/moment-he-eats-from-every-dish.webp",
+   "kind": "moment",
+   "subject": "He Eats From Every Dish",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-kings-last-cook/moment-the-signature.webp",
+   "kind": "moment",
+   "subject": "The Signature",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-kings-last-cook/moment-arrested-on-the-banquet-morning.webp",
+   "kind": "moment",
+   "subject": "Arrested on the Banquet Morning",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-kings-last-cook/moment-the-laundresses-supper.webp",
+   "kind": "moment",
+   "subject": "The Laundresses' Supper",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-kings-last-cook/location-the-court-leaves-versailles.webp",
+   "kind": "location",
+   "subject": "The Court Leaves Versailles",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-kings-last-cook/location-the-temple-in-winter.webp",
+   "kind": "location",
+   "subject": "The Temple in Winter",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-kings-last-cook/detail-knives-wrapped-for-the-road.webp",
+   "kind": "detail",
+   "subject": "Knives Wrapped for the Road",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-kings-last-cook/moment-toinette-teaches.webp",
+   "kind": "moment",
+   "subject": "Toinette Teaches",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-kings-last-cook/moment-soup-he-did-not-order.webp",
+   "kind": "moment",
+   "subject": "Soup He Did Not Order",
+   "created": "2026-11-06"
   }
  ],
  "the-last-broadcast": [
