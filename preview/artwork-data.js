@@ -972,6 +972,60 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "June's voice recorder and headphones",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/room-for-one-more/moment-three-doors-three-versions.webp",
+   "kind": "moment",
+   "subject": "Three Doors, Three Versions",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/room-for-one-more/moment-the-hospital-corridor-second-version.webp",
+   "kind": "moment",
+   "subject": "The Hospital Corridor, Second Version",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/room-for-one-more/moment-the-study-revelation.webp",
+   "kind": "moment",
+   "subject": "The Study Revelation",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/room-for-one-more/moment-the-treaty-dinner.webp",
+   "kind": "moment",
+   "subject": "The Treaty Dinner",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/room-for-one-more/location-the-hospital-corridor-empty.webp",
+   "kind": "location",
+   "subject": "The Hospital Corridor, Empty",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/room-for-one-more/location-the-boiler-room.webp",
+   "kind": "location",
+   "subject": "The Boiler Room",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/room-for-one-more/detail-the-telephone-that-rang-twice.webp",
+   "kind": "detail",
+   "subject": "The Telephone That Rang Twice",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/room-for-one-more/moment-eleven-again.webp",
+   "kind": "moment",
+   "subject": "Eleven Again",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/room-for-one-more/moment-one-car-at-dawn.webp",
+   "kind": "moment",
+   "subject": "One Car at Dawn",
+   "created": "2026-11-06"
   }
  ],
  "seven-minutes-to-midnight": [
@@ -1382,6 +1436,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The impossible photographic plate",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-city-without-shadows/moment-the-first-dusk.webp",
+   "kind": "moment",
+   "subject": "The First Dusk",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-city-without-shadows/moment-the-calibration-dip.webp",
+   "kind": "moment",
+   "subject": "The Calibration Dip",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-city-without-shadows/moment-petters-confession.webp",
+   "kind": "moment",
+   "subject": "Petter's Confession",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-city-without-shadows/moment-the-pump-council.webp",
+   "kind": "moment",
+   "subject": "The Pump Council",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-city-without-shadows/location-the-pump-hall.webp",
+   "kind": "location",
+   "subject": "The Pump Hall",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-city-without-shadows/location-the-umbral-school.webp",
+   "kind": "location",
+   "subject": "The Umbral School",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-city-without-shadows/detail-the-hidden-contact-proof.webp",
+   "kind": "detail",
+   "subject": "The Hidden Contact Proof",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-city-without-shadows/moment-the-descent.webp",
+   "kind": "moment",
+   "subject": "The Descent",
+   "created": "2026-11-06"
   }
  ],
  "the-devils-frequency": [
@@ -2568,6 +2670,60 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Ash's tally of the twelve measures",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-firekeeper/moment-brannock-relit.webp",
+   "kind": "moment",
+   "subject": "Brannock Relit",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-firekeeper/moment-the-hamlet-grain-stove.webp",
+   "kind": "moment",
+   "subject": "The Hamlet Grain Stove",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-firekeeper/moment-brandt-holds-the-lock.webp",
+   "kind": "moment",
+   "subject": "Brandt Holds the Lock",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-firekeeper/moment-the-last-waystation.webp",
+   "kind": "moment",
+   "subject": "The Last Waystation",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-firekeeper/location-the-worlds-edge-stone-ring.webp",
+   "kind": "location",
+   "subject": "The World's Edge Stone Ring",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-firekeeper/location-the-flooded-lock-stairs.webp",
+   "kind": "location",
+   "subject": "The Flooded Lock-Stairs",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-firekeeper/detail-the-founding-carving.webp",
+   "kind": "detail",
+   "subject": "The Founding Carving",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-firekeeper/moment-teaching-the-division.webp",
+   "kind": "moment",
+   "subject": "Teaching the Division",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-firekeeper/moment-the-sky-embers.webp",
+   "kind": "moment",
+   "subject": "The Sky Embers",
+   "created": "2026-11-06"
   }
  ],
  "the-last-picture-house": [
@@ -3684,6 +3840,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Miriam's calligraphy kit",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-retirement-job/moment-the-packet-comes-out.webp",
+   "kind": "moment",
+   "subject": "The Packet Comes Out",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-retirement-job/moment-the-tin-box.webp",
+   "kind": "moment",
+   "subject": "The Tin Box",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-retirement-job/moment-beatrice-reads.webp",
+   "kind": "moment",
+   "subject": "Beatrice Reads",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-retirement-job/moment-the-farewell-open-house.webp",
+   "kind": "moment",
+   "subject": "The Farewell Open House",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-retirement-job/location-the-parish-hall.webp",
+   "kind": "location",
+   "subject": "The Parish Hall",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-retirement-job/location-the-security-room.webp",
+   "kind": "location",
+   "subject": "The Security Room",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-retirement-job/detail-the-letters-packet.webp",
+   "kind": "detail",
+   "subject": "The Letters Packet",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-retirement-job/moment-eddies-corridor.webp",
+   "kind": "moment",
+   "subject": "Eddie's Corridor",
+   "created": "2026-11-06"
   }
  ],
  "the-second-moon": [
@@ -4094,6 +4298,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The erased personnel file",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-witness-list/moment-i-never-spoke-to-you.webp",
+   "kind": "moment",
+   "subject": "I Never Spoke to You",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-witness-list/moment-the-desk-already-filled.webp",
+   "kind": "moment",
+   "subject": "The Desk Already Filled",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-witness-list/moment-brandt-watches-the-editions-multiply.webp",
+   "kind": "moment",
+   "subject": "Brandt Watches the Editions Multiply",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-witness-list/moment-the-editor-signs.webp",
+   "kind": "moment",
+   "subject": "The Editor Signs",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-witness-list/location-the-veritas-office.webp",
+   "kind": "location",
+   "subject": "The Veritas Office",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-witness-list/location-the-charity-back-office.webp",
+   "kind": "location",
+   "subject": "The Charity Back Office",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-witness-list/detail-the-folded-bill.webp",
+   "kind": "detail",
+   "subject": "The Folded Bill",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-witness-list/moment-the-listening.webp",
+   "kind": "moment",
+   "subject": "The Listening",
+   "created": "2026-11-06"
   }
  ],
  "the-woman-in-apartment-9": [
@@ -4320,6 +4572,60 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The 11:47 clock",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/tomorrows-witness/moment-into-the-frame.webp",
+   "kind": "moment",
+   "subject": "Into the Frame",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/tomorrows-witness/moment-the-audit-he-stops.webp",
+   "kind": "moment",
+   "subject": "The Audit He Stops",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/tomorrows-witness/moment-not-her-evidence.webp",
+   "kind": "moment",
+   "subject": "Not Her Evidence",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/tomorrows-witness/moment-the-clinic-takes-a-client.webp",
+   "kind": "moment",
+   "subject": "The Clinic Takes a Client",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/tomorrows-witness/location-the-warehouse-doorway.webp",
+   "kind": "location",
+   "subject": "The Warehouse Doorway",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/tomorrows-witness/location-the-meridian-suite.webp",
+   "kind": "location",
+   "subject": "The Meridian Suite",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/tomorrows-witness/detail-the-lowered-gun.webp",
+   "kind": "detail",
+   "subject": "The Lowered Gun",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/tomorrows-witness/moment-ordinary-daylight.webp",
+   "kind": "moment",
+   "subject": "Ordinary Daylight",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/tomorrows-witness/moment-found-alive.webp",
+   "kind": "moment",
+   "subject": "Found Alive",
+   "created": "2026-11-06"
   }
  ]
 };
