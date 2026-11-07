@@ -1721,7 +1721,15 @@ function renderFilmDetail(id) {
      not use. Fallbacks preserve the V2 WS4 picks. */
   const ovwArt = (cur && cur.story ? assetByFile(film, cur.story) : null) ||
     assets.find((a) => a.kind === "location") || assets.find((a) => a.kind === "moment") || null;
-  const visionArt = assets.find((a) => a.kind === "detail" && (!ovwArt || a.file !== ovwArt.file)) ||
+  /* Scene-distinct rule (Nov 7): the Creative Vision visual must not
+     duplicate the curated gallery - pick the first detail/moment/
+     location that is neither the story image nor in the curated six. */
+  const curatedFiles = new Set(cur && Array.isArray(cur.gallery) ? cur.gallery : []);
+  const visionFree = (a) => (!ovwArt || a.file !== ovwArt.file) && !curatedFiles.has(a.file);
+  const visionArt = assets.find((a) => a.kind === "detail" && visionFree(a)) ||
+    assets.find((a) => a.kind === "moment" && visionFree(a)) ||
+    assets.find((a) => a.kind === "location" && visionFree(a)) ||
+    assets.find((a) => a.kind === "detail" && (!ovwArt || a.file !== ovwArt.file)) ||
     assets.find((a) => a.kind === "moment" && (!ovwArt || a.file !== ovwArt.file)) || null;
   const visionHtml = filmVisionHtml(film, visionArt);
   const storyMediaHtml = hasTeaser ? teaserMediaHtml :
