@@ -78,7 +78,67 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The returned umbrella, dry",
    "created": "2026-11-01"
-  }
+  },
+ {
+  "file": "artwork/before-the-city-wakes/moment-first-words-at-the-end-of-the-line.webp",
+  "kind": "moment",
+  "subject": "First Words at the End of the Line",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/before-the-city-wakes/moment-the-unanswered-page.webp",
+  "kind": "moment",
+  "subject": "The Unanswered Page",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/before-the-city-wakes/moment-ren-stops-teasing.webp",
+  "kind": "moment",
+  "subject": "Ren Stops Teasing",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/before-the-city-wakes/moment-the-carriage-ensemble.webp",
+  "kind": "moment",
+  "subject": "The Carriage Ensemble",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/before-the-city-wakes/location-yunas-apartment-at-dawn.webp",
+  "kind": "location",
+  "subject": "Yuna's Apartment at Dawn",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/before-the-city-wakes/location-the-438-platform.webp",
+  "kind": "location",
+  "subject": "The 4:38 Platform",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/before-the-city-wakes/detail-hands-that-speak.webp",
+  "kind": "detail",
+  "subject": "Hands That Speak",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/before-the-city-wakes/moment-same-side-of-the-carriage.webp",
+  "kind": "moment",
+  "subject": "Same Side of the Carriage",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/before-the-city-wakes/moment-the-empty-seat.webp",
+  "kind": "moment",
+  "subject": "The Empty Seat",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/before-the-city-wakes/moment-the-pastry-he-heard-in-her-sleep.webp",
+  "kind": "moment",
+  "subject": "The Pastry He Heard in Her Sleep",
+  "created": "2026-11-06"
+ }
  ],
  "blackwater-county": [
   {
@@ -1564,7 +1624,61 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The Blue Fruit, Cut Open",
    "created": "2026-11-01"
-  }
+  },
+ {
+  "file": "artwork/the-blue-orchard/moment-one-blue-apple-to-the-light.webp",
+  "kind": "moment",
+  "subject": "One Blue Apple to the Light",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-blue-orchard/moment-the-lab-retraction.webp",
+  "kind": "moment",
+  "subject": "The Lab Retraction",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-blue-orchard/moment-boone-holds-the-gate.webp",
+  "kind": "moment",
+  "subject": "Boone Holds the Gate",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-blue-orchard/moment-three-around-the-map.webp",
+  "kind": "moment",
+  "subject": "Three Around the Map",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-blue-orchard/location-the-ledger-room-empty.webp",
+  "kind": "location",
+  "subject": "The Ledger Room, Empty",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-blue-orchard/location-the-stag-headed-eleventh-tree.webp",
+  "kind": "location",
+  "subject": "The Stag-Headed Eleventh Tree",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-blue-orchard/detail-veritys-cassette-tapes.webp",
+  "kind": "detail",
+  "subject": "Verity's Cassette Tapes",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-blue-orchard/moment-bench-grafting-spring.webp",
+  "kind": "moment",
+  "subject": "Bench-Grafting, Spring",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-blue-orchard/moment-radar-walking-the-rows.webp",
+  "kind": "moment",
+  "subject": "Radar Walking the Rows",
+  "created": "2026-11-06"
+ }
  ],
  "the-cartographers-daughter": [
   {
@@ -2070,7 +2184,61 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Pressed Larkspur in a Childhood Book",
    "created": "2026-11-01"
-  }
+  },
+ {
+  "file": "artwork/the-forgotten-astronaut/moment-elias-front-and-centre.webp",
+  "kind": "moment",
+  "subject": "Elias Front and Centre",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-forgotten-astronaut/moment-the-offer.webp",
+  "kind": "moment",
+  "subject": "The Offer",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-forgotten-astronaut/moment-the-burn.webp",
+  "kind": "moment",
+  "subject": "The Burn",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-forgotten-astronaut/moment-night-shift-ensemble.webp",
+  "kind": "moment",
+  "subject": "Night Shift Ensemble",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-forgotten-astronaut/location-meridian-exterior.webp",
+  "kind": "location",
+  "subject": "Meridian Exterior",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-forgotten-astronaut/location-miriams-biology-laboratory-at-night.webp",
+  "kind": "location",
+  "subject": "Miriam's Biology Laboratory at Night",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-forgotten-astronaut/detail-the-rebuilt-transmitter.webp",
+  "kind": "detail",
+  "subject": "The Rebuilt Transmitter",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-forgotten-astronaut/moment-alone-in-the-corridor.webp",
+  "kind": "moment",
+  "subject": "Alone in the Corridor",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-forgotten-astronaut/moment-the-nightly-recording.webp",
+  "kind": "moment",
+  "subject": "The Nightly Recording",
+  "created": "2026-11-06"
+ }
  ],
  "the-girl-who-stole-tomorrow": [
   {
@@ -2442,7 +2610,55 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The medication safe",
    "created": "2026-11-01"
-  }
+  },
+ {
+  "file": "artwork/the-great-escape-club/moment-the-dawn-convoy.webp",
+  "kind": "moment",
+  "subject": "The Dawn Convoy",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-great-escape-club/moment-priya-at-midnight.webp",
+  "kind": "moment",
+  "subject": "Priya at Midnight",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-great-escape-club/moment-arthur-chooses-the-coast.webp",
+  "kind": "moment",
+  "subject": "Arthur Chooses the Coast",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-great-escape-club/moment-frank-and-nell-load-the-scooters.webp",
+  "kind": "moment",
+  "subject": "Frank and Nell Load the Scooters",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-great-escape-club/location-arthurs-hospice-room.webp",
+  "kind": "location",
+  "subject": "Arthur's Hospice Room",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-great-escape-club/location-the-minibus-south.webp",
+  "kind": "location",
+  "subject": "The Minibus South",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-great-escape-club/detail-whistle-timetable-and-biscuit-tin.webp",
+  "kind": "detail",
+  "subject": "Whistle, Timetable and Biscuit Tin",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-great-escape-club/moment-we-have-a-club.webp",
+  "kind": "moment",
+  "subject": "We Have a Club",
+  "created": "2026-11-06"
+ }
  ],
  "the-house-of-seven-doors": [
   {
@@ -3094,7 +3310,55 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Hand-copied frequency cards on a farmhouse door",
    "created": "2026-11-01"
-  }
+  },
+ {
+  "file": "artwork/the-last-broadcast/moment-last-voice-at-the-desk.webp",
+  "kind": "moment",
+  "subject": "Last Voice at the Desk",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-last-broadcast/moment-notebook-of-confessions.webp",
+  "kind": "moment",
+  "subject": "Notebook of Confessions",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-last-broadcast/moment-seizure-of-the-transmitter.webp",
+  "kind": "moment",
+  "subject": "Seizure of the Transmitter",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-last-broadcast/moment-the-nine-at-3-am.webp",
+  "kind": "moment",
+  "subject": "The Nine at 3 A.M.",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-last-broadcast/location-martas-farmhouse-relay-hub.webp",
+  "kind": "location",
+  "subject": "Marta's Farmhouse Relay Hub",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-last-broadcast/location-transmitter-site-exterior.webp",
+  "kind": "location",
+  "subject": "Transmitter Site Exterior",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-last-broadcast/detail-antique-transmitter-tubes.webp",
+  "kind": "detail",
+  "subject": "Antique Transmitter Tubes",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-last-broadcast/moment-dana-and-the-printer.webp",
+  "kind": "moment",
+  "subject": "Dana and the Printer",
+  "created": "2026-11-06"
+ }
  ],
  "the-last-firekeeper": [
   {
@@ -4026,7 +4290,55 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Worked stone channel joint",
    "created": "2026-11-01"
-  }
+  },
+ {
+  "file": "artwork/the-ocean-beneath-us/moment-submersible-before-the-lit-canyon.webp",
+  "kind": "moment",
+  "subject": "Submersible Before the Lit Canyon",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-ocean-beneath-us/moment-these-were-bred.webp",
+  "kind": "moment",
+  "subject": "These Were Bred",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-ocean-beneath-us/moment-the-dark-dive.webp",
+  "kind": "moment",
+  "subject": "The Dark Dive",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-ocean-beneath-us/moment-four-people-one-chart-table.webp",
+  "kind": "moment",
+  "subject": "Four People, One Chart Table",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-ocean-beneath-us/location-launch-deck.webp",
+  "kind": "location",
+  "subject": "Launch Deck",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-ocean-beneath-us/location-the-bred-garden.webp",
+  "kind": "location",
+  "subject": "The Bred Garden",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-ocean-beneath-us/detail-the-empty-specimen-case.webp",
+  "kind": "detail",
+  "subject": "The Empty Specimen Case",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-ocean-beneath-us/moment-descent.webp",
+  "kind": "moment",
+  "subject": "Descent",
+  "created": "2026-11-06"
+ }
  ],
  "the-perfect-alibi": [
   {
@@ -4532,7 +4844,61 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Elian's two-moon painting",
    "created": "2026-11-01"
-  }
+  },
+ {
+  "file": "artwork/the-second-moon/moment-the-watcher-on-the-roof.webp",
+  "kind": "moment",
+  "subject": "The Watcher on the Roof",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-second-moon/moment-the-publication.webp",
+  "kind": "moment",
+  "subject": "The Publication",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-second-moon/moment-the-water-returns.webp",
+  "kind": "moment",
+  "subject": "The Water Returns",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-second-moon/moment-five-witnesses-one-mechanism.webp",
+  "kind": "moment",
+  "subject": "Five Witnesses, One Mechanism",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-second-moon/location-the-tide-temple-above-the-wreck-cove.webp",
+  "kind": "location",
+  "subject": "The Tide Temple Above the Wreck Cove",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-second-moon/location-the-directorate-at-3-am.webp",
+  "kind": "location",
+  "subject": "The Directorate at 3 A.M.",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-second-moon/detail-calipers-on-the-calendar.webp",
+  "kind": "detail",
+  "subject": "Calipers on the Calendar",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-second-moon/moment-what-his-hands-brought-up.webp",
+  "kind": "moment",
+  "subject": "What His Hands Brought Up",
+  "created": "2026-11-06"
+ },
+ {
+  "file": "artwork/the-second-moon/moment-the-probe-finds-nothing-solid.webp",
+  "kind": "moment",
+  "subject": "The Probe Finds Nothing Solid",
+  "created": "2026-11-06"
+ }
  ],
  "the-silence-protocol": [
   {
