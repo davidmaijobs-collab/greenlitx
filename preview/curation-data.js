@@ -77,18 +77,18 @@ window.GLX_CURATION = {
   ],
   "locations": [
    "artwork/the-woman-in-apartment-9/location-charlottenburg-rooming-house.webp",
-   "artwork/the-woman-in-apartment-9/location-sewing-room.webp"
+   "artwork/the-woman-in-apartment-9/location-the-ration-queue.webp"
   ],
   "gallery": [
    "posters/the-woman-in-apartment-9.webp",
-   "artwork/the-woman-in-apartment-9/portrait-david-lenz.webp",
+   "artwork/the-woman-in-apartment-9/portrait-david-lenz-at-the-window.webp",
    "artwork/the-woman-in-apartment-9/detail-valve-buttons.webp",
    "artwork/the-woman-in-apartment-9/detail-felted-practice-keyboard.webp",
    "artwork/the-woman-in-apartment-9/moment-apartment-9-transmission.webp",
    "artwork/the-woman-in-apartment-9/moment-transmitter-in-coat.webp"
   ],
   "story": "artwork/the-woman-in-apartment-9/moment-apartment-9-transmission.webp",
-  "closing": "artwork/the-woman-in-apartment-9/location-sewing-room.webp"
+  "closing": "artwork/the-woman-in-apartment-9/location-the-ration-queue.webp"
  },
  "room-for-one-more": {
   "hero": "backdrops/room-for-one-more.webp",
@@ -124,10 +124,10 @@ window.GLX_CURATION = {
    "artwork/room-for-one-more/portrait-emile-favre.webp",
    "artwork/room-for-one-more/detail-birthday-table.webp",
    "artwork/room-for-one-more/detail-the-voice-recorder.webp",
-   "artwork/room-for-one-more/moment-twelfth-room.webp",
+   "artwork/room-for-one-more/moment-emile-on-the-staircase.webp",
    "artwork/room-for-one-more/location-grand-cervin.webp"
   ],
-  "story": "artwork/room-for-one-more/moment-twelfth-room.webp",
+  "story": "artwork/room-for-one-more/moment-emile-on-the-staircase.webp",
   "closing": "artwork/room-for-one-more/location-the-boathouse.webp"
  },
  "before-the-city-wakes": {
@@ -162,7 +162,7 @@ window.GLX_CURATION = {
   "gallery": [
    "posters/before-the-city-wakes.webp",
    "artwork/before-the-city-wakes/portrait-ren-mori.webp",
-   "artwork/before-the-city-wakes/detail-margin-notes-book.webp",
+   "artwork/before-the-city-wakes/detail-walking-back-in-daylight.webp",
    "artwork/before-the-city-wakes/detail-the-returned-umbrella.webp",
    "artwork/before-the-city-wakes/moment-pastry-in-seat-pocket.webp",
    "artwork/before-the-city-wakes/location-first-train.webp"
@@ -196,7 +196,7 @@ window.GLX_CURATION = {
    }
   ],
   "locations": [
-   "artwork/dead-freight/location-meridian-star-rotterdam.webp",
+   "artwork/dead-freight/location-the-terminal-fence.webp",
    "artwork/dead-freight/location-the-engine-room.webp"
   ],
   "gallery": [
@@ -204,10 +204,10 @@ window.GLX_CURATION = {
    "artwork/dead-freight/portrait-pavel-novak.webp",
    "artwork/dead-freight/detail-century-manifest.webp",
    "artwork/dead-freight/detail-the-welded-seam.webp",
-   "artwork/dead-freight/moment-welded-hold.webp",
-   "artwork/dead-freight/location-meridian-star-rotterdam.webp"
+   "artwork/dead-freight/moment-the-filing.webp",
+   "artwork/dead-freight/location-the-terminal-fence.webp"
   ],
-  "story": "artwork/dead-freight/moment-welded-hold.webp",
+  "story": "artwork/dead-freight/moment-the-filing.webp",
   "closing": "artwork/dead-freight/location-the-engine-room.webp"
  },
  "the-second-moon": {
@@ -236,7 +236,7 @@ window.GLX_CURATION = {
    }
   ],
   "locations": [
-   "artwork/the-second-moon/location-two-moons-skyline.webp",
+   "artwork/the-second-moon/location-the-hearing-she-loses.webp",
    "artwork/the-second-moon/location-atacama-lighthouse.webp"
   ],
   "gallery": [
@@ -244,7 +244,7 @@ window.GLX_CURATION = {
    "artwork/the-second-moon/portrait-tomas-irrarazaval-and-elian.webp",
    "artwork/the-second-moon/detail-tide-temple-carving.webp",
    "artwork/the-second-moon/detail-elians-painting.webp",
-   "artwork/the-second-moon/location-two-moons-skyline.webp",
+   "artwork/the-second-moon/location-the-hearing-she-loses.webp",
    "artwork/the-second-moon/location-atacama-lighthouse.webp"
   ],
   "story": "artwork/the-second-moon/detail-tide-temple-carving.webp",
@@ -260,7 +260,7 @@ window.GLX_CURATION = {
   "scenes": [
    {
     "seq": 0,
-    "file": "artwork/the-cartographers-daughter/moment-lamplight-on-an-erasure.webp"
+    "file": "artwork/the-cartographers-daughter/moment-rolling-the-fair-copy.webp"
    },
    {
     "seq": 1,
@@ -272,7 +272,7 @@ window.GLX_CURATION = {
    },
    {
     "seq": 3,
-    "file": "artwork/the-cartographers-daughter/moment-first-sight-at-the-end-of-the-erased-river.webp"
+    "file": "artwork/the-cartographers-daughter/moment-face-to-face-in-the-erased-city.webp"
    }
   ],
   "locations": [
@@ -373,14 +373,14 @@ window.GLX_CURATION = {
  "the-retirement-job": {
   "hero": "backdrops/the-retirement-job.webp",
   "portraits": [
-   "artwork/the-retirement-job/portrait-dot-kowalczyk.webp",
+   "artwork/the-retirement-job/portrait-dot-kowalczyk-parish-hall.webp",
    "artwork/the-retirement-job/portrait-sal-benedetti.webp",
    "artwork/the-retirement-job/portrait-miriam-okafor.webp"
   ],
   "scenes": [
    {
     "seq": 0,
-    "file": "artwork/the-retirement-job/moment-the-retirement-planning-seminar.webp"
+    "file": "artwork/the-retirement-job/moment-miriam-reletters-the-diagram.webp"
    },
    {
     "seq": 1,
@@ -463,7 +463,7 @@ window.GLX_CURATION = {
    },
    {
     "seq": 1,
-    "file": "artwork/children-of-the-storm/moment-river-crossing.webp"
+    "file": "artwork/children-of-the-storm/moment-the-ridge-path-at-first-light.webp"
    },
    {
     "seq": 2,
@@ -476,7 +476,7 @@ window.GLX_CURATION = {
   ],
   "locations": [
    "artwork/children-of-the-storm/location-drowned-island.webp",
-   "artwork/children-of-the-storm/location-the-lighthouse-headland.webp"
+   "artwork/children-of-the-storm/location-the-flooded-village-street.webp"
   ],
   "gallery": [
    "posters/children-of-the-storm.webp",
@@ -484,10 +484,10 @@ window.GLX_CURATION = {
    "artwork/children-of-the-storm/detail-insulin-cooler.webp",
    "artwork/children-of-the-storm/detail-the-lighthouse-radio.webp",
    "artwork/children-of-the-storm/location-drowned-island.webp",
-   "artwork/children-of-the-storm/location-the-lighthouse-headland.webp"
+   "artwork/children-of-the-storm/location-the-flooded-village-street.webp"
   ],
   "story": "artwork/children-of-the-storm/detail-insulin-cooler.webp",
-  "closing": "artwork/children-of-the-storm/location-the-lighthouse-headland.webp"
+  "closing": "artwork/children-of-the-storm/location-the-flooded-village-street.webp"
  },
  "the-kings-last-cook": {
   "hero": "backdrops/the-kings-last-cook.webp",
@@ -676,7 +676,7 @@ window.GLX_CURATION = {
   ],
   "locations": [
    "artwork/the-glass-diver/location-the-garden-bay.webp",
-   "artwork/the-glass-diver/location-aegir-station.webp"
+   "artwork/the-glass-diver/location-aegir-flooded-atrium.webp"
   ],
   "gallery": [
    "posters/the-glass-diver.webp",
@@ -684,10 +684,10 @@ window.GLX_CURATION = {
    "artwork/the-glass-diver/detail-future-dive-log.webp",
    "artwork/the-glass-diver/detail-hydrophone-array.webp",
    "artwork/the-glass-diver/moment-lit-station-approach.webp",
-   "artwork/the-glass-diver/location-aegir-station.webp"
+   "artwork/the-glass-diver/location-aegir-flooded-atrium.webp"
   ],
   "story": "artwork/the-glass-diver/moment-lit-station-approach.webp",
-  "closing": "artwork/the-glass-diver/location-aegir-station.webp"
+  "closing": "artwork/the-glass-diver/location-aegir-flooded-atrium.webp"
  },
  "letters-from-the-sun": {
   "hero": "backdrops/letters-from-the-sun.webp",
@@ -720,14 +720,14 @@ window.GLX_CURATION = {
   ],
   "gallery": [
    "posters/letters-from-the-sun.webp",
-   "artwork/letters-from-the-sun/location-sunward-capsule.webp",
+   "artwork/letters-from-the-sun/location-the-transmitter-room.webp",
    "artwork/letters-from-the-sun/portrait-helen-vane.webp",
    "artwork/letters-from-the-sun/detail-stencilled-bulkhead.webp",
    "artwork/letters-from-the-sun/detail-seed-packets-and-soil-designs.webp",
    "artwork/letters-from-the-sun/moment-the-garden-in-starlight.webp"
   ],
   "story": "artwork/letters-from-the-sun/detail-stencilled-bulkhead.webp",
-  "closing": "artwork/letters-from-the-sun/location-sunward-capsule.webp"
+  "closing": "artwork/letters-from-the-sun/location-the-transmitter-room.webp"
  },
  "the-night-orchestra": {
   "hero": "backdrops/the-night-orchestra.webp",
@@ -756,7 +756,7 @@ window.GLX_CURATION = {
   ],
   "locations": [
    "artwork/the-night-orchestra/location-the-catalogue-archive.webp",
-   "artwork/the-night-orchestra/location-aurelia-hall-3am.webp"
+   "artwork/the-night-orchestra/location-aurelia-exterior-at-3am.webp"
   ],
   "gallery": [
    "posters/the-night-orchestra.webp",
@@ -764,15 +764,15 @@ window.GLX_CURATION = {
    "artwork/the-night-orchestra/detail-programme-catalogue.webp",
    "artwork/the-night-orchestra/detail-annotated-violin-part.webp",
    "artwork/the-night-orchestra/moment-annotated-parts.webp",
-   "artwork/the-night-orchestra/location-aurelia-hall-3am.webp"
+   "artwork/the-night-orchestra/location-aurelia-exterior-at-3am.webp"
   ],
   "story": "artwork/the-night-orchestra/moment-annotated-parts.webp",
-  "closing": "artwork/the-night-orchestra/location-aurelia-hall-3am.webp"
+  "closing": "artwork/the-night-orchestra/location-aurelia-exterior-at-3am.webp"
  },
  "the-last-firekeeper": {
   "hero": "artwork/the-last-firekeeper/location-perpetual-hearth.webp",
   "portraits": [
-   "artwork/the-last-firekeeper/portrait-ash.webp",
+   "artwork/the-last-firekeeper/portrait-ash-on-the-ice-floes.webp",
    "artwork/the-last-firekeeper/portrait-master-corin.webp",
    "artwork/the-last-firekeeper/portrait-queen-sefira.webp"
   ],
@@ -801,7 +801,7 @@ window.GLX_CURATION = {
    "posters/the-last-firekeeper.webp",
    "backdrops/the-last-firekeeper.webp",
    "artwork/the-last-firekeeper/portrait-captain-ilya-brandt.webp",
-   "artwork/the-last-firekeeper/detail-lantern-flame.webp",
+   "artwork/the-last-firekeeper/detail-the-great-bells-rim.webp",
    "artwork/the-last-firekeeper/detail-measure-tally.webp",
    "artwork/the-last-firekeeper/moment-ash-takes-flame.webp"
   ],
@@ -811,7 +811,7 @@ window.GLX_CURATION = {
  "the-memory-auction": {
   "hero": "artwork/the-memory-auction/location-vesper-exchange.webp",
   "portraits": [
-   "artwork/the-memory-auction/portrait-june-park.webp",
+   "artwork/the-memory-auction/portrait-june-park-in-the-auction-room.webp",
    "artwork/the-memory-auction/portrait-elias-vane.webp",
    "artwork/the-memory-auction/portrait-odette-vesper.webp"
   ],
@@ -840,7 +840,7 @@ window.GLX_CURATION = {
    "posters/the-memory-auction.webp",
    "backdrops/the-memory-auction.webp",
    "artwork/the-memory-auction/portrait-theo-park.webp",
-   "artwork/the-memory-auction/detail-memory-vial.webp",
+   "artwork/the-memory-auction/detail-the-forty-one-lot-ledger.webp",
    "artwork/the-memory-auction/detail-sealed-trust-case.webp",
    "artwork/the-memory-auction/moment-seventh-birthday.webp"
   ],
@@ -857,7 +857,7 @@ window.GLX_CURATION = {
   "scenes": [
    {
     "seq": 0,
-    "file": "artwork/blackwater-county/moment-the-car-out-of-the-mud.webp"
+    "file": "artwork/blackwater-county/moment-the-porch-interview.webp"
    },
    {
     "seq": 1,
@@ -873,7 +873,7 @@ window.GLX_CURATION = {
    }
   ],
   "locations": [
-   "artwork/blackwater-county/location-drained-reservoir.webp",
+   "artwork/blackwater-county/location-the-boat-ramp.webp",
    "artwork/blackwater-county/location-sheriffs-office.webp"
   ],
   "gallery": [
@@ -901,7 +901,7 @@ window.GLX_CURATION = {
    },
    {
     "seq": 1,
-    "file": "artwork/seven-minutes-to-midnight/moment-verification-in-procedure.webp"
+    "file": "artwork/seven-minutes-to-midnight/moment-tommy-at-the-archive-systems.webp"
    },
    {
     "seq": 2,
@@ -920,7 +920,7 @@ window.GLX_CURATION = {
    "posters/seven-minutes-to-midnight.webp",
    "artwork/seven-minutes-to-midnight/portrait-tommy-okafor.webp",
    "artwork/seven-minutes-to-midnight/detail-dispatch-console.webp",
-   "artwork/seven-minutes-to-midnight/detail-headset-and-logbook.webp",
+   "artwork/seven-minutes-to-midnight/detail-the-transcript-printout.webp",
    "artwork/seven-minutes-to-midnight/moment-seven-minute-window.webp",
    "artwork/seven-minutes-to-midnight/location-dispatch-center.webp"
   ],
@@ -930,7 +930,7 @@ window.GLX_CURATION = {
  "the-forgotten-astronaut": {
   "hero": "backdrops/the-forgotten-astronaut.webp",
   "portraits": [
-   "artwork/the-forgotten-astronaut/portrait-elias-ward.webp",
+   "artwork/the-forgotten-astronaut/portrait-elias-ward-at-the-console.webp",
    "artwork/the-forgotten-astronaut/portrait-ana-ruiz.webp",
    "artwork/the-forgotten-astronaut/portrait-director-paul-hennig.webp"
   ],
@@ -941,7 +941,7 @@ window.GLX_CURATION = {
    },
    {
     "seq": 1,
-    "file": "artwork/the-forgotten-astronaut/moment-the-wrong-earth.webp"
+    "file": "artwork/the-forgotten-astronaut/moment-the-observatory-sighting.webp"
    },
    {
     "seq": 2,
@@ -959,11 +959,11 @@ window.GLX_CURATION = {
    "posters/the-forgotten-astronaut.webp",
    "artwork/the-forgotten-astronaut/location-station-meridian.webp",
    "artwork/the-forgotten-astronaut/portrait-miriam-ward-voice-and-recordings.webp",
-   "artwork/the-forgotten-astronaut/detail-flight-checklist.webp",
+   "artwork/the-forgotten-astronaut/detail-the-sealed-hatch.webp",
    "artwork/the-forgotten-astronaut/detail-pressed-larkspur.webp",
-   "artwork/the-forgotten-astronaut/moment-first-contact.webp"
+   "artwork/the-forgotten-astronaut/moment-the-fragment.webp"
   ],
-  "story": "artwork/the-forgotten-astronaut/moment-first-contact.webp",
+  "story": "artwork/the-forgotten-astronaut/moment-the-fragment.webp",
   "closing": "artwork/the-forgotten-astronaut/location-station-meridian.webp"
  },
  "the-city-without-shadows": {
@@ -1096,7 +1096,7 @@ window.GLX_CURATION = {
   "scenes": [
    {
     "seq": 0,
-    "file": "artwork/the-great-escape-club/moment-the-laundry-room-founding.webp"
+    "file": "artwork/the-great-escape-club/moment-cornwall-1968-the-pact.webp"
    },
    {
     "seq": 1,
@@ -1158,7 +1158,7 @@ window.GLX_CURATION = {
   "gallery": [
    "posters/one-hundred-winters.webp",
    "artwork/one-hundred-winters/portrait-davide-rinaldi.webp",
-   "artwork/one-hundred-winters/detail-hearth-letters.webp",
+   "artwork/one-hundred-winters/detail-the-doorframe-tally.webp",
    "artwork/one-hundred-winters/detail-the-loose-stone.webp",
    "artwork/one-hundred-winters/moment-letter-in-the-wall.webp",
    "artwork/one-hundred-winters/location-mountain-lodge.webp"
@@ -1180,11 +1180,11 @@ window.GLX_CURATION = {
    },
    {
     "seq": 1,
-    "file": "artwork/the-ocean-beneath-us/moment-channels-of-warm-water.webp"
+    "file": "artwork/the-ocean-beneath-us/moment-coda-the-recording-varies.webp"
    },
    {
     "seq": 2,
-    "file": "artwork/the-ocean-beneath-us/moment-the-sector-that-went-dark.webp"
+    "file": "artwork/the-ocean-beneath-us/moment-the-bridge-in-the-storm.webp"
    },
    {
     "seq": 3,
@@ -1193,7 +1193,7 @@ window.GLX_CURATION = {
   ],
   "locations": [
    "artwork/the-ocean-beneath-us/location-calypso-deep-at-surface.webp",
-   "artwork/the-ocean-beneath-us/location-trench-channels.webp"
+   "artwork/the-ocean-beneath-us/location-voss-alone.webp"
   ],
   "gallery": [
    "posters/the-ocean-beneath-us.webp",
@@ -1201,10 +1201,10 @@ window.GLX_CURATION = {
    "artwork/the-ocean-beneath-us/detail-sonar-geometry.webp",
    "artwork/the-ocean-beneath-us/detail-worked-stone-channel.webp",
    "artwork/the-ocean-beneath-us/moment-lights-answering.webp",
-   "artwork/the-ocean-beneath-us/location-trench-channels.webp"
+   "artwork/the-ocean-beneath-us/location-voss-alone.webp"
   ],
   "story": "artwork/the-ocean-beneath-us/moment-lights-answering.webp",
-  "closing": "artwork/the-ocean-beneath-us/location-trench-channels.webp"
+  "closing": "artwork/the-ocean-beneath-us/location-voss-alone.webp"
  },
  "the-girl-who-stole-tomorrow": {
   "hero": "backdrops/the-girl-who-stole-tomorrow.webp",
@@ -1313,7 +1313,7 @@ window.GLX_CURATION = {
   ],
   "locations": [
    "artwork/the-invisible-passenger/location-conductors-office.webp",
-   "artwork/the-invisible-passenger/location-coach-four.webp"
+   "artwork/the-invisible-passenger/location-the-couchette-compartment.webp"
   ],
   "gallery": [
    "posters/the-invisible-passenger.webp",
@@ -1321,10 +1321,10 @@ window.GLX_CURATION = {
    "artwork/the-invisible-passenger/detail-ticket-punch.webp",
    "artwork/the-invisible-passenger/detail-the-folded-note.webp",
    "artwork/the-invisible-passenger/moment-seat-nine.webp",
-   "artwork/the-invisible-passenger/location-coach-four.webp"
+   "artwork/the-invisible-passenger/location-the-couchette-compartment.webp"
   ],
   "story": "artwork/the-invisible-passenger/moment-seat-nine.webp",
-  "closing": "artwork/the-invisible-passenger/location-coach-four.webp"
+  "closing": "artwork/the-invisible-passenger/location-the-couchette-compartment.webp"
  },
  "the-last-picture-house": {
   "hero": "backdrops/the-last-picture-house.webp",
@@ -1336,7 +1336,7 @@ window.GLX_CURATION = {
   "scenes": [
    {
     "seq": 0,
-    "file": "artwork/the-last-picture-house/moment-the-booth-wall.webp"
+    "file": "artwork/the-last-picture-house/moment-the-buyers-offer.webp"
    },
    {
     "seq": 1,
@@ -1391,7 +1391,7 @@ window.GLX_CURATION = {
    }
   ],
   "locations": [
-   "artwork/red-desert-rising/location-wadi-khem-crossing.webp",
+   "artwork/red-desert-rising/location-the-night-camp.webp",
    "artwork/red-desert-rising/location-the-operating-tent.webp"
   ],
   "gallery": [
@@ -1400,7 +1400,7 @@ window.GLX_CURATION = {
    "artwork/red-desert-rising/detail-cold-chain-box.webp",
    "artwork/red-desert-rising/detail-failed-temperature-logger.webp",
    "artwork/red-desert-rising/moment-into-the-storm.webp",
-   "artwork/red-desert-rising/location-wadi-khem-crossing.webp"
+   "artwork/red-desert-rising/location-the-night-camp.webp"
   ],
   "story": "artwork/red-desert-rising/moment-into-the-storm.webp",
   "closing": "artwork/red-desert-rising/location-the-operating-tent.webp"
@@ -1438,7 +1438,7 @@ window.GLX_CURATION = {
    "posters/the-house-of-seven-doors.webp",
    "artwork/the-house-of-seven-doors/portrait-julian-marsh.webp",
    "artwork/the-house-of-seven-doors/detail-seven-keys.webp",
-   "artwork/the-house-of-seven-doors/detail-the-sealed-envelope.webp",
+   "artwork/the-house-of-seven-doors/detail-the-study-door-handle.webp",
    "artwork/the-house-of-seven-doors/moment-first-study-opened.webp",
    "artwork/the-house-of-seven-doors/location-blackmoor-house.webp"
   ],
@@ -1499,7 +1499,7 @@ window.GLX_CURATION = {
    },
    {
     "seq": 1,
-    "file": "artwork/the-star-collector/moment-forty-jars-below-a-thinner-sky-above.webp"
+    "file": "artwork/the-star-collector/moment-fitting-the-lamp-lens.webp"
    },
    {
     "seq": 2,
@@ -1528,7 +1528,7 @@ window.GLX_CURATION = {
  "the-last-broadcast": {
   "hero": "backdrops/the-last-broadcast.webp",
   "portraits": [
-   "artwork/the-last-broadcast/portrait-dana-reyes.webp",
+   "artwork/the-last-broadcast/portrait-dana-reyes-at-her-desk.webp",
    "artwork/the-last-broadcast/portrait-eli-navarro.webp",
    "artwork/the-last-broadcast/portrait-governors-liaison-mr-ash.webp"
   ],
@@ -1539,7 +1539,7 @@ window.GLX_CURATION = {
    },
    {
     "seq": 1,
-    "file": "artwork/the-last-broadcast/moment-the-bulletin-that-changed-hands.webp"
+    "file": "artwork/the-last-broadcast/moment-the-school-hall-chorus.webp"
    },
    {
     "seq": 2,
@@ -1592,7 +1592,7 @@ window.GLX_CURATION = {
   ],
   "locations": [
    "artwork/the-republic-of-tomorrow/location-foresight-ministry.webp",
-   "artwork/the-republic-of-tomorrow/location-the-kestrel-blind-spot.webp"
+   "artwork/the-republic-of-tomorrow/location-the-closed-polling-station.webp"
   ],
   "gallery": [
    "posters/the-republic-of-tomorrow.webp",
@@ -1603,7 +1603,7 @@ window.GLX_CURATION = {
    "artwork/the-republic-of-tomorrow/location-foresight-ministry.webp"
   ],
   "story": "artwork/the-republic-of-tomorrow/moment-the-sealed-annex.webp",
-  "closing": "artwork/the-republic-of-tomorrow/location-the-kestrel-blind-spot.webp"
+  "closing": "artwork/the-republic-of-tomorrow/location-the-closed-polling-station.webp"
  }
 };
 window.GLX_CURATION_DEMOTIONS = [
@@ -1627,9 +1627,9 @@ window.GLX_CURATION_DEMOTIONS = [
  },
  {
   "film": "letters-from-the-sun",
-  "file": "artwork/letters-from-the-sun/location-sunward-capsule.webp",
+  "file": "artwork/letters-from-the-sun/location-the-transmitter-room.webp",
   "from": "locations row",
-  "note": "The hero's sun-window composition a sixth time; stays in the curated + complete gallery."
+  "note": "The hero's sun-window composition a sixth time; stays in the curated + complete gallery. (Slot's artwork replaced by the scene-distinct transmitter-room image in the Nov 7 similarity fix.)"
  },
  {
   "film": "the-forgotten-astronaut",
