@@ -542,6 +542,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The watcher's pocket notebook",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/exit-47/moment-the-final-night-at-the-desk.webp",
+   "kind": "moment",
+   "subject": "The Final Night at the Desk",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/exit-47/moment-vince-keeps-the-ledger.webp",
+   "kind": "moment",
+   "subject": "Vince Keeps the Ledger",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/exit-47/moment-birdie-holds-the-counter.webp",
+   "kind": "moment",
+   "subject": "Birdie Holds the Counter",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/exit-47/moment-the-crisis-night-diner.webp",
+   "kind": "moment",
+   "subject": "The Crisis Night Diner",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/exit-47/location-room-6-interior.webp",
+   "kind": "location",
+   "subject": "Room 6 Interior",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/exit-47/location-the-swamp-behind-the-interchange.webp",
+   "kind": "location",
+   "subject": "The Swamp Behind the Interchange",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/exit-47/detail-the-prepared-card.webp",
+   "kind": "detail",
+   "subject": "The Prepared Card",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/exit-47/moment-ray-at-dawn.webp",
+   "kind": "moment",
+   "subject": "Ray at Dawn",
+   "created": "2026-11-06"
   }
  ],
  "letters-from-the-sun": [
@@ -634,6 +682,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Helen's seed packets and soil-bed designs",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/letters-from-the-sun/moment-the-build-at-the-cinder.webp",
+   "kind": "moment",
+   "subject": "The Build at the Cinder",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/letters-from-the-sun/moment-sol-writes-the-first-line.webp",
+   "kind": "moment",
+   "subject": "Sol Writes the First Line",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/letters-from-the-sun/moment-sy-signs-the-refusal.webp",
+   "kind": "moment",
+   "subject": "Sy Signs the Refusal",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/letters-from-the-sun/moment-houston-verifies.webp",
+   "kind": "moment",
+   "subject": "Houston Verifies",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/letters-from-the-sun/location-the-lighthouse-station-exterior.webp",
+   "kind": "location",
+   "subject": "The Lighthouse Station Exterior",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/letters-from-the-sun/location-the-garden-bay-under-construction.webp",
+   "kind": "location",
+   "subject": "The Garden Bay Under Construction",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/letters-from-the-sun/detail-the-correspondence-bound.webp",
+   "kind": "detail",
+   "subject": "The Correspondence, Bound",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/letters-from-the-sun/moment-elias-at-the-window.webp",
+   "kind": "moment",
+   "subject": "Elias at the Window",
+   "created": "2026-11-06"
   }
  ],
  "no-signal-in-paradise": [
@@ -714,6 +810,66 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The Beacon Board",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/no-signal-in-paradise/moment-forty-seconds-zero-bars.webp",
+   "kind": "moment",
+   "subject": "Forty Seconds, Zero Bars",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/no-signal-in-paradise/moment-the-camp-watches-itself.webp",
+   "kind": "moment",
+   "subject": "The Camp Watches Itself",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/no-signal-in-paradise/moment-the-catchment.webp",
+   "kind": "moment",
+   "subject": "The Catchment",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/no-signal-in-paradise/moment-the-water-line.webp",
+   "kind": "moment",
+   "subject": "The Water Line",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/no-signal-in-paradise/location-the-engine-room.webp",
+   "kind": "location",
+   "subject": "The Engine Room",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/no-signal-in-paradise/location-the-cairn-path.webp",
+   "kind": "location",
+   "subject": "The Cairn Path",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/no-signal-in-paradise/detail-the-ration-tin.webp",
+   "kind": "detail",
+   "subject": "The Ration Tin",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/no-signal-in-paradise/moment-sage-at-dawn.webp",
+   "kind": "moment",
+   "subject": "Sage at Dawn",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/no-signal-in-paradise/moment-brocks-night-carry.webp",
+   "kind": "moment",
+   "subject": "Brock's Night Carry",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/no-signal-in-paradise/moment-rescue-at-dawn.webp",
+   "kind": "moment",
+   "subject": "Rescue at Dawn",
+   "created": "2026-11-06"
   }
  ],
  "one-hundred-winters": [
@@ -2126,6 +2282,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "The sealed envelope for the thirtieth day",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-house-of-seven-doors/moment-seven-doors-open-at-dusk.webp",
+   "kind": "moment",
+   "subject": "Seven Doors Open at Dusk",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-house-of-seven-doors/moment-crowe-opens-the-envelope.webp",
+   "kind": "moment",
+   "subject": "Crowe Opens the Envelope",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-house-of-seven-doors/moment-the-election.webp",
+   "kind": "moment",
+   "subject": "The Election",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-house-of-seven-doors/moment-the-deliberation-table.webp",
+   "kind": "moment",
+   "subject": "The Deliberation Table",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-house-of-seven-doors/location-a-study-interior.webp",
+   "kind": "location",
+   "subject": "A Study Interior",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-house-of-seven-doors/location-crowes-parlour.webp",
+   "kind": "location",
+   "subject": "Crowe's Parlour",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-house-of-seven-doors/detail-the-minute-book.webp",
+   "kind": "detail",
+   "subject": "The Minute Book",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-house-of-seven-doors/moment-eleanor-on-the-staircase.webp",
+   "kind": "moment",
+   "subject": "Eleanor on the Staircase",
+   "created": "2026-11-06"
   }
  ],
  "the-invisible-passenger": [
@@ -2956,6 +3160,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Bronze courier warrant",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-last-summer-of-rome/moment-the-dawn-ride.webp",
+   "kind": "moment",
+   "subject": "The Dawn Ride",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-summer-of-rome/moment-the-plague-village.webp",
+   "kind": "moment",
+   "subject": "The Plague Village",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-summer-of-rome/moment-placidia-burns-the-forgery.webp",
+   "kind": "moment",
+   "subject": "Placidia Burns the Forgery",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-summer-of-rome/moment-odoacers-camp-at-evening.webp",
+   "kind": "moment",
+   "subject": "Odoacer's Camp at Evening",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-summer-of-rome/location-a-relay-station.webp",
+   "kind": "location",
+   "subject": "A Relay Station",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-summer-of-rome/location-the-marsh-causeway.webp",
+   "kind": "location",
+   "subject": "The Marsh Causeway",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-summer-of-rome/detail-the-seal-matrix.webp",
+   "kind": "detail",
+   "subject": "The Seal Matrix",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-last-summer-of-rome/moment-on-foot-walking-pace.webp",
+   "kind": "moment",
+   "subject": "On Foot, Walking Pace",
+   "created": "2026-11-06"
   }
  ],
  "the-last-train-below": [
@@ -4066,6 +4318,54 @@ window.GLX_ARTWORK = {
    "kind": "detail",
    "subject": "Amira's metronome and inlaid hand drum",
    "created": "2026-11-01"
+  },
+  {
+   "file": "artwork/the-silence-protocol/moment-the-board-demonstration.webp",
+   "kind": "moment",
+   "subject": "The Board Demonstration",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-silence-protocol/moment-the-hospital-timing-incident.webp",
+   "kind": "moment",
+   "subject": "The Hospital Timing Incident",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-silence-protocol/moment-daniel-defects.webp",
+   "kind": "moment",
+   "subject": "Daniel Defects",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-silence-protocol/moment-the-lab-team.webp",
+   "kind": "moment",
+   "subject": "The Lab Team",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-silence-protocol/location-the-sealed-wing.webp",
+   "kind": "location",
+   "subject": "The Sealed Wing",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-silence-protocol/location-noors-apartment.webp",
+   "kind": "location",
+   "subject": "Noor's Apartment",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-silence-protocol/detail-hands-on-the-floor.webp",
+   "kind": "detail",
+   "subject": "Hands on the Floor",
+   "created": "2026-11-06"
+  },
+  {
+   "file": "artwork/the-silence-protocol/moment-noor-on-the-floor.webp",
+   "kind": "moment",
+   "subject": "Noor on the Floor",
+   "created": "2026-11-06"
   }
  ],
  "the-star-collector": [
