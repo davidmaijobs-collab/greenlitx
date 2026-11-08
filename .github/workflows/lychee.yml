@@ -1,0 +1,18 @@
+name: Weekly link check
+
+on:
+  schedule:
+    - cron: "0 12 * * 1"
+  workflow_dispatch:
+
+jobs:
+  linkChecker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Lychee over the live site
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --base https://greenlitx.com/preview/ --accept 200,204,301,302,307,308 --timeout 20 --max-retries 2 --no-progress https://greenlitx.com/ https://greenlitx.com/sitemap.xml
+          format: markdown
+          jobSummary: true
+          fail: true
