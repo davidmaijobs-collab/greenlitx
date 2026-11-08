@@ -1243,6 +1243,14 @@ function galleryDisplayAssets(film) {
      of the same key visual — never show both in the gallery. The poster
      stays as the key visual; the backdrop already serves as the hero. */
   if (ordered.some((a) => a.kind === "poster")) ordered = ordered.filter((a) => a.kind !== "backdrop");
+  /* Owner rule (Nov 8): no picture appears twice on one film page. The
+     Explore the World strip already shows the film's curated locations
+     (same selection exploreWorldHtml makes, fallback included), so the
+     gallery never repeats them — same exclusion method as the backdrop. */
+  const worldFiles = (cur && Array.isArray(cur.locations) && cur.locations.length)
+    ? cur.locations
+    : assets.filter((a) => a.kind === "location").map((a) => a.file);
+  if (worldFiles.length) ordered = ordered.filter((a) => !worldFiles.includes(a.file));
   /* Deliberate order: key visual, then story moments, characters, world,
      details. Stable within each kind, so curation order is preserved. */
   return ordered
@@ -1252,10 +1260,21 @@ function galleryDisplayAssets(film) {
 }
 function galleryAssetVisible(film, a) {
   const f = galleryFilterState.filter;
+  const display = galleryDisplayAssets(film);
+  /* Anything outside the display set (backdrop, Explore the World picks)
+     is never visible in the gallery — this also corrects pre-rendered
+     figures on the static film pages. */
+  if (!display.some((x) => x.file === a.file)) return false;
   if (f !== "all") return a.kind === f;
   if (galleryFilterState.complete) return true;
   const cur = curationFor(film.id);
-  return cur && Array.isArray(cur.gallery) && cur.gallery.length ? cur.gallery.includes(a.file) : true;
+  if (!cur || !Array.isArray(cur.gallery) || !cur.gallery.length) return true;
+  if (cur.gallery.includes(a.file)) return true;
+  /* Curated picks that moved to Explore the World are replaced by the
+     next gallery images, so the curated row still shows six. */
+  const curatedShown = display.filter((x) => cur.gallery.includes(x.file)).length;
+  if (curatedShown >= 6) return false;
+  return display.filter((x) => !cur.gallery.includes(x.file)).slice(0, 6 - curatedShown).some((x) => x.file === a.file);
 }
 function galleryVisibleAssets(film) {
   return galleryDisplayAssets(film).filter((a) => galleryAssetVisible(film, a));
